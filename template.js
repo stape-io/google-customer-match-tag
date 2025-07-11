@@ -2,7 +2,6 @@ const BigQuery = require('BigQuery');
 const encodeUriComponent = require('encodeUriComponent');
 const getAllEventData = require('getAllEventData');
 const getContainerVersion = require('getContainerVersion');
-const getGoogleAuth = require('getGoogleAuth');
 const getRequestHeader = require('getRequestHeader');
 const getTimestampMillis = require('getTimestampMillis');
 const getType = require('getType');
@@ -22,9 +21,6 @@ const eventData = getAllEventData();
 
 const useOptimisticScenario = isUIFieldTrue(data.useOptimisticScenario);
 
-logToConsole('eventData', eventData); // REMOVE
-logToConsole('data', data); // REMOVE
-
 if (!isConsentGivenOrNotRequired()) {
   return data.gtmOnSuccess();
 }
@@ -35,27 +31,6 @@ if (url && url.lastIndexOf('https://gtm-msr.appspot.com/', 0) === 0) {
 }
 
 const mappedData = getDataForAudienceDataUpload(data, eventData);
-
-function validateMappedData(mappedData) {
-  if (!mappedData.audienceMembers || mappedData.audienceMembers.length === 0) {
-    return 'At least 1 Audience Member resource must be specified.';
-  }
-
-  const audienceMembersLengthLimit = 10000;
-  if (mappedData.audienceMembers.length > audienceMembersLengthLimit) {
-    return (
-      'Audience Members list length must be at most ' +
-      audienceMembersLengthLimit +
-      '. Current is: ' +
-      mappedData.audienceMembers.length
-    );
-  }
-
-  const hasUserDataOrPairData = mappedData.audienceMembers.some((am) => am.userData || am.pairData);
-  if (hasUserDataOrPairData && !mappedData.encoding) {
-    return 'Encoding must be specified when sending UserData or PairData.';
-  }
-}
 
 const invalidFields = validateMappedData(mappedData);
 if (invalidFields) {
@@ -224,7 +199,7 @@ function addAudienceMembersData(data, eventData, mappedData) {
     if (data.addUserDataAddress) {
       const addressUIFields = [
         'addressGivenName',
-        'addressLastName',
+        'addressFamilyName',
         'addressRegion',
         'addressPostalCode'
       ];
@@ -235,7 +210,7 @@ function addAudienceMembersData(data, eventData, mappedData) {
         if (inputAllAddressFieldsAreValid) {
           address = {
             givenName: makeString(data.addressGivenName),
-            familyName: makeString(data.addressLastName),
+            familyName: makeString(data.addressFamilyName),
             regionCode: makeString(data.addressRegion),
             postalCode: makeString(data.addressPostalCode)
           };
@@ -333,6 +308,8 @@ function hashDataIfNeeded(mappedData) {
 
   if (audienceMembers) {
     audienceMembers.forEach((audienceMember) => {
+      if (!audienceMember) return;
+
       if (
         audienceMember.userData &&
         audienceMember.userData.userIdentifiers &&
@@ -342,7 +319,7 @@ function hashDataIfNeeded(mappedData) {
           const key = Object.keys(userIdentifier)[0];
 
           if (key === 'emailAddress' || key === 'phoneNumber') {
-            const value = userIdentifier[key];
+            let value = userIdentifier[key];
             if (isSHA256HexHashed(value)) {
               mappedData.encoding = 'HEX';
               return;
@@ -350,10 +327,25 @@ function hashDataIfNeeded(mappedData) {
               mappedData.encoding = 'BASE64';
               return;
             }
+
+            if (key === 'phoneNumber') {
+              value = value
+                .split(' ')
+                .join('')
+                .split('-')
+                .join('')
+                .split('(')
+                .join('')
+                .split(')')
+                .join('');
+              if (value[0] !== '+') value = '+' + value;
+            }
+
             userIdentifier[key] = hashData(value);
             mappedData.encoding = 'HEX';
           } else if (key === 'address') {
-            ['givenName', 'familyName'].forEach((nameKey) => {
+            const addressKeysToHash = ['givenName', 'familyName'];
+            addressKeysToHash.forEach((nameKey) => {
               const value = userIdentifier.address[nameKey];
               if (!value) return;
 
@@ -399,11 +391,6 @@ function generateRequestUrl(data) {
   };
   const action = audienceActionNormalization[data.audienceAction];
 
-  return (
-    'https://alnheslx.dgl.stape.io/stape-api/e04bf2aeea695a8f151dd9ad180ce2d5b44c8ad2alnheslx/v2/data-manager/' +
-    action
-  ); // REMOVE
-
   const containerIdentifier = getRequestHeader('x-gtm-identifier');
   const defaultDomain = getRequestHeader('x-gtm-default-domain');
   const containerApiKey = getRequestHeader('x-gtm-api-key');
@@ -419,7 +406,7 @@ function generateRequestUrl(data) {
   );
 }
 
-function generateRequestOptions(data) {
+function generateRequestOptions() {
   const options = {
     method: 'POST',
     headers: {
@@ -428,6 +415,27 @@ function generateRequestOptions(data) {
   };
 
   return options;
+}
+
+function validateMappedData(mappedData) {
+  if (!mappedData.audienceMembers || mappedData.audienceMembers.length === 0) {
+    return 'At least 1 Audience Member resource must be specified.';
+  }
+
+  const audienceMembersLengthLimit = 10000;
+  if (mappedData.audienceMembers.length > audienceMembersLengthLimit) {
+    return (
+      'Audience Members list length must be at most ' +
+      audienceMembersLengthLimit +
+      '. Current is: ' +
+      mappedData.audienceMembers.length
+    );
+  }
+
+  const hasUserDataOrPairData = mappedData.audienceMembers.some((am) => am.userData || am.pairData);
+  if (hasUserDataOrPairData && !mappedData.encoding) {
+    return 'Encoding must be specified when sending UserData or PairData.';
+  }
 }
 
 function getDataForAudienceDataUpload(data, eventData) {
@@ -443,7 +451,7 @@ function getDataForAudienceDataUpload(data, eventData) {
   addAudienceMembersData(data, eventData, mappedData);
   hashDataIfNeeded(mappedData); // This should come before addEncodingData().
   addEncodingData(data, mappedData);
-  if (isUIFieldTrue(data.enableUserDataEncryption)) {
+  if (isUIFieldTrue(data.enableAudienceDataEncryption)) {
     addEncryptionData(data, mappedData);
   }
 
@@ -452,7 +460,7 @@ function getDataForAudienceDataUpload(data, eventData) {
 
 function sendRequest(data, mappedData) {
   const requestUrl = generateRequestUrl(data);
-  const requestOptions = generateRequestOptions(data);
+  const requestOptions = generateRequestOptions();
   const requestBody = mappedData;
 
   const logEventName =

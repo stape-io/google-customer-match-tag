@@ -453,7 +453,7 @@ ___TEMPLATE_PARAMETERS___
                 "name": "userDataEmailAddresses",
                 "displayName": "User Email Address(es)",
                 "simpleValueType": true,
-                "help": "Specify a single email address, or an array of email addresses. Each item can be already SHA256 hashed or not. They can be already encrypted as well.\n\u003cbr/\u003e\u003cbr/\u003e\nIf already SHA256 hashed, make sure to follow these \u003ca href\u003d\"https://developers.google.com/data-manager/api/get-started/formatting#userdata_format\"\u003enormalization guidelines\u003c/a\u003e before applying the hash, and also to \u003cb\u003especify the hash encoding in the corresponding template field\u003c/b\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\nDefault: \u003ci\u003eeventData.user_data.email\u003c/i\u003e -\u003e \u003ci\u003eeventData.user_data.email_address\u003c/i\u003e -\u003e \u003ci\u003eeventData.user_data.sha256_email\u003c/i\u003e -\u003e \u003ci\u003eeventData.user_data.sha256_email_address\u003c/i\u003e\n\u003cbr/\u003e\nIf you do not want to use the default, pass an \u003ci\u003eundefined\u003c/i\u003e variable in the field.",
+                "help": "Specify a single email address, or an array of email addresses. Each item can be already SHA256 hashed or not. They can be already encrypted as well.\n\u003cbr/\u003e\u003cbr/\u003e\nIf already SHA256 hashed, make sure to follow these \u003ca href\u003d\"https://developers.google.com/data-manager/api/get-started/formatting#userdata_format\"\u003enormalization guidelines\u003c/a\u003e before applying the hash, and also to \u003cb\u003especify the hash encoding in the corresponding template field\u003c/b\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\nDefault: \u003ci\u003eeventData.user_data.email\u003c/i\u003e -\u003e \u003ci\u003eeventData.user_data.email_address\u003c/i\u003e -\u003e \u003ci\u003eeventData.user_data.sha256_email\u003c/i\u003e -\u003e \u003ci\u003eeventData.user_data.sha256_email_address\u003c/i\u003e\n\u003cbr/\u003e\n⚠️ If you do NOT want to use the default value, pass an \u003ci\u003eundefined\u003c/i\u003e variable in the field (not the \"undefined\" string).",
                 "valueHint": "jane@example.com"
               },
               {
@@ -461,7 +461,7 @@ ___TEMPLATE_PARAMETERS___
                 "name": "userDataPhoneNumbers",
                 "displayName": "User Phone Number(s)",
                 "simpleValueType": true,
-                "help": "Specify a single phone number, or an array of phone numbers. Each item can be already SHA256 hashed or not. They can be already encrypted as well.\n\u003cbr/\u003e\u003cbr/\u003e\nUse \u003ca href\u003d\"https://en.wikipedia.org/wiki/E.164\"\u003eE.164 format\u003c/a\u003e. Include the plus sign (+) and the country code.\n\u003cbr/\u003e\nIf already SHA256 hashed, make sure to follow these \u003ca href\u003d\"https://developers.google.com/data-manager/api/get-started/formatting#userdata_format\"\u003enormalization guidelines\u003c/a\u003e before applying the hash, and also to \u003cb\u003especify the hash encoding in the corresponding template field\u003c/b\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\nDefault: \u003ci\u003eeventData.user_data.phone\u003c/i\u003e -\u003e \u003ci\u003eeventData.user_data.phone_number\u003c/i\u003e -\u003e \u003ci\u003eeventData.user_data.sha256_phone_number\u003c/i\u003e\n\u003cbr/\u003e\nIf you do not want to use the default, pass an \u003ci\u003eundefined\u003c/i\u003e variable in the field.",
+                "help": "Specify a single phone number, or an array of phone numbers. Each item can be already SHA256 hashed or not. They can be already encrypted as well.\n\u003cbr/\u003e\u003cbr/\u003e\nUse \u003ca href\u003d\"https://en.wikipedia.org/wiki/E.164\"\u003eE.164 format\u003c/a\u003e. Include the plus sign (+) and the country code.\n\u003cbr/\u003e\nIf already SHA256 hashed, make sure to follow these \u003ca href\u003d\"https://developers.google.com/data-manager/api/get-started/formatting#userdata_format\"\u003enormalization guidelines\u003c/a\u003e before applying the hash, and also to \u003cb\u003especify the hash encoding in the corresponding template field\u003c/b\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\nDefault: \u003ci\u003eeventData.user_data.phone\u003c/i\u003e -\u003e \u003ci\u003eeventData.user_data.phone_number\u003c/i\u003e -\u003e \u003ci\u003eeventData.user_data.sha256_phone_number\u003c/i\u003e\n\u003cbr/\u003e\n⚠️ If you do NOT want to use the default value, pass an \u003ci\u003eundefined\u003c/i\u003e variable in the field (not the \"undefined\" string).",
                 "valueHint": "+1555999999999"
               },
               {
@@ -484,16 +484,16 @@ ___TEMPLATE_PARAMETERS___
                         "name": "addressGivenName",
                         "displayName": "User Given Name",
                         "simpleValueType": true,
-                        "help": "Specify the User Given Name (First Name). Don\u0027t include suffixes such as \u003ci\u003eJr\u003c/i\u003e. It can be already SHA256 hashed or not. It can be encrypted as well.\n\u003cbr/\u003e\u003cbr/\u003e\nIf already SHA256 hashed, make sure to follow these \u003ca href\u003d\"https://developers.google.com/data-manager/api/get-started/formatting#userdata_format\"\u003enormalization guidelines\u003c/a\u003e before applying the hash, and also to \u003cb\u003especify the hash encoding in the corresponding template field\u003c/b\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\nDefault: \u003ci\u003eeventData.user_data.address.first_name\u003c/i\u003e -\u003e \u003ci\u003eeventData.user_data.address.sha256_first_name\u003c/i\u003e\n\u003cbr/\u003e\nIf you do not want to use the default, pass an \u003ci\u003eundefined\u003c/i\u003e variable in the field.",
+                        "help": "Specify the User Given Name (First Name). Don\u0027t include suffixes such as \u003ci\u003eJr\u003c/i\u003e. It can be already SHA256 hashed or not. It can be encrypted as well.\n\u003cbr/\u003e\u003cbr/\u003e\nIf already SHA256 hashed, make sure to follow these \u003ca href\u003d\"https://developers.google.com/data-manager/api/get-started/formatting#userdata_format\"\u003enormalization guidelines\u003c/a\u003e before applying the hash, and also to \u003cb\u003especify the hash encoding in the corresponding template field\u003c/b\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\nDefault: \u003ci\u003eeventData.user_data.address.first_name\u003c/i\u003e -\u003e \u003ci\u003eeventData.user_data.address.sha256_first_name\u003c/i\u003e\n\u003cbr/\u003e\n⚠️ If you do NOT want to use the default value, pass an \u003ci\u003eundefined\u003c/i\u003e variable in the field (not the \"undefined\" string).",
                         "valueHint": "john",
                         "valueValidators": []
                       },
                       {
                         "type": "TEXT",
-                        "name": "addressLastName",
+                        "name": "addressFamilyName",
                         "displayName": "User Family Name",
                         "simpleValueType": true,
-                        "help": "Specify the User Family Name (Last Name). It can be already SHA256 hashed or not. It can be encrypted as well.\n\u003cbr/\u003e\u003cbr/\u003e\nIf already SHA256 hashed, make sure to follow these \u003ca href\u003d\"https://developers.google.com/data-manager/api/get-started/formatting#userdata_format\"\u003enormalization guidelines\u003c/a\u003e before applying the hash, and also to \u003cb\u003especify the hash encoding in the corresponding template field\u003c/b\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\nDefault: \u003ci\u003eeventData.user_data.address.last_name\u003c/i\u003e -\u003e \u003ci\u003eeventData.user_data.address.sha256_last_name\u003c/i\u003e\n\u003cbr/\u003e\nIf you do not want to use the default, pass an \u003ci\u003eundefined\u003c/i\u003e variable in the field.",
+                        "help": "Specify the User Family Name (Last Name). It can be already SHA256 hashed or not. It can be encrypted as well.\n\u003cbr/\u003e\u003cbr/\u003e\nIf already SHA256 hashed, make sure to follow these \u003ca href\u003d\"https://developers.google.com/data-manager/api/get-started/formatting#userdata_format\"\u003enormalization guidelines\u003c/a\u003e before applying the hash, and also to \u003cb\u003especify the hash encoding in the corresponding template field\u003c/b\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\nDefault: \u003ci\u003eeventData.user_data.address.last_name\u003c/i\u003e -\u003e \u003ci\u003eeventData.user_data.address.sha256_last_name\u003c/i\u003e\n\u003cbr/\u003e\n⚠️ If you do NOT want to use the default value, pass an \u003ci\u003eundefined\u003c/i\u003e variable in the field (not the \"undefined\" string).",
                         "valueHint": "doe",
                         "valueValidators": []
                       },
@@ -502,7 +502,7 @@ ___TEMPLATE_PARAMETERS___
                         "name": "addressRegion",
                         "displayName": "User Address Region",
                         "simpleValueType": true,
-                        "help": "The 2-letter region code in \u003ca href\u003d\"https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2\"\u003eISO-3166-1 alpha-2\u003c/a\u003e of the user\u0027s address. Do not hash.\n\u003cbr/\u003e\u003cbr/\u003e\nDefault: \u003ci\u003eeventData.user_data.address.country\u003c/i\u003e\n\u003cbr/\u003e\nIf you do not want to use the default, pass an \u003ci\u003eundefined\u003c/i\u003e variable in the field.",
+                        "help": "The 2-letter region code in \u003ca href\u003d\"https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2\"\u003eISO-3166-1 alpha-2\u003c/a\u003e of the user\u0027s address. Do not hash.\n\u003cbr/\u003e\u003cbr/\u003e\nDefault: \u003ci\u003eeventData.user_data.address.country\u003c/i\u003e\n\u003cbr/\u003e\n⚠️ If you do NOT want to use the default value, pass an \u003ci\u003eundefined\u003c/i\u003e variable in the field (not the \"undefined\" string).",
                         "valueHint": "US",
                         "valueValidators": []
                       },
@@ -511,7 +511,7 @@ ___TEMPLATE_PARAMETERS___
                         "name": "addressPostalCode",
                         "displayName": "User Address Postal Code",
                         "simpleValueType": true,
-                        "help": "The postal code of the user\u0027s address. Do not hash.\n\u003cbr/\u003e\nBoth US and international zip and postal codes are allowed. \n\u003cbr/\u003e\nFor US addresses, use either 5 digits or 5 digits followed by a 4-digit extension. Using a 4-digit extension may improve your match rate.\n\u003cbr/\u003e\nFor all other countries, don\u0027t use postal code extensions.\n\u003cbr/\u003e\u003cbr/\u003e\nDefault: \u003ci\u003eeventData.user_data.address.postal_code\u003c/i\u003e\n\u003cbr/\u003e\nIf you do not want to use the default, pass an \u003ci\u003eundefined\u003c/i\u003e variable in the field.",
+                        "help": "The postal code of the user\u0027s address. Do not hash.\n\u003cbr/\u003e\nBoth US and international zip and postal codes are allowed. \n\u003cbr/\u003e\nFor US addresses, use either 5 digits or 5 digits followed by a 4-digit extension. Using a 4-digit extension may improve your match rate.\n\u003cbr/\u003e\nFor all other countries, don\u0027t use postal code extensions.\n\u003cbr/\u003e\u003cbr/\u003e\nDefault: \u003ci\u003eeventData.user_data.address.postal_code\u003c/i\u003e\n\u003cbr/\u003e\n⚠️ If you do NOT want to use the default value, pass an \u003ci\u003eundefined\u003c/i\u003e variable in the field (not the \"undefined\" string).",
                         "valueHint": "10001",
                         "valueValidators": []
                       }
@@ -728,7 +728,6 @@ const BigQuery = require('BigQuery');
 const encodeUriComponent = require('encodeUriComponent');
 const getAllEventData = require('getAllEventData');
 const getContainerVersion = require('getContainerVersion');
-const getGoogleAuth = require('getGoogleAuth');
 const getRequestHeader = require('getRequestHeader');
 const getTimestampMillis = require('getTimestampMillis');
 const getType = require('getType');
@@ -748,9 +747,6 @@ const eventData = getAllEventData();
 
 const useOptimisticScenario = isUIFieldTrue(data.useOptimisticScenario);
 
-logToConsole('eventData', eventData); // REMOVE
-logToConsole('data', data); // REMOVE
-
 if (!isConsentGivenOrNotRequired()) {
   return data.gtmOnSuccess();
 }
@@ -761,27 +757,6 @@ if (url && url.lastIndexOf('https://gtm-msr.appspot.com/', 0) === 0) {
 }
 
 const mappedData = getDataForAudienceDataUpload(data, eventData);
-
-function validateMappedData(mappedData) {
-  if (!mappedData.audienceMembers || mappedData.audienceMembers.length === 0) {
-    return 'At least 1 Audience Member resource must be specified.';
-  }
-
-  const audienceMembersLengthLimit = 10000;
-  if (mappedData.audienceMembers.length > audienceMembersLengthLimit) {
-    return (
-      'Audience Members list length must be at most ' +
-      audienceMembersLengthLimit +
-      '. Current is: ' +
-      mappedData.audienceMembers.length
-    );
-  }
-
-  const hasUserDataOrPairData = mappedData.audienceMembers.some((am) => am.userData || am.pairData);
-  if (hasUserDataOrPairData && !mappedData.encoding) {
-    return 'Encoding must be specified when sending UserData or PairData.';
-  }
-}
 
 const invalidFields = validateMappedData(mappedData);
 if (invalidFields) {
@@ -950,7 +925,7 @@ function addAudienceMembersData(data, eventData, mappedData) {
     if (data.addUserDataAddress) {
       const addressUIFields = [
         'addressGivenName',
-        'addressLastName',
+        'addressFamilyName',
         'addressRegion',
         'addressPostalCode'
       ];
@@ -961,7 +936,7 @@ function addAudienceMembersData(data, eventData, mappedData) {
         if (inputAllAddressFieldsAreValid) {
           address = {
             givenName: makeString(data.addressGivenName),
-            familyName: makeString(data.addressLastName),
+            familyName: makeString(data.addressFamilyName),
             regionCode: makeString(data.addressRegion),
             postalCode: makeString(data.addressPostalCode)
           };
@@ -1059,6 +1034,8 @@ function hashDataIfNeeded(mappedData) {
 
   if (audienceMembers) {
     audienceMembers.forEach((audienceMember) => {
+      if (!audienceMember) return;
+
       if (
         audienceMember.userData &&
         audienceMember.userData.userIdentifiers &&
@@ -1068,7 +1045,7 @@ function hashDataIfNeeded(mappedData) {
           const key = Object.keys(userIdentifier)[0];
 
           if (key === 'emailAddress' || key === 'phoneNumber') {
-            const value = userIdentifier[key];
+            let value = userIdentifier[key];
             if (isSHA256HexHashed(value)) {
               mappedData.encoding = 'HEX';
               return;
@@ -1076,10 +1053,25 @@ function hashDataIfNeeded(mappedData) {
               mappedData.encoding = 'BASE64';
               return;
             }
+
+            if (key === 'phoneNumber') {
+              value = value
+                .split(' ')
+                .join('')
+                .split('-')
+                .join('')
+                .split('(')
+                .join('')
+                .split(')')
+                .join('');
+              if (value[0] !== '+') value = '+' + value;
+            }
+
             userIdentifier[key] = hashData(value);
             mappedData.encoding = 'HEX';
           } else if (key === 'address') {
-            ['givenName', 'familyName'].forEach((nameKey) => {
+            const addressKeysToHash = ['givenName', 'familyName'];
+            addressKeysToHash.forEach((nameKey) => {
               const value = userIdentifier.address[nameKey];
               if (!value) return;
 
@@ -1125,11 +1117,6 @@ function generateRequestUrl(data) {
   };
   const action = audienceActionNormalization[data.audienceAction];
 
-  return (
-    'https://alnheslx.dgl.stape.io/stape-api/e04bf2aeea695a8f151dd9ad180ce2d5b44c8ad2alnheslx/v2/data-manager/' +
-    action
-  ); // REMOVE
-
   const containerIdentifier = getRequestHeader('x-gtm-identifier');
   const defaultDomain = getRequestHeader('x-gtm-default-domain');
   const containerApiKey = getRequestHeader('x-gtm-api-key');
@@ -1145,7 +1132,7 @@ function generateRequestUrl(data) {
   );
 }
 
-function generateRequestOptions(data) {
+function generateRequestOptions() {
   const options = {
     method: 'POST',
     headers: {
@@ -1154,6 +1141,27 @@ function generateRequestOptions(data) {
   };
 
   return options;
+}
+
+function validateMappedData(mappedData) {
+  if (!mappedData.audienceMembers || mappedData.audienceMembers.length === 0) {
+    return 'At least 1 Audience Member resource must be specified.';
+  }
+
+  const audienceMembersLengthLimit = 10000;
+  if (mappedData.audienceMembers.length > audienceMembersLengthLimit) {
+    return (
+      'Audience Members list length must be at most ' +
+      audienceMembersLengthLimit +
+      '. Current is: ' +
+      mappedData.audienceMembers.length
+    );
+  }
+
+  const hasUserDataOrPairData = mappedData.audienceMembers.some((am) => am.userData || am.pairData);
+  if (hasUserDataOrPairData && !mappedData.encoding) {
+    return 'Encoding must be specified when sending UserData or PairData.';
+  }
 }
 
 function getDataForAudienceDataUpload(data, eventData) {
@@ -1169,7 +1177,7 @@ function getDataForAudienceDataUpload(data, eventData) {
   addAudienceMembersData(data, eventData, mappedData);
   hashDataIfNeeded(mappedData); // This should come before addEncodingData().
   addEncodingData(data, mappedData);
-  if (isUIFieldTrue(data.enableUserDataEncryption)) {
+  if (isUIFieldTrue(data.enableAudienceDataEncryption)) {
     addEncryptionData(data, mappedData);
   }
 
@@ -1178,7 +1186,7 @@ function getDataForAudienceDataUpload(data, eventData) {
 
 function sendRequest(data, mappedData) {
   const requestUrl = generateRequestUrl(data);
-  const requestOptions = generateRequestOptions(data);
+  const requestOptions = generateRequestOptions();
   const requestBody = mappedData;
 
   const logEventName =
@@ -1607,32 +1615,6 @@ ___SERVER_PERMISSIONS___
   {
     "instance": {
       "key": {
-        "publicId": "use_google_credentials",
-        "versionId": "1"
-      },
-      "param": [
-        {
-          "key": "allowedScopes",
-          "value": {
-            "type": 2,
-            "listItem": [
-              {
-                "type": 1,
-                "string": "https://www.googleapis.com/auth/datamanager"
-              }
-            ]
-          }
-        }
-      ]
-    },
-    "clientAnnotations": {
-      "isEditedByUser": true
-    },
-    "isRequired": true
-  },
-  {
-    "instance": {
-      "key": {
         "publicId": "access_bigquery",
         "versionId": "1"
       },
@@ -1696,7 +1678,541 @@ ___SERVER_PERMISSIONS___
 
 ___TESTS___
 
-scenarios: []
+scenarios:
+- name: '[Single User] Should NOT send request if Audience Members list is empty'
+  code: |-
+    setMockDataByAudienceMethod('ingest', {
+      userMode: 'single',
+      userDataEmailAddresses: undefined,
+      userDataPhoneNumbers: undefined,
+      addUserDataAddress: false,
+      addressGivenName: undefined,
+      addressFamilyName: undefined,
+      addressRegion: undefined,
+      addressPostalCode: undefined,
+      mobileIds: undefined,
+      pairIds: undefined,
+    });
+
+    runCode(mockData);
+
+    assertApi('sendHttpRequest').wasNotCalled();
+    assertApi('gtmOnSuccess').wasNotCalled();
+    assertApi('gtmOnFailure').wasCalled();
+- name: '[Multiple Users] Should NOT send request if Audience Members list is empty'
+  code: |
+    setMockDataByAudienceMethod('ingest', {
+      userMode: 'multiple',
+      audienceMembers: undefined
+    });
+
+    runCode(mockData);
+
+    assertApi('sendHttpRequest').wasNotCalled();
+    assertApi('gtmOnSuccess').wasNotCalled();
+    assertApi('gtmOnFailure').wasCalled();
+- name: '[Multiple Users] Should NOT send request if Audience Members list length
+    is greater than 10000'
+  code: |-
+    const audienceMembersSize = 10001;
+    const audienceMembers = [
+      {
+        userData: {},
+        pairData: {}
+      }
+    ];
+    audienceMembers.length = 10001;
+
+    setMockDataByAudienceMethod('ingest', {
+      userMode: 'multiple',
+      audienceMembers: audienceMembers
+    });
+
+    runCode(mockData);
+
+    assertApi('sendHttpRequest').wasNotCalled();
+    assertApi('gtmOnSuccess').wasNotCalled();
+    assertApi('gtmOnFailure').wasCalled();
+- name: '[Ingest] Request URL is succesfully built based on Audience Method'
+  code: "setMockDataByAudienceMethod('ingest');\n\nmock('sendHttpRequest', (requestUrl,\
+    \ callback, requestOptions, requestBody) => {\n  assertThat(requestUrl).isEqualTo('https://expectedXGtmIdentifier.expectedXGtmDefaultDomain/stape-api/expectedXGtmApiKey/v2/data-manager/ingest');\n\
+    \  if (typeof callback === 'function') {\n    callback(200);\n  } else {\n   \
+    \ requestBody = requestOptions;\n    requestOptions = callback;\n    return Promise.create((resolve,\
+    \ reject) => {\n      resolve({ statusCode: 200 });\n    });  \n  }\n});\n\nrunCode(mockData);\n\
+    \ncallLater(() => {\n  assertApi('gtmOnSuccess').wasCalled();\n  assertApi('gtmOnFailure').wasNotCalled();\n\
+    });"
+- name: '[Remove] Request URL is succesfully built based on Audience Method'
+  code: "setMockDataByAudienceMethod('remove');\n\nmock('sendHttpRequest', (requestUrl,\
+    \ callback, requestOptions, requestBody) => {\n  assertThat(requestUrl).isEqualTo('https://expectedXGtmIdentifier.expectedXGtmDefaultDomain/stape-api/expectedXGtmApiKey/v2/data-manager/remove');\n\
+    \n  return Promise.create((resolve, reject) => {\n    resolve({ statusCode: 200\
+    \ });\n  });  \n});\n\nrunCode(mockData);\n\ncallLater(() => {\n  assertApi('gtmOnSuccess').wasCalled();\n\
+    \  assertApi('gtmOnFailure').wasNotCalled();\n});"
+- name: Request Options are succesfully built and sent in the request
+  code: "setMockDataByAudienceMethod('ingest');\n\nmock('sendHttpRequest', (requestUrl,\
+    \ requestOptions, requestBody) => {\n  assertThat(requestOptions).isEqualTo({\n\
+    \    method: 'POST',\n    headers: {\n      'Content-Type': 'application/json'\n\
+    \    }\n  });\n\n  return Promise.create((resolve, reject) => {\n    resolve({\
+    \ statusCode: 200 });\n  });  \n});\n\nrunCode(mockData);\n\ncallLater(() => {\n\
+    \  assertApi('gtmOnSuccess').wasCalled();\n  assertApi('gtmOnFailure').wasNotCalled();\n\
+    });"
+- name: '[Ingest - Single User] Request is successfully built and sent - data from
+    UI fields'
+  code: "setMockDataByAudienceMethod('ingest', {\n  userMode: 'single'\n});\n\nmock('sendHttpRequest',\
+    \ (requestUrl, requestOptions, requestBody) => {\n  const parsedRequestBody =\
+    \ JSON.parse(requestBody);\n  assertThat(parsedRequestBody).isEqualTo({\n    destinations:\
+    \ [\n      {\n        productDestinationId: '123',\n        operatingAccount:\
+    \ { product: 'GOOGLE_ADS', accountId: '123' },\n        linkedAccount: { product:\
+    \ 'GOOGLE_ADS', accountId: '123' }\n      },\n      {\n        productDestinationId:\
+    \ '444',\n        operatingAccount: { product: 'GOOGLE_ADS', accountId: '444'\
+    \ },\n        linkedAccount: { product: 'GOOGLE_ADS', accountId: '444' }\n   \
+    \   }\n    ],\n    validateOnly: false,\n    termsOfService: { customerMatchTermsOfServiceStatus:\
+    \ 'ACCEPTED' },\n    consent: {\n      adUserData: 'CONSENT_GRANTED',\n      adPersonalization:\
+    \ 'CONSENT_GRANTED'\n    },\n    audienceMembers: [\n      {\n        userData:\
+    \ {\n          userIdentifiers: [\n            {\n              emailAddress:\n\
+    \                '973dfe463ec85785f5f95af5ba3906eedb2d931c24e69824a89ea65dba4e813b'\n\
+    \            },\n            {\n              phoneNumber:\n                '910a625c4ba147b544e6bd2f267e130ae14c591b6ba9c25cb8573322dedbebd0'\n\
+    \            },\n            {\n              address: {\n                givenName:\n\
+    \                  '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
+    \                familyName:\n                  '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
+    \                regionCode: 'BR',\n                postalCode: '10001'\n    \
+    \          }\n            }\n          ]\n        }\n      },\n      { mobileData:\
+    \ { mobileIds: ['AAA-BB-CC-111'] } },\n      {\n        pairData: {\n        \
+    \  pairIds: [\n            '426a1c28c61b7ba258fa3cc300ba7cd3abc11c0d4b585d3ce4a15d6f22d6d363'\n\
+    \          ]\n        }\n      }\n    ],\n    encoding: 'HEX',\n    encryptionInfo:\
+    \ {\n      gcpWrappedKeyInfo: {\n        keyType: 'XCHACHA20_POLY1305',\n    \
+    \    wipProvider: '123',\n        kekUri: '123',\n        encryptedDek: '123'\n\
+    \      }\n    }\n  });\n\n  return Promise.create((resolve, reject) => {\n   \
+    \ resolve({ statusCode: 200 });\n  });  \n});\n\nrunCode(mockData);\n\ncallLater(()\
+    \ => {\n  assertApi('gtmOnSuccess').wasCalled();\n  assertApi('gtmOnFailure').wasNotCalled();\n\
+    });"
+- name: '[Ingest - Single User] Request is successfully built and sent - data from
+    UI fallbacks'
+  code: "setGetAllEventData();\nsetMockDataByAudienceMethod('ingest', {\n  userMode:\
+    \ 'single',\n  userDataEmailAddresses: undefined,\n  userDataPhoneNumbers: undefined,\n\
+    \  addUserDataAddress: true,\n  enableAudienceDataEncryption: false,\n  mobileIds:\
+    \ undefined,\n  pairIds: undefined\n});\n\n[\n  'userDataEmailAddresses',\n  'userDataPhoneNumbers',\n\
+    \  'addressGivenName',\n  'addressFamilyName',\n  'addressRegion',\n  'addressPostalCode'\n\
+    ].forEach((key) => Object.delete(mockData, key));\n\nmock('sendHttpRequest', (requestUrl,\
+    \ requestOptions, requestBody) => {\n  const parsedRequestBody = JSON.parse(requestBody);\n\
+    \  assertThat(parsedRequestBody).isEqualTo({\n    destinations: [\n      {\n \
+    \       productDestinationId: '123',\n        operatingAccount: { product: 'GOOGLE_ADS',\
+    \ accountId: '123' },\n        linkedAccount: { product: 'GOOGLE_ADS', accountId:\
+    \ '123' }\n      },\n      {\n        productDestinationId: '444',\n        operatingAccount:\
+    \ { product: 'GOOGLE_ADS', accountId: '444' },\n        linkedAccount: { product:\
+    \ 'GOOGLE_ADS', accountId: '444' }\n      }\n    ],\n    validateOnly: false,\n\
+    \    termsOfService: { customerMatchTermsOfServiceStatus: 'ACCEPTED' },\n    consent:\
+    \ {\n      adUserData: 'CONSENT_GRANTED',\n      adPersonalization: 'CONSENT_GRANTED'\n\
+    \    },\n    audienceMembers: [\n      {\n        userData: {\n          userIdentifiers:\
+    \ [\n            {\n              emailAddress:\n                'ddffdce54594d729a13068951750239a1943c295a5f89349b5cf69744d4a1ba2'\n\
+    \            },\n            {\n              emailAddress:\n                'afea90f78a2e604dc6cc5d7826ffdd2bfbab612a0c1222acf8df173319b7e809'\n\
+    \            },\n            {\n              phoneNumber:\n                'c698c0b85d32cbcf5033ada58f34de87d4f7415efaf5a8d1c1e9e63393dcc85e'\n\
+    \            },\n            {\n              address: {\n                givenName:\n\
+    \                  '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
+    \                familyName:\n                  '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
+    \                postalCode: '10001',\n                regionCode: 'BR'\n    \
+    \          }\n            }\n          ]\n        }\n      }\n    ],\n    encoding:\
+    \ 'HEX'\n  });\n\n  return Promise.create((resolve, reject) => {\n    resolve({\
+    \ statusCode: 200 });\n  });  \n});\n\nrunCode(mockData);\n\ncallLater(() => {\n\
+    \  assertApi('gtmOnSuccess').wasCalled();\n  assertApi('gtmOnFailure').wasNotCalled();\n\
+    });"
+- name: '[Ingest - Single User] data from UI fallbacks are not used when passing undefined
+    to the fields'
+  code: "setGetAllEventData();\nsetMockDataByAudienceMethod('ingest', {\n  userMode:\
+    \ 'single',\n  userDataEmailAddresses: undefined,\n  userDataPhoneNumbers: undefined,\n\
+    \  addUserDataAddress: true,\n  addressGivenName: undefined,\n  addressFamilyName:\
+    \ undefined,\n  addressRegion: undefined,\n  addressPostalCode: undefined,\n \
+    \ enableAudienceDataEncryption: false\n});\n\nmock('sendHttpRequest', (requestUrl,\
+    \ requestOptions, requestBody) => {\n  const parsedRequestBody = JSON.parse(requestBody);\n\
+    \  assertThat(parsedRequestBody).isEqualTo({\n    destinations: [\n      {\n \
+    \       productDestinationId: '123',\n        operatingAccount: { product: 'GOOGLE_ADS',\
+    \ accountId: '123' },\n        linkedAccount: { product: 'GOOGLE_ADS', accountId:\
+    \ '123' }\n      },\n      {\n        productDestinationId: '444',\n        operatingAccount:\
+    \ { product: 'GOOGLE_ADS', accountId: '444' },\n        linkedAccount: { product:\
+    \ 'GOOGLE_ADS', accountId: '444' }\n      }\n    ],\n    validateOnly: false,\n\
+    \    termsOfService: { customerMatchTermsOfServiceStatus: 'ACCEPTED' },\n    consent:\
+    \ {\n      adUserData: 'CONSENT_GRANTED',\n      adPersonalization: 'CONSENT_GRANTED'\n\
+    \    },\n    audienceMembers: [\n      { mobileData: { mobileIds: ['AAA-BB-CC-111']\
+    \ } },\n      {\n        pairData: {\n          pairIds: [\n            '426a1c28c61b7ba258fa3cc300ba7cd3abc11c0d4b585d3ce4a15d6f22d6d363'\n\
+    \          ]\n        }\n      }\n    ],\n    encoding: 'HEX'\n  });\n\n  return\
+    \ Promise.create((resolve, reject) => {\n    resolve({ statusCode: 200 });\n \
+    \ });  \n});\n\nrunCode(mockData);\n\ncallLater(() => {\n  assertApi('gtmOnSuccess').wasCalled();\n\
+    \  assertApi('gtmOnFailure').wasNotCalled();\n});"
+- name: '[Ingest - Multiple Users] Request is successfully built and sent - data from
+    UI fields'
+  code: "setMockDataByAudienceMethod('ingest', {\n  userMode: 'multiple',\n  audienceMembers:\
+    \ [\n    {\n      userData: {\n        userIdentifiers: [\n          {\n     \
+    \       emailAddress:\n              '973dfe463ec85785f5f95af5ba3906eedb2d931c24e69824a89ea65dba4e813b'\n\
+    \          },\n          {\n            phoneNumber:\n              '910a625c4ba147b544e6bd2f267e130ae14c591b6ba9c25cb8573322dedbebd0'\n\
+    \          },\n          {\n            address: {\n              givenName:\n\
+    \                '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
+    \              familyName:\n                '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
+    \              regionCode: 'BR',\n              postalCode: '10001'\n        \
+    \    }\n          }\n        ]\n      }\n    },\n    {\n      userData: {\n  \
+    \      userIdentifiers: [\n          {\n            emailAddress:\n          \
+    \    '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08'\n    \
+    \      },\n          {\n            phoneNumber:\n              '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08'\n\
+    \          },\n          {\n            address: {\n              givenName:\n\
+    \                '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
+    \              familyName:\n                '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
+    \              regionCode: 'US',\n              postalCode: '22222'\n        \
+    \    }\n          }\n        ]\n      }\n    },\n    { \n      mobileData: { mobileIds:\
+    \ ['AAA-BB-CC-111'] } \n    },\n    { \n      mobileData: { mobileIds: ['foobar',\
+    \ 'barfoo'] } \n    },\n    {\n      pairData: { pairIds: ['426a1c28c61b7ba258fa3cc300ba7cd3abc11c0d4b585d3ce4a15d6f22d6d363']\
+    \ }\n    },\n    {\n      pairData: { pairIds: ['abc', 'cde'] }\n    }\n  ]\n\
+    });\n\nmock('sendHttpRequest', (requestUrl, requestOptions, requestBody) => {\n\
+    \  const parsedRequestBody = JSON.parse(requestBody);\n  assertThat(parsedRequestBody).isEqualTo({\n\
+    \    destinations: [\n      {\n        productDestinationId: '123',\n        operatingAccount:\
+    \ { product: 'GOOGLE_ADS', accountId: '123' },\n        linkedAccount: { product:\
+    \ 'GOOGLE_ADS', accountId: '123' }\n      },\n      {\n        productDestinationId:\
+    \ '444',\n        operatingAccount: { product: 'GOOGLE_ADS', accountId: '444'\
+    \ },\n        linkedAccount: { product: 'GOOGLE_ADS', accountId: '444' }\n   \
+    \   }\n    ],\n    validateOnly: false,\n    termsOfService: { customerMatchTermsOfServiceStatus:\
+    \ 'ACCEPTED' },\n    consent: {\n      adUserData: 'CONSENT_GRANTED',\n      adPersonalization:\
+    \ 'CONSENT_GRANTED'\n    },\n    audienceMembers: [\n      {\n        userData:\
+    \ {\n          userIdentifiers: [\n            {\n              emailAddress:\n\
+    \                '973dfe463ec85785f5f95af5ba3906eedb2d931c24e69824a89ea65dba4e813b'\n\
+    \            },\n            {\n              phoneNumber:\n                '910a625c4ba147b544e6bd2f267e130ae14c591b6ba9c25cb8573322dedbebd0'\n\
+    \            },\n            {\n              address: {\n                givenName:\n\
+    \                  '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
+    \                familyName:\n                  '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
+    \                regionCode: 'BR',\n                postalCode: '10001'\n    \
+    \          }\n            }\n          ]\n        }\n      },\n      {\n     \
+    \   userData: {\n          userIdentifiers: [\n            {\n              emailAddress:\n\
+    \                '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08'\n\
+    \            },\n            {\n              phoneNumber:\n                '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08'\n\
+    \            },\n            {\n              address: {\n                givenName:\n\
+    \                  '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
+    \                familyName:\n                  '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
+    \                regionCode: 'US',\n                postalCode: '22222'\n    \
+    \          }\n            }\n          ]\n        }\n      },\n      { mobileData:\
+    \ { mobileIds: ['AAA-BB-CC-111'] } },\n      { mobileData: { mobileIds: ['foobar',\
+    \ 'barfoo'] } },\n      {\n        pairData: {\n          pairIds: [\n       \
+    \     '426a1c28c61b7ba258fa3cc300ba7cd3abc11c0d4b585d3ce4a15d6f22d6d363'\n   \
+    \       ]\n        }\n      },\n      {\n        pairData: {\n          pairIds:\
+    \ [\n            'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad',\n\
+    \            '08a018a9549220d707e11c5c4fe94d8dd60825f010e71efaa91e5e784f364d7b'\n\
+    \          ]\n        }\n      }\n    ],\n    encoding: 'HEX',\n    encryptionInfo:\
+    \ {\n      gcpWrappedKeyInfo: {\n        keyType: 'XCHACHA20_POLY1305',\n    \
+    \    wipProvider: '123',\n        kekUri: '123',\n        encryptedDek: '123'\n\
+    \      }\n    }\n  });\n\n  return Promise.create((resolve, reject) => {\n   \
+    \ resolve({ statusCode: 200 });\n  });  \n});\n\nrunCode(mockData);\n\ncallLater(()\
+    \ => {\n  assertApi('gtmOnSuccess').wasCalled();\n  assertApi('gtmOnFailure').wasNotCalled();\n\
+    });"
+- name: '[Remove - Single User] Request is successfully built and sent - data from
+    UI fields'
+  code: "setMockDataByAudienceMethod('remove', {\n  userMode: 'single'\n});\n\nmock('sendHttpRequest',\
+    \ (requestUrl, requestOptions, requestBody) => {\n  const parsedRequestBody =\
+    \ JSON.parse(requestBody);\n  assertThat(parsedRequestBody).isEqualTo({\n    destinations:\
+    \ [\n      {\n        productDestinationId: '123',\n        operatingAccount:\
+    \ { product: 'GOOGLE_ADS', accountId: '123' },\n        linkedAccount: { product:\
+    \ 'GOOGLE_ADS', accountId: '123' }\n      },\n      {\n        productDestinationId:\
+    \ '444',\n        operatingAccount: { product: 'GOOGLE_ADS', accountId: '444'\
+    \ },\n        linkedAccount: { product: 'GOOGLE_ADS', accountId: '444' }\n   \
+    \   }\n    ],\n    validateOnly: false,\n    audienceMembers: [\n      {\n   \
+    \     userData: {\n          userIdentifiers: [\n            {\n             \
+    \ emailAddress:\n                '973dfe463ec85785f5f95af5ba3906eedb2d931c24e69824a89ea65dba4e813b'\n\
+    \            },\n            {\n              phoneNumber:\n                '910a625c4ba147b544e6bd2f267e130ae14c591b6ba9c25cb8573322dedbebd0'\n\
+    \            },\n            {\n              address: {\n                givenName:\n\
+    \                  '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
+    \                familyName:\n                  '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
+    \                regionCode: 'BR',\n                postalCode: '10001'\n    \
+    \          }\n            }\n          ]\n        }\n      },\n      { mobileData:\
+    \ { mobileIds: ['AAA-BB-CC-111'] } },\n      {\n        pairData: {\n        \
+    \  pairIds: [\n            '426a1c28c61b7ba258fa3cc300ba7cd3abc11c0d4b585d3ce4a15d6f22d6d363'\n\
+    \          ]\n        }\n      }\n    ],\n    encoding: 'HEX',\n    encryptionInfo:\
+    \ {\n      gcpWrappedKeyInfo: {\n        keyType: 'XCHACHA20_POLY1305',\n    \
+    \    wipProvider: '123',\n        kekUri: '123',\n        encryptedDek: '123'\n\
+    \      }\n    }\n  });\n\n  return Promise.create((resolve, reject) => {\n   \
+    \ resolve({ statusCode: 200 });\n  });  \n});\n\nrunCode(mockData);\n\ncallLater(()\
+    \ => {\n  assertApi('gtmOnSuccess').wasCalled();\n  assertApi('gtmOnFailure').wasNotCalled();\n\
+    });"
+- name: '[Remove - Single User] Request is successfully built and sent - data from
+    UI fallbacks'
+  code: "setGetAllEventData();\nsetMockDataByAudienceMethod('remove', {\n  userMode:\
+    \ 'single',\n  userDataEmailAddresses: undefined,\n  userDataPhoneNumbers: undefined,\n\
+    \  addUserDataAddress: true,\n  enableAudienceDataEncryption: false,\n  mobileIds:\
+    \ undefined,\n  pairIds: undefined\n});\n\n[\n  'userDataEmailAddresses',\n  'userDataPhoneNumbers',\n\
+    \  'addressGivenName',\n  'addressFamilyName',\n  'addressRegion',\n  'addressPostalCode'\n\
+    ].forEach((key) => Object.delete(mockData, key));\n\nmock('sendHttpRequest', (requestUrl,\
+    \ requestOptions, requestBody) => {\n  const parsedRequestBody = JSON.parse(requestBody);\n\
+    \  assertThat(parsedRequestBody).isEqualTo({\n    destinations: [\n      {\n \
+    \       productDestinationId: '123',\n        operatingAccount: { product: 'GOOGLE_ADS',\
+    \ accountId: '123' },\n        linkedAccount: { product: 'GOOGLE_ADS', accountId:\
+    \ '123' }\n      },\n      {\n        productDestinationId: '444',\n        operatingAccount:\
+    \ { product: 'GOOGLE_ADS', accountId: '444' },\n        linkedAccount: { product:\
+    \ 'GOOGLE_ADS', accountId: '444' }\n      }\n    ],\n    validateOnly: false,\n\
+    \    audienceMembers: [\n      {\n        userData: {\n          userIdentifiers:\
+    \ [\n            {\n              emailAddress:\n                'ddffdce54594d729a13068951750239a1943c295a5f89349b5cf69744d4a1ba2'\n\
+    \            },\n            {\n              emailAddress:\n                'afea90f78a2e604dc6cc5d7826ffdd2bfbab612a0c1222acf8df173319b7e809'\n\
+    \            },\n            {\n              phoneNumber:\n                'c698c0b85d32cbcf5033ada58f34de87d4f7415efaf5a8d1c1e9e63393dcc85e'\n\
+    \            },\n            {\n              address: {\n                givenName:\n\
+    \                  '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
+    \                familyName:\n                  '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
+    \                postalCode: '10001',\n                regionCode: 'BR'\n    \
+    \          }\n            }\n          ]\n        }\n      }\n    ],\n    encoding:\
+    \ 'HEX'\n  });\n\n  return Promise.create((resolve, reject) => {\n    resolve({\
+    \ statusCode: 200 });\n  });  \n});\n\nrunCode(mockData);\n\ncallLater(() => {\n\
+    \  assertApi('gtmOnSuccess').wasCalled();\n  assertApi('gtmOnFailure').wasNotCalled();\n\
+    });"
+- name: '[Remove - Single User] data from UI fallbacks are not used when passing undefined
+    to the fields'
+  code: "setGetAllEventData();\nsetMockDataByAudienceMethod('remove', {\n  userMode:\
+    \ 'single',\n  userDataEmailAddresses: undefined,\n  userDataPhoneNumbers: undefined,\n\
+    \  addUserDataAddress: true,\n  addressGivenName: undefined,\n  addressFamilyName:\
+    \ undefined,\n  addressRegion: undefined,\n  addressPostalCode: undefined,\n \
+    \ enableAudienceDataEncryption: false\n});\n\nmock('sendHttpRequest', (requestUrl,\
+    \ requestOptions, requestBody) => {\n  const parsedRequestBody = JSON.parse(requestBody);\n\
+    \  assertThat(parsedRequestBody).isEqualTo({\n    destinations: [\n      {\n \
+    \       productDestinationId: '123',\n        operatingAccount: { product: 'GOOGLE_ADS',\
+    \ accountId: '123' },\n        linkedAccount: { product: 'GOOGLE_ADS', accountId:\
+    \ '123' }\n      },\n      {\n        productDestinationId: '444',\n        operatingAccount:\
+    \ { product: 'GOOGLE_ADS', accountId: '444' },\n        linkedAccount: { product:\
+    \ 'GOOGLE_ADS', accountId: '444' }\n      }\n    ],\n    validateOnly: false,\n\
+    \    audienceMembers: [\n      { mobileData: { mobileIds: ['AAA-BB-CC-111'] }\
+    \ },\n      {\n        pairData: {\n          pairIds: [\n            '426a1c28c61b7ba258fa3cc300ba7cd3abc11c0d4b585d3ce4a15d6f22d6d363'\n\
+    \          ]\n        }\n      }\n    ],\n    encoding: 'HEX'\n  });\n\n  return\
+    \ Promise.create((resolve, reject) => {\n    resolve({ statusCode: 200 });\n \
+    \ });  \n});\n\nrunCode(mockData);\n\ncallLater(() => {\n  assertApi('gtmOnSuccess').wasCalled();\n\
+    \  assertApi('gtmOnFailure').wasNotCalled();\n});"
+- name: '[Remove - Multiple Users] Request is successfully built and sent - data from
+    UI fields'
+  code: "setMockDataByAudienceMethod('remove', {\n  userMode: 'multiple',\n  audienceMembers:\
+    \ [\n    {\n      userData: {\n        userIdentifiers: [\n          {\n     \
+    \       emailAddress:\n              '973dfe463ec85785f5f95af5ba3906eedb2d931c24e69824a89ea65dba4e813b'\n\
+    \          },\n          {\n            phoneNumber:\n              '910a625c4ba147b544e6bd2f267e130ae14c591b6ba9c25cb8573322dedbebd0'\n\
+    \          },\n          {\n            address: {\n              givenName:\n\
+    \                '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
+    \              familyName:\n                '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
+    \              regionCode: 'BR',\n              postalCode: '10001'\n        \
+    \    }\n          }\n        ]\n      }\n    },\n    {\n      userData: {\n  \
+    \      userIdentifiers: [\n          {\n            emailAddress:\n          \
+    \    '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08'\n    \
+    \      },\n          {\n            phoneNumber:\n              '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08'\n\
+    \          },\n          {\n            address: {\n              givenName:\n\
+    \                '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
+    \              familyName:\n                '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
+    \              regionCode: 'US',\n              postalCode: '22222'\n        \
+    \    }\n          }\n        ]\n      }\n    },\n    { \n      mobileData: { mobileIds:\
+    \ ['AAA-BB-CC-111'] } \n    },\n    { \n      mobileData: { mobileIds: ['foobar',\
+    \ 'barfoo'] } \n    },\n    {\n      pairData: { pairIds: ['426a1c28c61b7ba258fa3cc300ba7cd3abc11c0d4b585d3ce4a15d6f22d6d363']\
+    \ }\n    },\n    {\n      pairData: { pairIds: ['abc', 'cde'] }\n    }\n  ]\n\
+    });\n\nmock('sendHttpRequest', (requestUrl, requestOptions, requestBody) => {\n\
+    \  const parsedRequestBody = JSON.parse(requestBody);\n  assertThat(parsedRequestBody).isEqualTo({\n\
+    \    destinations: [\n      {\n        productDestinationId: '123',\n        operatingAccount:\
+    \ { product: 'GOOGLE_ADS', accountId: '123' },\n        linkedAccount: { product:\
+    \ 'GOOGLE_ADS', accountId: '123' }\n      },\n      {\n        productDestinationId:\
+    \ '444',\n        operatingAccount: { product: 'GOOGLE_ADS', accountId: '444'\
+    \ },\n        linkedAccount: { product: 'GOOGLE_ADS', accountId: '444' }\n   \
+    \   }\n    ],\n    validateOnly: false,\n    audienceMembers: [\n      {\n   \
+    \     userData: {\n          userIdentifiers: [\n            {\n             \
+    \ emailAddress:\n                '973dfe463ec85785f5f95af5ba3906eedb2d931c24e69824a89ea65dba4e813b'\n\
+    \            },\n            {\n              phoneNumber:\n                '910a625c4ba147b544e6bd2f267e130ae14c591b6ba9c25cb8573322dedbebd0'\n\
+    \            },\n            {\n              address: {\n                givenName:\n\
+    \                  '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
+    \                familyName:\n                  '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
+    \                regionCode: 'BR',\n                postalCode: '10001'\n    \
+    \          }\n            }\n          ]\n        }\n      },\n      {\n     \
+    \   userData: {\n          userIdentifiers: [\n            {\n              emailAddress:\n\
+    \                '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08'\n\
+    \            },\n            {\n              phoneNumber:\n                '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08'\n\
+    \            },\n            {\n              address: {\n                givenName:\n\
+    \                  '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
+    \                familyName:\n                  '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
+    \                regionCode: 'US',\n                postalCode: '22222'\n    \
+    \          }\n            }\n          ]\n        }\n      },\n      { mobileData:\
+    \ { mobileIds: ['AAA-BB-CC-111'] } },\n      { mobileData: { mobileIds: ['foobar',\
+    \ 'barfoo'] } },\n      {\n        pairData: {\n          pairIds: [\n       \
+    \     '426a1c28c61b7ba258fa3cc300ba7cd3abc11c0d4b585d3ce4a15d6f22d6d363'\n   \
+    \       ]\n        }\n      },\n      {\n        pairData: {\n          pairIds:\
+    \ [\n            'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad',\n\
+    \            '08a018a9549220d707e11c5c4fe94d8dd60825f010e71efaa91e5e784f364d7b'\n\
+    \          ]\n        }\n      }\n    ],\n    encoding: 'HEX',\n    encryptionInfo:\
+    \ {\n      gcpWrappedKeyInfo: {\n        keyType: 'XCHACHA20_POLY1305',\n    \
+    \    wipProvider: '123',\n        kekUri: '123',\n        encryptedDek: '123'\n\
+    \      }\n    }\n  });\n\n  return Promise.create((resolve, reject) => {\n   \
+    \ resolve({ statusCode: 200 });\n  });  \n});\n\nrunCode(mockData);\n\ncallLater(()\
+    \ => {\n  assertApi('gtmOnSuccess').wasCalled();\n  assertApi('gtmOnFailure').wasNotCalled();\n\
+    });"
+- name: '[Hex] Encoding is correctly defined when hashed Audience Data is already
+    Hex encoded'
+  code: "setGetAllEventData();\nsetMockDataByAudienceMethod('ingest', {\n  userMode:\
+    \ 'single',\n  audienceDataEncoding: undefined,\n  userDataEmailAddresses: '426a1c28c61b7ba258fa3cc300ba7cd3abc11c0d4b585d3ce4a15d6f22d6d363',\n\
+    \  userDataPhoneNumbers: '426a1c28c61b7ba258fa3cc300ba7cd3abc11c0d4b585d3ce4a15d6f22d6d363',\n\
+    \  addUserDataAddress: true,\n  addressGivenName: '426a1c28c61b7ba258fa3cc300ba7cd3abc11c0d4b585d3ce4a15d6f22d6d363',\n\
+    \  addressFamilyName: '426a1c28c61b7ba258fa3cc300ba7cd3abc11c0d4b585d3ce4a15d6f22d6d363',\n\
+    \  pairIds: ['426a1c28c61b7ba258fa3cc300ba7cd3abc11c0d4b585d3ce4a15d6f22d6d363']\n\
+    });\n\nmock('sendHttpRequest', (requestUrl, requestOptions, requestBody) => {\n\
+    \  const parsedRequestBody = JSON.parse(requestBody);\n  assertThat(parsedRequestBody.encoding).isEqualTo('HEX');\n\
+    \n  return Promise.create((resolve, reject) => {\n    resolve({ statusCode: 200\
+    \ });\n  });  \n});\n\nrunCode(mockData);\n\ncallLater(() => {\n  assertApi('gtmOnSuccess').wasCalled();\n\
+    \  assertApi('gtmOnFailure').wasNotCalled();\n});"
+- name: '[Base64] Encoding is correctly defined when hashed Audience Data is already
+    Base64 encoded'
+  code: "setGetAllEventData();\nsetMockDataByAudienceMethod('ingest', {\n  userMode:\
+    \ 'single',\n  audienceDataEncoding: undefined,\n  userDataEmailAddresses: 'osrifrM+43jsL6zoLw/I4luJ2T20MMOXTxBMsVIEx1o=',\n\
+    \  userDataPhoneNumbers: 'osrifrM+43jsL6zoLw/I4luJ2T20MMOXTxBMsVIEx1o=',\n  addUserDataAddress:\
+    \ true,\n  addressGivenName: 'osrifrM+43jsL6zoLw/I4luJ2T20MMOXTxBMsVIEx1o=',\n\
+    \  addressFamilyName: 'osrifrM+43jsL6zoLw/I4luJ2T20MMOXTxBMsVIEx1o=',\n  pairIds:\
+    \ ['osrifrM+43jsL6zoLw/I4luJ2T20MMOXTxBMsVIEx1o=']\n});\n\nmock('sendHttpRequest',\
+    \ (requestUrl, requestOptions, requestBody) => {\n  const parsedRequestBody =\
+    \ JSON.parse(requestBody);\n  assertThat(parsedRequestBody.encoding).isEqualTo('BASE64');\n\
+    \n  return Promise.create((resolve, reject) => {\n    resolve({ statusCode: 200\
+    \ });\n  });  \n});\n\nrunCode(mockData);\n\ncallLater(() => {\n  assertApi('gtmOnSuccess').wasCalled();\n\
+    \  assertApi('gtmOnFailure').wasNotCalled();\n});"
+- name: Should log to console, if the 'Always log to console' option is selected
+  code: "setMockDataByAudienceMethod('ingest');\nmockData.logType = 'always';\n\n\
+    const expectedDebugMode = true;\nmock('getContainerVersion', () => {\n  return\
+    \ {\n    debugMode: expectedDebugMode\n  };\n}); \n\nmock('logToConsole', (logData)\
+    \ => {\n  const parsedLogData = JSON.parse(logData);\n  requiredConsoleKeys.forEach(p\
+    \ => assertThat(parsedLogData[p]).isDefined());\n});\n\nrunCode(mockData);\n\n\
+    callLater(() => {\n  assertApi('logToConsole').wasCalled();\n  assertApi('gtmOnSuccess').wasCalled();\n\
+    \  assertApi('gtmOnFailure').wasNotCalled();\n});"
+- name: Should log to console, if the 'Log during debug and preview' option is selected
+    AND is on preview mode
+  code: |-
+    setMockDataByAudienceMethod('ingest');
+    mockData.logType = 'debug';
+
+    const expectedDebugMode = true;
+    mock('getContainerVersion', () => {
+      return {
+        debugMode: expectedDebugMode
+      };
+    });
+
+    mock('logToConsole', (logData) => {
+      const parsedLogData = JSON.parse(logData);
+      requiredConsoleKeys.forEach(p => assertThat(parsedLogData[p]).isDefined());
+    });
+
+    runCode(mockData);
+
+    callLater(() => {
+      assertApi('logToConsole').wasCalled();
+      assertApi('gtmOnSuccess').wasCalled();
+      assertApi('gtmOnFailure').wasNotCalled();
+    });
+- name: Should NOT log to console, if the 'Log during debug and preview' option is
+    selected AND is NOT on preview mode
+  code: "setMockDataByAudienceMethod('ingest');\nmockData.logType = 'debug';\n\nconst\
+    \ expectedDebugMode = false;\nmock('getContainerVersion', () => {\n  return {\n\
+    \    debugMode: expectedDebugMode\n  };\n}); \n\nrunCode(mockData);\n\ncallLater(()\
+    \ => {\n  assertApi('logToConsole').wasNotCalled();\n  assertApi('gtmOnSuccess').wasCalled();\n\
+    \  assertApi('gtmOnFailure').wasNotCalled();\n});"
+- name: Should NOT log to console, if the 'Do not log' option is selected
+  code: |-
+    setMockDataByAudienceMethod('ingest');
+    mockData.logType = 'no';
+
+    runCode(mockData);
+
+    callLater(() => {
+      assertApi('logToConsole').wasNotCalled();
+      assertApi('gtmOnSuccess').wasCalled();
+      assertApi('gtmOnFailure').wasNotCalled();
+    });
+- name: Should log to BQ, if the 'Log to BigQuery' option is selected
+  code: "setMockDataByAudienceMethod('ingest');\nmockData.bigQueryLogType = 'always';\n\
+    \n// assertApi doesn't work for 'BigQuery.insert()'.\n// Ref: https://gtm-gear.com/posts/gtm-templates-testing/\n\
+    mock('BigQuery', () => {\n  return { \n    insert: (connectionInfo, rows, options)\
+    \ => { \n      assertThat(connectionInfo).isDefined();\n      assertThat(rows).isArray();\n\
+    \      assertThat(rows).hasLength(1);\n      requiredBqKeys.forEach(p => assertThat(rows[0][p]).isDefined());\n\
+    \      assertThat(options).isEqualTo(expectedBqOptions);\n      return Promise.create((resolve,\
+    \ reject) => {\n        resolve();\n      });\n    }\n  };\n});\n\nrunCode(mockData);\n\
+    \ncallLater(() => {\n  assertApi('gtmOnSuccess').wasCalled();\n  assertApi('gtmOnFailure').wasNotCalled();\n\
+    });"
+- name: Should NOT log to BQ, if the 'Do not log to BigQuery' option is selected
+  code: "setMockDataByAudienceMethod('ingest');\nmockData.bigQueryLogType = 'no';\n\
+    \n// assertApi doesn't work for 'BigQuery.insert()'.\n// Ref: https://gtm-gear.com/posts/gtm-templates-testing/\n\
+    mock('BigQuery', () => {\n  return { \n    insert: (connectionInfo, rows, options)\
+    \ => { \n      fail('BigQuery.insert should not have been called.');\n      return\
+    \ Promise.create((resolve, reject) => {\n        resolve();\n      });\n    }\n\
+    \  };\n});\n\nrunCode(mockData);\n\ncallLater(() => {\n  assertApi('gtmOnSuccess').wasCalled();\n\
+    \  assertApi('gtmOnFailure').wasNotCalled();\n});"
+setup: "const Promise = require('Promise');\nconst JSON = require('JSON');\nconst\
+  \ makeInteger = require('makeInteger');\nconst Object = require('Object');\nconst\
+  \ callLater = require('callLater');\n\nconst mergeObj = (target, source) => {\n\
+  \  for (const key in source) {\n    if (source.hasOwnProperty(key)) target[key]\
+  \ = source[key];\n  }\n  return target;\n};\n\nconst expectedBigQuerySettings =\
+  \ {\n  logBigQueryProjectId: 'logBigQueryProjectId',\n  logBigQueryDatasetId: 'logBigQueryDatasetId',\n\
+  \  logBigQueryTableId: 'logBigQueryTableId'\n};\n\nconst requiredConsoleKeys = ['Type',\
+  \ 'TraceId', 'Name'];\nconst requiredBqKeys = ['timestamp', 'type', 'trace_id',\
+  \ 'tag_name'];\nconst expectedBqOptions = { ignoreUnknownValues: true };\n\nconst\
+  \ mockData = {\n  logBigQueryProjectId: expectedBigQuerySettings.logBigQueryProjectId,\n\
+  \  logBigQueryDatasetId: expectedBigQuerySettings.logBigQueryDatasetId,\n  logBigQueryTableId:\
+  \ expectedBigQuerySettings.logBigQueryTableId\n};\n\nconst setMockDataByAudienceMethod\
+  \ = (method, objToBeMerged) => {\n  const methods = {\n    ingest: {\n      audienceAction:\
+  \ 'ingest',\n      authFlow: 'stape',\n      stapeAuthDestinationsList: [\n    \
+  \  {\n          product: 'GOOGLE_ADS',\n          operatingAccountId: '123',\n \
+  \         linkedAccountId: '123',\n          productDestinationId: '123'\n     \
+  \   },\n        {\n          product: 'GOOGLE_ADS',\n          operatingAccountId:\
+  \ '444',\n          linkedAccountId: '444',\n          productDestinationId: '444'\n\
+  \        }\n      ],\n      termsOfServiceStatus: 'ACCEPTED',\n      validateOnly:\
+  \ false,\n      useOptimisticScenario: false,\n      adUserData: 'CONSENT_GRANTED',\n\
+  \      adPersonalization: 'CONSENT_GRANTED',\n      audienceDataEncoding: 'HEX',\n\
+  \      enableAudienceDataEncryption: true,\n      gcpWrappedKeyType: 'XCHACHA20_POLY1305',\n\
+  \      gcpWrappedKeyEncryptedDek: '123',\n      gcpWrappedKeyKekUri: '123',\n  \
+  \    gcpWrappedKeyWipProvider: '123',\n      userMode: 'single',\n      userDataEmailAddresses:\
+  \ 'test@example.com',\n      userDataPhoneNumbers: '+15555555555',\n      addUserDataAddress:\
+  \ true,\n      addressGivenName: 'test',\n      addressFamilyName: 'test',\n   \
+  \   addressRegion: 'BR',\n      addressPostalCode: '10001',\n      mobileIds: 'AAA-BB-CC-111',\n\
+  \      pairIds: 'foobar123',\n      adStorageConsent: 'optional',\n      logType:\
+  \ 'debug',\n      bigQueryLogType: 'no'\n    },\n    remove: {\n      audienceAction:\
+  \ 'remove',\n      authFlow: 'stape',\n      stapeAuthDestinationsList: [\n    \
+  \  {\n          product: 'GOOGLE_ADS',\n          operatingAccountId: '123',\n \
+  \         linkedAccountId: '123',\n          productDestinationId: '123'\n     \
+  \   },\n        {\n          product: 'GOOGLE_ADS',\n          operatingAccountId:\
+  \ '444',\n          linkedAccountId: '444',\n          productDestinationId: '444'\n\
+  \        }\n      ],\n      validateOnly: false,\n      useOptimisticScenario: false,\n\
+  \      audienceDataEncoding: 'HEX',\n      enableAudienceDataEncryption: true,\n\
+  \      gcpWrappedKeyType: 'XCHACHA20_POLY1305',\n      gcpWrappedKeyEncryptedDek:\
+  \ '123',\n      gcpWrappedKeyKekUri: '123',\n      gcpWrappedKeyWipProvider: '123',\n\
+  \      userMode: 'single',\n      userDataEmailAddresses: 'test@example.com',\n\
+  \      userDataPhoneNumbers: '+15555555555',\n      addUserDataAddress: true,\n\
+  \      addressGivenName: 'test',\n      addressFamilyName: 'test',\n      addressRegion:\
+  \ 'BR',\n      addressPostalCode: '10001',\n      mobileIds: 'AAA-BB-CC-111',\n\
+  \      pairIds: 'foobar123',\n      adStorageConsent: 'optional',\n      logType:\
+  \ 'debug',\n      bigQueryLogType: 'no'\n    }\n  };\n  \n  return mergeObj(\n \
+  \   mockData, \n    mergeObj(methods[method], objToBeMerged || {})\n  );\n};\n\n\
+  const setGetAllEventData = (objToBeMerged) => {\n  mock('getAllEventData', mergeObj({\n\
+  \    'x-ga-protocol_version': '2',\n    'x-ga-measurement_id': 'G-123ABC',\n   \
+  \ 'x-ga-gtm_version': '45je55e1za200',\n    'x-ga-page_id': 1747422523211,\n   \
+  \ 'x-ga-gcd': '13l3l3l3l1l1',\n    'x-ga-npa': '0',\n    'x-ga-dma': '0',\n    'x-ga-mp2-tag_exp':\n\
+  \      '101509157~103116025~103130498~103130500~103136993~103136995~103200001~103207802~103211513~103233427~103252644~103252646~103263073~103301114~103301116',\n\
+  \    client_id: 'AUJctU7H7hBB/aMuhE4pKwGu5DWDdklg5abyyyn8i/I=.1747154479',\n   \
+  \ 'x-ga-ecid': '1294673677',\n    language: 'en-us',\n    screen_resolution: '1512x982',\n\
+  \    event_location: { country: 'BR', region: 'SP' },\n    event_id: '101509157~103116025~103130498',\n\
+  \    timestamp: 1748377016,\n    client_hints: {\n      architecture: 'arm',\n \
+  \     bitness: '64',\n      full_version_list: [\n        { brand: 'Chromium', version:\
+  \ '136.0.7103.93' },\n        { brand: 'Google Chrome', version: '136.0.7103.93'\
+  \ },\n        { brand: 'Not.A/Brand', version: '99.0.0.0' }\n      ],\n      mobile:\
+  \ false,\n      model: '',\n      platform: 'macOS',\n      platform_version: '15.2.0',\n\
+  \      wow64: false,\n      brands: [\n        { brand: 'Chromium', version: '136'\
+  \ },\n        { brand: 'Google Chrome', version: '136' },\n        { brand: 'Not.A/Brand',\
+  \ version: '99' }\n      ]\n    },\n    'x-ga-are': '1',\n    'x-ga-mp2-frm': '0',\n\
+  \    'x-ga-pscdl': 'noapi',\n    'x-ga-system_properties': { eu: [34], tu: 'BA',\
+  \ ss: '1', ee: true },\n    'x-sst-system_properties': {\n      etld: 'google.com.br',\n\
+  \      tft: '1747422523211',\n      lpc: '60493049',\n      navt: 'r',\n      ude:\
+  \ '0',\n      sw_exp: '1',\n      request_start_time_ms: 1747422524851\n    },\n\
+  \    'x-ga-request_count': 1,\n    ga_session_id: '1747422523',\n    ga_session_number:\
+  \ 3,\n    'x-ga-mp2-seg': '0',\n    page_location: 'https://example.com/?test=1i23i21j3',\n\
+  \    page_title: 'Example Domain',\n    event_name: 'page_view',\n    'x-ga-tfd':\
+  \ 5784,\n    ip_override: '2804:14d:c096:8dd6:311c:8c00:e6c:e33',\n    user_agent:\n\
+  \      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML,\
+  \ like Gecko) Chrome/136.0.0.0 Safari/537.36',\n    value: 123.45,\n    currency:\
+  \ 'BRL',\n    user_data: {\n      email: { 0: 'test1@example.net', 1: 'test2@example.org'\
+  \ },\n      phone_number: '+55 (19) 99999-9999',\n      address: {\n        first_name:\
+  \ 'test',\n        last_name: 'test',\n        postal_code: '10001',\n        country:\
+  \ 'BR'\n      }\n    }\n  }, objToBeMerged || {}));\n};\n\nmock('sendHttpRequest',\
+  \ (requestUrl, callback, requestOptions, requestBody) => {\n  if (typeof callback\
+  \ === 'function') {\n    callback(200);\n  } else {\n    requestBody = requestOptions;\n\
+  \    requestOptions = callback;\n    return Promise.create((resolve, reject) =>\
+  \ {\n      resolve({ statusCode: 200 });\n    });  \n  }\n});\n\nmock('getRequestHeader',\
+  \ (header) => {\n  if (header === 'trace-id') return 'expectedTraceId';\n  else\
+  \ if (header === 'x-gtm-identifier') return 'expectedXGtmIdentifier';\n  else if\
+  \ (header === 'x-gtm-default-domain') return 'expectedXGtmDefaultDomain';\n  else\
+  \ if (header === 'x-gtm-api-key') return 'expectedXGtmApiKey';\n});\n\nmock('getTimestampMillis',\
+  \ 1747945830456);"
 
 
 ___NOTES___
