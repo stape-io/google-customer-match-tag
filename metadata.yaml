@@ -1,4 +1,5 @@
 homepage: 'https://stape.io/'
+documentation: 'https://github.com/stape-io/google-customer-match-tag'
 versions:
   - sha: 4b6aeb95cec80f904ad8904fcf6365d9f9070f4e
     changeNotes: Initial release.
