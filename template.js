@@ -65,7 +65,7 @@ function addDestinationsData(data, mappedData) {
 
   accountsAndDestinationsFromUI.forEach((row) => {
     const destination = {
-      productDestinationId: makeString(row.productDestinationId),
+      productDestinationId: 'stape_' + makeString(row.productDestinationId).trim(),
       operatingAccount: {
         product: row.product,
         accountId: makeString(row.operatingAccountId)
