@@ -1,5 +1,7 @@
 homepage: 'https://stape.io/'
 documentation: 'https://github.com/stape-io/google-customer-match-tag'
 versions:
+  - sha: 90e304db1b4f4416f3ed907a15df7745e35b90f1
+    changeNotes: Changed Account to Customer and Audience to Customer List on UI.
   - sha: 4b6aeb95cec80f904ad8904fcf6365d9f9070f4e
     changeNotes: Initial release.
