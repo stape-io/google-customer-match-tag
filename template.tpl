@@ -42,11 +42,11 @@ ___TEMPLATE_PARAMETERS___
     "selectItems": [
       {
         "value": "ingest",
-        "displayValue": "Add to Audience"
+        "displayValue": "Add to Customer List"
       },
       {
         "value": "remove",
-        "displayValue": "Remove from Audience"
+        "displayValue": "Remove from Customer List"
       }
     ],
     "simpleValueType": true
@@ -74,7 +74,7 @@ ___TEMPLATE_PARAMETERS___
       {
         "type": "SIMPLE_TABLE",
         "name": "stapeAuthDestinationsList",
-        "displayName": "Destination Accounts and Audiences",
+        "displayName": "Destination Accounts and Customer Lists",
         "simpleTableColumns": [
           {
             "defaultValue": "GOOGLE_ADS",
@@ -95,7 +95,7 @@ ___TEMPLATE_PARAMETERS___
           },
           {
             "defaultValue": "",
-            "displayName": "Operating Account ID",
+            "displayName": "Operating Customer ID",
             "name": "operatingAccountId",
             "type": "TEXT",
             "valueHint": "1234567890",
@@ -110,7 +110,7 @@ ___TEMPLATE_PARAMETERS___
           },
           {
             "defaultValue": "",
-            "displayName": "Linked Account ID",
+            "displayName": "Customer ID",
             "name": "linkedAccountId",
             "type": "TEXT",
             "valueValidators": [
@@ -125,7 +125,7 @@ ___TEMPLATE_PARAMETERS___
           },
           {
             "defaultValue": "",
-            "displayName": "Audience Name",
+            "displayName": "Customer List Name",
             "name": "productDestinationId",
             "type": "TEXT",
             "valueHint": "1234567890",
@@ -149,8 +149,8 @@ ___TEMPLATE_PARAMETERS___
             "type": "NON_EMPTY"
           }
         ],
-        "newRowButtonText": "Add Audience",
-        "help": "\u003cb\u003eProduct\u003c/b\u003e: The Product the Operating Account belongs to.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eOperating Account ID\u003c/b\u003e: The \u003ci\u003eAccount ID\u003c/i\u003e of the account (Google Ads account, DV360 account etc.) that will receive audience data (without hyphens). \u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/Destination\"\u003eLearn more\u003c/a\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eLinked Account ID\u003c/b\u003e: The \u003ci\u003eAccount ID\u003c/i\u003e of the account for which the link between the Data Partner account (Stape) and the Advertiser account was established.\n\u003cbr/\u003e\ne.g. the link between the Data Partner account (Stape) and Advertiser account can be done at MCC level, but the data is going to be sent to a subaccount of the MCC.\n\u003cbr/\u003e\nIn this case: the Linked Account is the MCC, and Operating Account is the subaccount.\n\u003cbr/\u003e\nIf the link is done with the same account that will receive the data, then the Linked Account and Operating Account are the same.\n\u003cbr/\u003e\n\u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/Destination\"\u003eLearn more\u003c/a\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eAudience Name\u003c/b\u003e: The name of the audience you want to interact with.\n\u003cbr/\u003e\nOnly audiences created through the Stape connection are supported. You cannot interact with arbitrary audiences.\n\u003cbr/\u003e\nWhen using Google products, the audience will appear with the name format: \u003ci\u003estape_\u0026lt;Audience Name\u0026gt;\u003c/i\u003e. This audience is created automatically by Stape during the integration process.\n\u003cbr/\u003e\nFor example, if you enter \"Purchasers\" in this field, the tag will interact with the audience named \u003ci\u003estape_Purchasers\u003c/i\u003e in your Google product."
+        "newRowButtonText": "Add Customer List",
+        "help": "\u003cb\u003eProduct\u003c/b\u003e: The Product the Operating Customer Account belongs to.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eOperating Customer ID\u003c/b\u003e: The \u003ci\u003eAccount ID\u003c/i\u003e (without hyphens) of the account (Google Ads account, DV360 account etc.) that will receive customer list data. \u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/Destination\"\u003eLearn more\u003c/a\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eCustomer ID\u003c/b\u003e: The \u003ci\u003eAccount ID\u003c/i\u003e (without hyphens) of the account for which the link between the Data Partner account (Stape) and the Advertiser account was established.\n\u003cbr/\u003e\ne.g. the link between the Data Partner account (Stape) and Advertiser account can be done at MCC level, but the data is going to be sent to a subaccount of the MCC.\n\u003cbr/\u003e\nIn this case: the Customer Account is the MCC, and Operating Customer Account is the subaccount.\n\u003cbr/\u003e\nIf the link is done with the same account that will receive the data, then the Customer Account and Operating Customer Account are the same.\n\u003cbr/\u003e\n\u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/Destination\"\u003eLearn more\u003c/a\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eCustomer List Name\u003c/b\u003e: The name of the customer list you want to interact with.\n\u003cbr/\u003e\nOnly customer lists created through the Stape connection are supported. You cannot interact with arbitrary customer lists.\n\u003cbr/\u003e\nWhen using Google products, the audience will appear with the name format: \u003ci\u003estape_\u0026lt;Customer List Name\u0026gt;\u003c/i\u003e. This customer list is created automatically by Stape during the integration process.\n\u003cbr/\u003e\nFor example, if you enter \"Purchasers\" in this field, the tag will interact with the customer list named \u003ci\u003estape_Purchasers\u003c/i\u003e in your Google product."
       }
     ],
     "groupStyle": "NO_ZIPPY"
