@@ -4,17 +4,17 @@ The **Google Customer Match (Audiences) Tag** for Google Tag Manager Server-Side
 
 This tag supports two primary actions:
 
-* **Add to Audience**: Ingests user data into a specified audience list.
+* **Add to Customer List**: Ingests user data into a specified customer list.
 
-* **Remove from Audience**: Removes user data from a specified audience list.
+* **Remove from Customer List**: Removes user data from a specified customer list.
 
 ## How to use the Google Customer Match Tag
 
 1. Add the **Google Customer Match (Audiences) Tag** to your server container in GTM.
 
-2. Select the **Action** you want to perform (`Add to Audience` or `Remove from Audience`).
+2. Select the **Action** you want to perform (`Add to Customer List` or `Remove from Customer List`).
 
-3. Configure the **Destination Accounts and Audiences** by providing the `Operating Account ID`, `Linked Account ID`, and `Audience ID`.
+3. Configure the **Destination Accounts and Customer Lists** by providing the `Operating Customer ID`, `Customer ID`, and `Customer List Name`.
 
 4. Configure the **Audience Members** section with the user data you want to send. You can provide data for a single user or multiple users in a batch. The tag will automatically hash user identifiers (like email and phone) using SHA256 if they are not already hashed.
 
@@ -24,17 +24,17 @@ This tag supports two primary actions:
 
 ### Main Configuration
 
-* **Action**: Choose whether to `Add to Audience` or `Remove from Audience`.
+* **Action**: Choose whether to `Add to Customer List` or `Remove from Customer List`.
 
 * **Authentication Type**: Currently supports **Stape Google Connection**. You can enable it in your Stape container settings under the "Connections" section.
 
-* **Destination Accounts and Audiences**: Specify the Google Ads accounts and audiences to target.
+* **Destination Accounts and Customer Lists**: Specify the Google Ads accounts and customer lists to target.
 
-  * **Operating Account ID**: The ID of the Google Ads account that will receive the audience data.
+  * **Operating Customer ID**: The ID of the Google Ads account that will receive the customer list data.
 
-  * **Linked Account ID**: The ID of the account for which the link between the Data Partner (Stape) and the Advertiser was established. If the link is with the same account that receives the data, this will be the same as the Operating Account ID.
+  * **Customer ID**: The ID of the account for which the link between the Data Partner (Stape) and the Advertiser was established. If the link is with the same account that receives the data, this will be the same as the Operating Customer ID.
 
-  * **Audience ID**: The ID of the specific audience you want to modify.
+  * **Customer List Name**: The name of the customer list you want to interact with.
 
 ### User Data & Identifiers
 
@@ -48,7 +48,9 @@ The tag can be configured to send data for a single user or for multiple users a
 
 * **User Identifiers**:
 
-  * **User Data**: Includes Email Address(es), Phone Number(s), and full address details (Given Name, Family Name, Region, Postal Code). The tag automatically normalizes and hashes this data if provided in clear text. If these fields are left blank in the tag configuration, the tag will attempt to use fallback values from the incoming GA4 event data (`user_data` object). To prevent the tag from using these fallback values, you can pass an `undefined` variable to the corresponding field. The fallback order is:
+  The only current supported type of user identifier is [UserData](https://developers.google.com/data-manager/api/reference/rest/v1/UserData). [PAIR IDs](https://developers.google.com/data-manager/api/reference/rest/v1/AudienceMember#PairData) and [Mobile IDs](https://developers.google.com/data-manager/api/reference/rest/v1/AudienceMember#MobileData) supported is planned to be added soon.
+
+  * **UserData**: Includes Email Address(es), Phone Number(s), and full address details (Given Name, Family Name, Region, Postal Code). The tag automatically normalizes and hashes this data if provided in clear text. If these fields are left blank in the tag configuration, the tag will attempt to use fallback values from the incoming GA4 event data (`user_data` object). To prevent the tag from using these fallback values, you can pass an `undefined` variable to the corresponding field. The fallback order is:
 
     * **Email**: `user_data.email` -> `user_data.email_address` -> `user_data.sha256_email` -> `user_data.sha256_email_address`
 
@@ -61,10 +63,6 @@ The tag can be configured to send data for a single user or for multiple users a
     * **Region**: `user_data.address.country`
 
     * **Postal Code**: `user_data.address.postal_code`
-
-  * **Mobile IDs**: A list of mobile device IDs (Advertising ID/IDFA).
-
-  * **PAIR IDs**: Cleanroom-provided PII data for PAIR user lists.
 
 ### Data Formatting & Encryption
 
@@ -83,6 +81,12 @@ The tag can be configured to send data for a single user or for multiple users a
 * **Consent Settings**: Prevent the tag from firing unless the necessary ad storage consent is granted by the user.
 
 * **Logging**: Configure console and/or BigQuery logging for debugging and monitoring requests and responses.
+
+## Useful Resources
+
+- [Data Manager API for Audience Data](https://developers.google.com/data-manager/api/reference/rest/v1/audienceMembers)
+- [Audience Member definition](https://developers.google.com/data-manager/api/reference/rest/v1/AudienceMember)
+- [User Identifiers Normalization Guidelines](https://developers.google.com/data-manager/api/get-started/formatting)
 
 ## Open Source
 
