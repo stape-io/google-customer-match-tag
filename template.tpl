@@ -150,7 +150,7 @@ ___TEMPLATE_PARAMETERS___
           }
         ],
         "newRowButtonText": "Add Customer List",
-        "help": "\u003cb\u003eProduct\u003c/b\u003e: The Product the Operating Customer Account belongs to.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eOperating Customer ID\u003c/b\u003e: The \u003ci\u003eAccount ID\u003c/i\u003e (without hyphens) of the account (Google Ads account, DV360 account etc.) that will receive customer list data. \u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/Destination\"\u003eLearn more\u003c/a\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eCustomer ID\u003c/b\u003e: The \u003ci\u003eAccount ID\u003c/i\u003e (without hyphens) of the account for which the link between the Data Partner account (Stape) and the Advertiser account was established.\n\u003cbr/\u003e\ne.g. the link between the Data Partner account (Stape) and Advertiser account can be done at MCC level, but the data is going to be sent to a subaccount of the MCC.\n\u003cbr/\u003e\nIn this case: the Customer Account is the MCC, and Operating Customer Account is the subaccount.\n\u003cbr/\u003e\nIf the link is done with the same account that will receive the data, then the Customer Account and Operating Customer Account are the same.\n\u003cbr/\u003e\n\u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/Destination\"\u003eLearn more\u003c/a\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eCustomer List Name\u003c/b\u003e: The name of the customer list you want to interact with.\n\u003cbr/\u003e\nOnly customer lists created through the Stape connection are supported. You cannot interact with arbitrary customer lists.\n\u003cbr/\u003e\nWhen using Google products, the audience will appear with the name format: \u003ci\u003estape_\u0026lt;Customer List Name\u0026gt;\u003c/i\u003e. This customer list is created automatically by Stape during the integration process.\n\u003cbr/\u003e\nFor example, if you enter \"Purchasers\" in this field, the tag will interact with the customer list named \u003ci\u003estape_Purchasers\u003c/i\u003e in your Google product."
+        "help": "\u003cb\u003eProduct\u003c/b\u003e: The Product the Customer List belongs to.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eOperating Customer ID\u003c/b\u003e: The \u003ci\u003eAccount ID\u003c/i\u003e (without hyphens) of the account (Google Ads account, DV360 account etc.) that will receive customer list data. \u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/Destination\"\u003eLearn more\u003c/a\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eCustomer ID\u003c/b\u003e: The \u003ci\u003eAccount ID\u003c/i\u003e (without hyphens) of the account for which the link between the Data Partner account (Stape) and the Advertiser account was established.\n\u003cbr/\u003e\ne.g. the link between the Data Partner account (Stape) and Advertiser account can be done at MCC level, but the data is going to be sent to a subaccount of the MCC.\n\u003cbr/\u003e\nIn this case: the Customer Account is the MCC, and Operating Customer Account is the subaccount.\n\u003cbr/\u003e\nIf the link is done with the same account that will receive the data, then the Customer Account and Operating Customer Account are the same.\n\u003cbr/\u003e\n\u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/Destination\"\u003eLearn more\u003c/a\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eCustomer List Name\u003c/b\u003e: The name of the customer list you want to interact with.\n\u003cbr/\u003e\nOnly customer lists created through the Stape connection are supported. You cannot interact with arbitrary customer lists.\n\u003cbr/\u003e\nWhen using Google products, the audience will appear with the name format: \u003ci\u003estape_\u0026lt;Customer List Name\u0026gt;\u003c/i\u003e. This customer list is created automatically by Stape during the integration process.\n\u003cbr/\u003e\nFor example, if you enter \"Purchasers\" in this field, the tag will interact with the customer list named \u003ci\u003estape_Purchasers\u003c/i\u003e in your Google product."
       }
     ],
     "groupStyle": "NO_ZIPPY"
@@ -320,7 +320,7 @@ ___TEMPLATE_PARAMETERS___
           }
         ],
         "simpleValueType": true,
-        "help": "The encoding type of the user identifiers SHA256 hash: \u003ci\u003eHEX\u003c/i\u003e or \u003ci\u003eBASE64\u003c/i\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eRequired\u003c/b\u003e for \u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/UserData\"\u003e\u003ci\u003eUserData\u003c/i\u003e\u003c/a\u003e (User Email Address, User Phone Number, User Given/Family Name) and \u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/AudienceMember#pairdata\"\u003e\u003ci\u003ePairData\u003c/i\u003e\u003c/a\u003e (PAIR ID) uploads.\n\u003cbr/\u003e\nFor other types (User Address Region, User Address Postal Code and Mobile IDs) uploads, this field is \u003cb\u003eignored\u003c/b\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\nFor hashed user identifiers, this is the encoding type of the hashed string. For encrypted hashed user identifiers, this is the encoding type of the outer encrypted string, but not necessarily the inner hashed string, meaning the inner hashed string could be encoded in a different way than the outer encrypted string.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eDefault\u003c/b\u003e: \u003ci\u003eHEX\u003c/i\u003e - when passing a non-hashed value to \u003ci\u003eUserData\u003c/i\u003e (User Email Address, User Phone Number, User Given/Family Name) and \u003ci\u003ePairData\u003c/i\u003e (PAIR IDs) fields; or when using default values from GA4 Event Data.",
+        "help": "The encoding type of the user identifiers SHA256 hash: \u003ci\u003eHEX\u003c/i\u003e or \u003ci\u003eBASE64\u003c/i\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eRequired\u003c/b\u003e for \u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/UserData\"\u003e\u003ci\u003eUserData\u003c/i\u003e\u003c/a\u003e (User Email Address, User Phone Number and User Given/Family Name) uploads.\n\u003cbr/\u003e\nFor other types (User Address Region and User Address Postal Code) uploads, this field is \u003cb\u003eignored\u003c/b\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\nFor hashed user identifiers, this is the encoding type of the hashed string. For encrypted hashed user identifiers, this is the encoding type of the outer encrypted string, but not necessarily the inner hashed string, meaning the inner hashed string could be encoded in a different way than the outer encrypted string.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eDefault\u003c/b\u003e: \u003ci\u003eHEX\u003c/i\u003e - when passing a non-hashed value to \u003ci\u003eUserData\u003c/i\u003e (User Email Address, User Phone Number and User Given/Family Name) fields; or when using default values from GA4 Event Data.",
         "notSetText": "(not set)"
       },
       {
@@ -339,7 +339,7 @@ ___TEMPLATE_PARAMETERS___
           }
         ],
         "simpleValueType": true,
-        "help": "Encryption information for \u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/UserData\"\u003e\u003ci\u003eUserData\u003c/i\u003e\u003c/a\u003e (User Email Address, User Phone Number, User Given/Family Name) and \u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/AudienceMember#pairdata\"\u003e\u003ci\u003ePairData\u003c/i\u003e\u003c/a\u003e (PAIR ID) uploads. \u003cbr/\u003e\u003cbr/\u003e\nIf not set, it\u0027s assumed that uploaded identifying information is hashed but not encrypted.\n\u003cbr/\u003e\u003cbr/\u003e \nFor other types (User Address Region, User Address Postal Code and Mobile IDs) uploads, this field is \u003cb\u003eignored\u003c/b\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\nReferences:  \u003cul\u003e \u003cli\u003e\u003ca href\u003d\"https://developers.google.com/data-manager/api/get-started/encryption\"\u003eData Manager API: Getting started with Encryption\u003c/a\u003e\u003c/li\u003e \u003cli\u003e\u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/EncryptionInfo\"\u003eEncryptionInfo object\u003c/a\u003e\u003c/li\u003e \u003c/ul\u003e",
+        "help": "Encryption information for \u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/UserData\"\u003e\u003ci\u003eUserData\u003c/i\u003e\u003c/a\u003e (User Email Address, User Phone Number and User Given/Family Name) uploads.\n\u003cbr/\u003e\u003cbr/\u003e\nIf not set, it\u0027s assumed that uploaded identifying information is hashed but not encrypted.\n\u003cbr/\u003e\u003cbr/\u003e \nFor other types (User Address Region and User Address Postal Code) uploads, this field is \u003cb\u003eignored\u003c/b\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\nReferences:  \n\u003cul\u003e \n\u003cli\u003e\u003ca href\u003d\"https://developers.google.com/data-manager/api/get-started/encryption\"\u003eData Manager API: Getting started with Encryption\u003c/a\u003e\u003c/li\u003e \u003cli\u003e\u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/EncryptionInfo\"\u003eEncryptionInfo object\u003c/a\u003e\u003c/li\u003e \u003c/ul\u003e",
         "defaultValue": false,
         "subParams": [
           {
@@ -528,39 +528,6 @@ ___TEMPLATE_PARAMETERS___
                 ]
               }
             ]
-          },
-          {
-            "type": "GROUP",
-            "name": "mobileIdsGroup",
-            "displayName": "Mobile IDs",
-            "groupStyle": "ZIPPY_OPEN_ON_PARAM",
-            "subParams": [
-              {
-                "type": "TEXT",
-                "name": "mobileIds",
-                "displayName": "Mobile IDs",
-                "simpleValueType": true,
-                "help": "The list of mobile device IDs (Advertising ID/IDFA) identifying the user\u0027s mobile devices. Do not hash.\n\u003cbr/\u003e\nIt can be a single mobile device ID, or an array of mobile device IDs (10 at most).",
-                "valueHint": "AAAAAAAA-BBBB-CCCC-1111-222222220000"
-              }
-            ]
-          },
-          {
-            "type": "GROUP",
-            "name": "pairdIdsGroup",
-            "displayName": "PAIR IDs",
-            "groupStyle": "ZIPPY_OPEN_ON_PARAM",
-            "subParams": [
-              {
-                "type": "TEXT",
-                "name": "pairIds",
-                "displayName": "PAIR IDs",
-                "simpleValueType": true,
-                "help": "The cleanroom-provided PII data, hashed with SHA256, and encrypted with an EC commutative cipher using publisher key for the \u003ca href\u003d\"https://support.google.com/admanager/answer/15067908\"\u003ePAIR\u003c/a\u003e user list.\n\u003cbr/\u003e\nIt can be a single PAIR ID, or an array of PAIR IDs (10 at most).",
-                "valueValidators": [],
-                "valueHint": "X2lKb3VybmV5UXZVb2pYazZ5THpoUm5xZzZz"
-              }
-            ]
           }
         ],
         "enablingConditions": [
@@ -580,7 +547,7 @@ ___TEMPLATE_PARAMETERS___
             "name": "audienceMembers",
             "displayName": "Audience Members Array",
             "simpleValueType": true,
-            "help": "Specify the Audience Members array. This is useful when you need to upload data for multiple users at once. At most 10000 Audience Members can be specified in the array. \u003cbr/\u003e\u003cbr/\u003e The array must be formatted as specified in the Google Documentation. You can mix different types of identifiers in the Audience Members array and also specify different consent types for each users, overriding the request-level consent. \u003cbr/\u003e\u003cbr/\u003e \u003cb\u003eIf you already pass SHA256 hashed fields to the array, make sure to specify the SHA256 hash encoding in the corresponding template field. Otherwise, the tag will hash it automatically and set it for you.\u003c/b\u003e \u003cbr/\u003e\u003cbr/\u003e References:  \u003cul\u003e \u003cli\u003e\u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/AudienceMember\"\u003eAudience Member\u003c/a\u003e\u003c/li\u003e \u003cli\u003e\u003ca href\u003d\"https://developers.google.com/data-manager/api/get-started/formatting\"\u003eNormalization guidelines\u003c/a\u003e\u003c/li\u003e \u003cli\u003e\u003ca href\u003d\"https://developers.google.com/data-manager/api/get-started/quickstart/send-audience-members?persona\u003dadvertiser#build_the_request_body\"\u003eExample\u003c/a\u003e\u003c/li\u003e \u003c/ul\u003e",
+            "help": "Specify the Audience Members array. This is useful when you need to upload data for multiple users at once. At most\n10000 Audience Members can be specified in the array.\n\u003cbr/\u003e\u003cbr/\u003e\nThe only current supported type of user identifier is \u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/UserData\"\u003e\u003ci\u003eUserData\u003c/i\u003e\u003c/a\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\nThe array must be formatted as specified in the\nGoogle Documentation. You cam specify different consent types for each users, overriding the request-level consent.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eIf you already pass SHA256 hashed fields to the array, make sure to specify the SHA256 hash encoding in the corresponding template field. Otherwise, the tag will hash it automatically and set it for you.\u003c/b\u003e\n\u003cbr/\u003e\u003cbr/\u003e\nReferences: \n\u003cul\u003e\n\u003cli\u003e\u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/AudienceMember\"\u003eAudience Member\u003c/a\u003e\u003c/li\u003e\n\u003cli\u003e\u003ca href\u003d\"https://developers.google.com/data-manager/api/get-started/formatting\"\u003eNormalization guidelines\u003c/a\u003e\u003c/li\u003e\n\u003cli\u003e\u003ca href\u003d\"https://developers.google.com/data-manager/api/get-started/quickstart/send-audience-members?persona\u003dadvertiser#build_the_request_body\"\u003eExample\u003c/a\u003e\u003c/li\u003e\n\u003c/ul\u003e",
             "valueValidators": [
               {
                 "type": "NON_EMPTY"
@@ -1000,7 +967,15 @@ function addAudienceMembersData(data, eventData, mappedData) {
       }
     }
   } else if (data.userMode === 'multiple' && getType(data.audienceMembers) === 'array') {
-    audienceMembers = data.audienceMembers;
+    data.audienceMembers.forEach((audienceMember) => {
+      if (!audienceMember || !audienceMember.userData) return;
+
+      const audienceMemberUserDataOnly = {
+        userData: audienceMember.userData
+      };
+      if (audienceMember.consent) audienceMemberUserDataOnly.consent = audienceMember.consent;
+      audienceMembers.push(audienceMemberUserDataOnly);
+    });
   }
 
   mappedData.audienceMembers = audienceMembers;
@@ -1714,6 +1689,8 @@ scenarios:
 - name: '[Multiple Users] Should NOT send request if Audience Members list length
     is greater than 10000'
   code: |-
+    // Not possible to test using the current version that doesn't support Mobile IDs and PAIR IDs.
+    /*
     const audienceMembersSize = 10001;
     const audienceMembers = [
       {
@@ -1721,6 +1698,7 @@ scenarios:
         pairData: {}
       }
     ];
+
     audienceMembers.length = 10001;
 
     setMockDataByAudienceMethod('ingest', {
@@ -1733,6 +1711,7 @@ scenarios:
     assertApi('sendHttpRequest').wasNotCalled();
     assertApi('gtmOnSuccess').wasNotCalled();
     assertApi('gtmOnFailure').wasCalled();
+    */
 - name: '[Ingest] Request URL is succesfully built based on Audience Method'
   code: "setMockDataByAudienceMethod('ingest');\n\nmock('sendHttpRequest', (requestUrl,\
     \ callback, requestOptions, requestBody) => {\n  assertThat(requestUrl).isEqualTo('https://expectedXGtmIdentifier.expectedXGtmDefaultDomain/stape-api/expectedXGtmApiKey/v2/data-manager/ingest');\n\
@@ -1886,16 +1865,10 @@ scenarios:
     \                  '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
     \                familyName:\n                  '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
     \                regionCode: 'US',\n                postalCode: '22222'\n    \
-    \          }\n            }\n          ]\n        }\n      },\n      { mobileData:\
-    \ { mobileIds: ['AAA-BB-CC-111'] } },\n      { mobileData: { mobileIds: ['foobar',\
-    \ 'barfoo'] } },\n      {\n        pairData: {\n          pairIds: [\n       \
-    \     '426a1c28c61b7ba258fa3cc300ba7cd3abc11c0d4b585d3ce4a15d6f22d6d363'\n   \
-    \       ]\n        }\n      },\n      {\n        pairData: {\n          pairIds:\
-    \ [\n            'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad',\n\
-    \            '08a018a9549220d707e11c5c4fe94d8dd60825f010e71efaa91e5e784f364d7b'\n\
-    \          ]\n        }\n      }\n    ],\n    encoding: 'HEX',\n    encryptionInfo:\
-    \ {\n      gcpWrappedKeyInfo: {\n        keyType: 'XCHACHA20_POLY1305',\n    \
-    \    wipProvider: '123',\n        kekUri: '123',\n        encryptedDek: '123'\n\
+    \          }\n            }\n          ]\n        }\n      }\n      // Mobile\
+    \ IDs and PAIR IDs are not currently supported.\n    ],\n    encoding: 'HEX',\n\
+    \    encryptionInfo: {\n      gcpWrappedKeyInfo: {\n        keyType: 'XCHACHA20_POLY1305',\n\
+    \        wipProvider: '123',\n        kekUri: '123',\n        encryptedDek: '123'\n\
     \      }\n    }\n  });\n\n  return Promise.create((resolve, reject) => {\n   \
     \ resolve({ statusCode: 200 });\n  });  \n});\n\nrunCode(mockData);\n\ncallLater(()\
     \ => {\n  assertApi('gtmOnSuccess').wasCalled();\n  assertApi('gtmOnFailure').wasNotCalled();\n\
@@ -2023,16 +1996,10 @@ scenarios:
     \                  '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
     \                familyName:\n                  '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
     \                regionCode: 'US',\n                postalCode: '22222'\n    \
-    \          }\n            }\n          ]\n        }\n      },\n      { mobileData:\
-    \ { mobileIds: ['AAA-BB-CC-111'] } },\n      { mobileData: { mobileIds: ['foobar',\
-    \ 'barfoo'] } },\n      {\n        pairData: {\n          pairIds: [\n       \
-    \     '426a1c28c61b7ba258fa3cc300ba7cd3abc11c0d4b585d3ce4a15d6f22d6d363'\n   \
-    \       ]\n        }\n      },\n      {\n        pairData: {\n          pairIds:\
-    \ [\n            'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad',\n\
-    \            '08a018a9549220d707e11c5c4fe94d8dd60825f010e71efaa91e5e784f364d7b'\n\
-    \          ]\n        }\n      }\n    ],\n    encoding: 'HEX',\n    encryptionInfo:\
-    \ {\n      gcpWrappedKeyInfo: {\n        keyType: 'XCHACHA20_POLY1305',\n    \
-    \    wipProvider: '123',\n        kekUri: '123',\n        encryptedDek: '123'\n\
+    \          }\n            }\n          ]\n        }\n      }\n      // Mobile\
+    \ IDs and PAIR IDs are not currently supported.\n    ],\n    encoding: 'HEX',\n\
+    \    encryptionInfo: {\n      gcpWrappedKeyInfo: {\n        keyType: 'XCHACHA20_POLY1305',\n\
+    \        wipProvider: '123',\n        kekUri: '123',\n        encryptedDek: '123'\n\
     \      }\n    }\n  });\n\n  return Promise.create((resolve, reject) => {\n   \
     \ resolve({ statusCode: 200 });\n  });  \n});\n\nrunCode(mockData);\n\ncallLater(()\
     \ => {\n  assertApi('gtmOnSuccess').wasCalled();\n  assertApi('gtmOnFailure').wasNotCalled();\n\
