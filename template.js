@@ -274,7 +274,15 @@ function addAudienceMembersData(data, eventData, mappedData) {
       }
     }
   } else if (data.userMode === 'multiple' && getType(data.audienceMembers) === 'array') {
-    audienceMembers = data.audienceMembers;
+    data.audienceMembers.forEach((audienceMember) => {
+      if (!audienceMember || !audienceMember.userData) return;
+
+      const audienceMemberUserDataOnly = {
+        userData: audienceMember.userData
+      };
+      if (audienceMember.consent) audienceMemberUserDataOnly.consent = audienceMember.consent;
+      audienceMembers.push(audienceMemberUserDataOnly);
+    });
   }
 
   mappedData.audienceMembers = audienceMembers;
