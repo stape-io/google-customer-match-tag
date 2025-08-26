@@ -1,6 +1,8 @@
 homepage: 'https://stape.io/'
 documentation: 'https://github.com/stape-io/google-customer-match-tag'
 versions:
+  - sha: b0eb8c2b8f89c4cdfc9cd82691ae76baa3035392
+    changeNotes: Modified tag name and tag icon.
   - sha: 5d62f00d312a59a12a654f6c41b0de0cae633d9d
     changeNotes: Removed PAIR IDs and Mobile IDs support.
   - sha: 90e304db1b4f4416f3ed907a15df7745e35b90f1
