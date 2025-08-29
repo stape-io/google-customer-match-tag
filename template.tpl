@@ -59,7 +59,7 @@ ___TEMPLATE_PARAMETERS___
       {
         "value": "stape",
         "displayValue": "Stape Google Connection",
-        "help": "You can enable it on the Stape container settings, in the \u003ca href\u003d\"https://app.stape.io/container/\" target\u003d\"_blank\"\u003eConnections\u003c/a\u003e section.\n\u003c/br\u003e\u003c/br\u003e\n\u003ca href\u003d\"https://stape.io/blog/google-ads-offline-conversion-using-server-gtm\" target\u003d\"_blank\"\u003eLearn more in this Stape article.\u003c/a\u003e",
+        "help": "You can enable it on the Stape container settings, in the \u003ca href\u003d\"https://app.stape.io/container/\" target\u003d\"_blank\"\u003eConnections\u003c/a\u003e section.\n\u003c/br\u003e\u003c/br\u003e\nLearn more: \u003ca href\u003d\"https://stape.io/solutions/data-manager-api-connection\" target\u003d\"_blank\"\u003e[1]\u003c/a\u003e and \u003ca href\u003d\"https://stape.io/blog/customer-list-google-ads\" target\u003d\"_blank\"\u003e[2]\u003c/a\u003e",
         "subParams": []
       }
     ],
@@ -202,7 +202,7 @@ ___TEMPLATE_PARAMETERS___
       }
     ],
     "simpleValueType": true,
-    "help": "If \u003cb\u003etrue\u003c/b\u003e, the request is validated but not executed. Only errors are returned, not results.\u003cbr /\u003e \u003ca href\u003d\"https://developers.google.com/google-ads/api/rest/reference/rest/v17/customers/uploadClickConversions?hl\u003den#request-body\"\u003eRead more\u003c/a\u003e.",
+    "help": "If \u003cb\u003etrue\u003c/b\u003e, the request is validated but not executed. Only errors are returned, not results.\u003cbr /\u003e \u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/audienceMembers/ingest#request-body\"\u003eLearn more\u003c/a\u003e.",
     "defaultValue": false
   },
   {
@@ -320,7 +320,7 @@ ___TEMPLATE_PARAMETERS___
           }
         ],
         "simpleValueType": true,
-        "help": "The encoding type of the user identifiers SHA256 hash: \u003ci\u003eHEX\u003c/i\u003e or \u003ci\u003eBASE64\u003c/i\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eRequired\u003c/b\u003e for \u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/UserData\"\u003e\u003ci\u003eUserData\u003c/i\u003e\u003c/a\u003e (User Email Address, User Phone Number and User Given/Family Name) uploads.\n\u003cbr/\u003e\nFor other types (User Address Region and User Address Postal Code) uploads, this field is \u003cb\u003eignored\u003c/b\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\nFor hashed user identifiers, this is the encoding type of the hashed string. For encrypted hashed user identifiers, this is the encoding type of the outer encrypted string, but not necessarily the inner hashed string, meaning the inner hashed string could be encoded in a different way than the outer encrypted string.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eDefault\u003c/b\u003e: \u003ci\u003eHEX\u003c/i\u003e - when passing a non-hashed value to \u003ci\u003eUserData\u003c/i\u003e (User Email Address, User Phone Number and User Given/Family Name) fields; or when using default values from GA4 Event Data.",
+        "help": "The encoding type of the user identifiers SHA256 hash: \u003ci\u003eHEX\u003c/i\u003e or \u003ci\u003eBASE64\u003c/i\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eRequired\u003c/b\u003e for \u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/UserData\"\u003e\u003ci\u003eUserData\u003c/i\u003e\u003c/a\u003e (User Email Address, User Phone Number and User Given/Family Name) uploads.\n\u003cbr/\u003e\nFor other types (User Address Region and User Address Postal Code) uploads, this field is \u003cb\u003eignored\u003c/b\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\nFor hashed user identifiers, this is the encoding type of the hashed string.\n\u003cbr/\u003e\nFor encrypted hashed user identifiers, this is the encoding type of the outer encrypted string, but not necessarily the inner hashed string, meaning the inner hashed string could be encoded in a different way than the outer encrypted string.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eDefault\u003c/b\u003e: \u003ci\u003eHEX\u003c/i\u003e - when passing a non-hashed value to \u003ci\u003eUserData\u003c/i\u003e (User Email Address, User Phone Number and User Given/Family Name) fields; or when using default values from GA4 Event Data.",
         "notSetText": "(not set)"
       },
       {
@@ -430,7 +430,8 @@ ___TEMPLATE_PARAMETERS___
           }
         ],
         "simpleValueType": true,
-        "help": "Send data for a single user or for multiple users."
+        "help": "Send data for a single user or for multiple users.",
+        "defaultValue": "single"
       },
       {
         "type": "GROUP",
@@ -547,7 +548,7 @@ ___TEMPLATE_PARAMETERS___
             "name": "audienceMembers",
             "displayName": "Audience Members Array",
             "simpleValueType": true,
-            "help": "Specify the Audience Members array. This is useful when you need to upload data for multiple users at once. At most\n10000 Audience Members can be specified in the array.\n\u003cbr/\u003e\u003cbr/\u003e\nThe only current supported type of user identifier is \u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/UserData\"\u003e\u003ci\u003eUserData\u003c/i\u003e\u003c/a\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\nThe array must be formatted as specified in the\nGoogle Documentation. You cam specify different consent types for each users, overriding the request-level consent.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eIf you already pass SHA256 hashed fields to the array, make sure to specify the SHA256 hash encoding in the corresponding template field. Otherwise, the tag will hash it automatically and set it for you.\u003c/b\u003e\n\u003cbr/\u003e\u003cbr/\u003e\nReferences: \n\u003cul\u003e\n\u003cli\u003e\u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/AudienceMember\"\u003eAudience Member\u003c/a\u003e\u003c/li\u003e\n\u003cli\u003e\u003ca href\u003d\"https://developers.google.com/data-manager/api/get-started/formatting\"\u003eNormalization guidelines\u003c/a\u003e\u003c/li\u003e\n\u003cli\u003e\u003ca href\u003d\"https://developers.google.com/data-manager/api/get-started/quickstart/send-audience-members?persona\u003dadvertiser#build_the_request_body\"\u003eExample\u003c/a\u003e\u003c/li\u003e\n\u003c/ul\u003e",
+            "help": "Specify the Audience Members array. This is useful when you need to upload data for multiple users at once. At most\n10000 Audience Members can be specified in the array.\n\u003cbr/\u003e\u003cbr/\u003e\nThe only current supported type of user identifier is \u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/UserData\"\u003e\u003ci\u003eUserData\u003c/i\u003e\u003c/a\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\nThe array must be formatted as specified in the\nGoogle Documentation. You can specify different consent types for each user, overriding the request-level consent.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eIf you already pass SHA256 hashed fields to the array, make sure to specify the SHA256 hash encoding in the corresponding template field. Otherwise, the tag will hash it automatically and set it for you.\u003c/b\u003e\n\u003cbr/\u003e\u003cbr/\u003e\nReferences: \n\u003cul\u003e\n\u003cli\u003e\u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/AudienceMember\"\u003eAudience Member\u003c/a\u003e\u003c/li\u003e\n\u003cli\u003e\u003ca href\u003d\"https://developers.google.com/data-manager/api/get-started/formatting\"\u003eNormalization guidelines\u003c/a\u003e\u003c/li\u003e\n\u003cli\u003e\u003ca href\u003d\"https://developers.google.com/data-manager/api/get-started/quickstart/send-audience-members?persona\u003dadvertiser#build_the_request_body\"\u003eExample\u003c/a\u003e\u003c/li\u003e\n\u003c/ul\u003e",
             "valueValidators": [
               {
                 "type": "NON_EMPTY"
@@ -568,8 +569,8 @@ ___TEMPLATE_PARAMETERS___
   },
   {
     "type": "GROUP",
-    "name": "consentSettingsGroup",
-    "displayName": "Consent Settings",
+    "name": "tagExecutionConsentSettingsGroup",
+    "displayName": "Tag Execution Consent Settings",
     "groupStyle": "ZIPPY_CLOSED",
     "subParams": [
       {
@@ -583,7 +584,8 @@ ___TEMPLATE_PARAMETERS___
           },
           {
             "value": "required",
-            "displayValue": "Send data in case marketing consent given"
+            "displayValue": "Send data in case marketing consent given",
+            "help": "Aborts the tag execution if marketing consent (\u003ci\u003ead_storage\u003c/i\u003e Google Consent Mode or Stape\u0027s Data Tag parameter) is not given."
           }
         ],
         "simpleValueType": true,
@@ -709,12 +711,10 @@ const sha256Sync = require('sha256Sync');
 ==============================================================================*/
 
 const traceId = getRequestHeader('trace-id');
-
 const eventData = getAllEventData();
-
 const useOptimisticScenario = isUIFieldTrue(data.useOptimisticScenario);
 
-if (!isConsentGivenOrNotRequired()) {
+if (!isConsentGivenOrNotRequired(data, eventData)) {
   return data.gtmOnSuccess();
 }
 
@@ -731,10 +731,7 @@ if (invalidFields) {
     Name: 'GoogleCustomerMatch',
     Type: 'Message',
     TraceId: traceId,
-    EventName:
-      data.audienceAction +
-      ' | Audience ID(s): ' +
-      mappedData.destinations.map((d) => d.productDestinationId).join(','),
+    EventName: data.audienceAction,
     Message: 'Request was not sent.',
     Reason: invalidFields
   });
@@ -1164,16 +1161,11 @@ function sendRequest(data, mappedData) {
   const requestOptions = generateRequestOptions();
   const requestBody = mappedData;
 
-  const logEventName =
-    data.audienceAction +
-    ' | Audience ID(s): ' +
-    requestBody.destinations.map((d) => d.productDestinationId).join(',');
-
   log({
     Name: 'GoogleCustomerMatch',
     Type: 'Request',
     TraceId: traceId,
-    EventName: logEventName,
+    EventName: data.audienceAction,
     RequestMethod: 'POST',
     RequestUrl: requestUrl,
     RequestBody: requestBody
@@ -1186,7 +1178,7 @@ function sendRequest(data, mappedData) {
         Name: 'GoogleCustomerMatch',
         Type: 'Response',
         TraceId: traceId,
-        EventName: logEventName,
+        EventName: data.audienceAction,
         ResponseStatusCode: result.statusCode,
         ResponseHeaders: result.headers,
         ResponseBody: result.body
@@ -1205,7 +1197,7 @@ function sendRequest(data, mappedData) {
         Name: 'GoogleCustomerMatch',
         Type: 'Message',
         TraceId: traceId,
-        EventName: logEventName,
+        EventName: data.audienceAction,
         Message: 'Request failed or timed out.',
         Reason: JSON.stringify(result)
       });
@@ -1270,7 +1262,7 @@ function isUIFieldTrue(field) {
   return [true, 'true'].indexOf(field) !== -1;
 }
 
-function isConsentGivenOrNotRequired() {
+function isConsentGivenOrNotRequired(data, eventData) {
   if (data.adStorageConsent !== 'required') return true;
   if (eventData.consent_state) return !!eventData.consent_state.ad_storage;
   const xGaGcs = eventData['x-ga-gcs'] || ''; // x-ga-gcs is a string like "G110"

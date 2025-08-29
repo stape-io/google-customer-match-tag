@@ -16,12 +16,10 @@ const sha256Sync = require('sha256Sync');
 ==============================================================================*/
 
 const traceId = getRequestHeader('trace-id');
-
 const eventData = getAllEventData();
-
 const useOptimisticScenario = isUIFieldTrue(data.useOptimisticScenario);
 
-if (!isConsentGivenOrNotRequired()) {
+if (!isConsentGivenOrNotRequired(data, eventData)) {
   return data.gtmOnSuccess();
 }
 
@@ -38,10 +36,7 @@ if (invalidFields) {
     Name: 'GoogleCustomerMatch',
     Type: 'Message',
     TraceId: traceId,
-    EventName:
-      data.audienceAction +
-      ' | Audience ID(s): ' +
-      mappedData.destinations.map((d) => d.productDestinationId).join(','),
+    EventName: data.audienceAction,
     Message: 'Request was not sent.',
     Reason: invalidFields
   });
@@ -471,16 +466,11 @@ function sendRequest(data, mappedData) {
   const requestOptions = generateRequestOptions();
   const requestBody = mappedData;
 
-  const logEventName =
-    data.audienceAction +
-    ' | Audience ID(s): ' +
-    requestBody.destinations.map((d) => d.productDestinationId).join(',');
-
   log({
     Name: 'GoogleCustomerMatch',
     Type: 'Request',
     TraceId: traceId,
-    EventName: logEventName,
+    EventName: data.audienceAction,
     RequestMethod: 'POST',
     RequestUrl: requestUrl,
     RequestBody: requestBody
@@ -493,7 +483,7 @@ function sendRequest(data, mappedData) {
         Name: 'GoogleCustomerMatch',
         Type: 'Response',
         TraceId: traceId,
-        EventName: logEventName,
+        EventName: data.audienceAction,
         ResponseStatusCode: result.statusCode,
         ResponseHeaders: result.headers,
         ResponseBody: result.body
@@ -512,7 +502,7 @@ function sendRequest(data, mappedData) {
         Name: 'GoogleCustomerMatch',
         Type: 'Message',
         TraceId: traceId,
-        EventName: logEventName,
+        EventName: data.audienceAction,
         Message: 'Request failed or timed out.',
         Reason: JSON.stringify(result)
       });
@@ -577,7 +567,7 @@ function isUIFieldTrue(field) {
   return [true, 'true'].indexOf(field) !== -1;
 }
 
-function isConsentGivenOrNotRequired() {
+function isConsentGivenOrNotRequired(data, eventData) {
   if (data.adStorageConsent !== 'required') return true;
   if (eventData.consent_state) return !!eventData.consent_state.ad_storage;
   const xGaGcs = eventData['x-ga-gcs'] || ''; // x-ga-gcs is a string like "G110"
