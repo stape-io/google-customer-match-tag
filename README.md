@@ -84,6 +84,8 @@ The tag can be configured to send data for a single user or for multiple users a
 
 ## Useful Resources
 
+- [Stape's Data Manager API Connection](https://stape.io/solutions/data-manager-api-connection)
+- [Blog post: Set up automatic Google Customer Match Lists via Stape](https://stape.io/blog/customer-list-google-ads)
 - [Data Manager API for Audience Data](https://developers.google.com/data-manager/api/reference/rest/v1/audienceMembers)
 - [Audience Member definition](https://developers.google.com/data-manager/api/reference/rest/v1/AudienceMember)
 - [User Identifiers Normalization Guidelines](https://developers.google.com/data-manager/api/get-started/formatting)
