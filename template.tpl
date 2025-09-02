@@ -150,7 +150,7 @@ ___TEMPLATE_PARAMETERS___
           }
         ],
         "newRowButtonText": "Add Customer List",
-        "help": "\u003cb\u003eProduct\u003c/b\u003e: The Product the Customer List belongs to.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eOperating Customer ID\u003c/b\u003e: The \u003ci\u003eAccount ID\u003c/i\u003e (without hyphens) of the account (Google Ads account, DV360 account etc.) that will receive customer list data. \u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/Destination\"\u003eLearn more\u003c/a\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eCustomer ID\u003c/b\u003e: The \u003ci\u003eAccount ID\u003c/i\u003e (without hyphens) of the account for which the link between the Data Partner account (Stape) and the Advertiser account was established.\n\u003cbr/\u003e\ne.g. the link between the Data Partner account (Stape) and Advertiser account can be done at MCC level, but the data is going to be sent to a subaccount of the MCC.\n\u003cbr/\u003e\nIn this case: the Customer Account is the MCC, and Operating Customer Account is the subaccount.\n\u003cbr/\u003e\nIf the link is done with the same account that will receive the data, then the Customer Account and Operating Customer Account are the same.\n\u003cbr/\u003e\n\u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/Destination\"\u003eLearn more\u003c/a\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eCustomer List Name\u003c/b\u003e: The name of the customer list you want to interact with.\n\u003cbr/\u003e\nOnly customer lists created through the Stape connection are supported. You cannot interact with arbitrary customer lists.\n\u003cbr/\u003e\nWhen using Google products, the audience will appear with the name format: \u003ci\u003estape_\u0026lt;Customer List Name\u0026gt;\u003c/i\u003e. This customer list is created automatically by Stape during the integration process.\n\u003cbr/\u003e\nFor example, if you enter \"Purchasers\" in this field, the tag will interact with the customer list named \u003ci\u003estape_Purchasers\u003c/i\u003e in your Google product."
+        "help": "\u003cb\u003eProduct\u003c/b\u003e: The Product the Customer List belongs to.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eOperating Customer ID\u003c/b\u003e: The \u003ci\u003eAccount ID\u003c/i\u003e (without hyphens) of the account (Google Ads account, DV360 account etc.) that will receive customer list data. \u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/Destination\"\u003eLearn more\u003c/a\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eCustomer ID\u003c/b\u003e: The \u003ci\u003eAccount ID\u003c/i\u003e (without hyphens) of the account for which the link between the Data Partner account (Stape) and the Advertiser account was established.\n\u003cbr/\u003e\ne.g. the link between the Data Partner account (Stape) and Advertiser account can be done at MCC level, but the data is going to be sent to a subaccount of the MCC.\n\u003cbr/\u003e\nIn this case: the \u003ci\u003eCustomer Account\u003c/i\u003e is the MCC, and \u003ci\u003eOperating Customer Account\u003c/i\u003e is the subaccount.\n\u003cbr/\u003e\nIf the link is done with the same account that will receive the data, then the \u003ci\u003eCustomer Account\u003c/i\u003e and \u003ci\u003eOperating Customer Account\u003c/i\u003e are the same.\n\u003cbr/\u003e\n\u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/Destination\"\u003eLearn more\u003c/a\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eCustomer List Name\u003c/b\u003e: The name of the customer list you want to interact with.\n\u003cbr/\u003e\nOnly customer lists created through the Stape connection are supported. You cannot interact with arbitrary customer lists.\n\u003cbr/\u003e\nWhen using Google products, the audience will appear with the name format: \u003ci\u003estape_\u0026lt;Customer List Name\u0026gt;\u003c/i\u003e. This customer list is created automatically by Stape during the integration process.\n\u003cbr/\u003e\nFor example, if you enter \"Purchasers\" in this field, the tag will interact with the customer list named \u003ci\u003estape_Purchasers\u003c/i\u003e in your Google product."
       }
     ],
     "groupStyle": "NO_ZIPPY"
@@ -436,97 +436,89 @@ ___TEMPLATE_PARAMETERS___
       {
         "type": "GROUP",
         "name": "audienceMembersSingleUserGroup",
-        "groupStyle": "NO_ZIPPY",
+        "groupStyle": "ZIPPY_OPEN",
         "subParams": [
           {
-            "type": "GROUP",
-            "name": "userDataGroup",
-            "displayName": "User Data Identifiers",
-            "groupStyle": "ZIPPY_OPEN",
+            "type": "LABEL",
+            "name": "userDataGroupLabel",
+            "displayName": "When sending User Data Identifiers, \u003cb\u003eat least one\u003c/b\u003e of User Email Address(es), User Phone Number(s) or User Address must be specified.\n\u003cbr/\u003e\nThe total number of User Data identifiers must not exceed 10 items."
+          },
+          {
+            "type": "TEXT",
+            "name": "userDataEmailAddresses",
+            "displayName": "User Email Address(es)",
+            "simpleValueType": true,
+            "help": "Specify a single email address, or an array of email addresses. Each item can be already SHA256 hashed or not. They can be already encrypted as well.\n\u003cbr/\u003e\u003cbr/\u003e\nIf already SHA256 hashed, make sure to follow these \u003ca href\u003d\"https://developers.google.com/data-manager/api/get-started/formatting#userdata_format\"\u003enormalization guidelines\u003c/a\u003e before applying the hash, and also to \u003cb\u003especify the hash encoding in the corresponding template field\u003c/b\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\nDefault: \u003ci\u003eeventData.user_data.email\u003c/i\u003e -\u003e \u003ci\u003eeventData.user_data.email_address\u003c/i\u003e -\u003e \u003ci\u003eeventData.user_data.sha256_email\u003c/i\u003e -\u003e \u003ci\u003eeventData.user_data.sha256_email_address\u003c/i\u003e\n\u003cbr/\u003e\n⚠️ If you do NOT want to use the default value, pass an \u003ci\u003eundefined\u003c/i\u003e variable in the field (not the \"undefined\" string).",
+            "valueHint": "jane@example.com"
+          },
+          {
+            "type": "TEXT",
+            "name": "userDataPhoneNumbers",
+            "displayName": "User Phone Number(s)",
+            "simpleValueType": true,
+            "help": "Specify a single phone number, or an array of phone numbers. Each item can be already SHA256 hashed or not. They can be already encrypted as well.\n\u003cbr/\u003e\u003cbr/\u003e\nUse \u003ca href\u003d\"https://en.wikipedia.org/wiki/E.164\"\u003eE.164 format\u003c/a\u003e. Include the plus sign (+) and the country code.\n\u003cbr/\u003e\nIf already SHA256 hashed, make sure to follow these \u003ca href\u003d\"https://developers.google.com/data-manager/api/get-started/formatting#userdata_format\"\u003enormalization guidelines\u003c/a\u003e before applying the hash, and also to \u003cb\u003especify the hash encoding in the corresponding template field\u003c/b\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\nDefault: \u003ci\u003eeventData.user_data.phone\u003c/i\u003e -\u003e \u003ci\u003eeventData.user_data.phone_number\u003c/i\u003e -\u003e \u003ci\u003eeventData.user_data.sha256_phone_number\u003c/i\u003e\n\u003cbr/\u003e\n⚠️ If you do NOT want to use the default value, pass an \u003ci\u003eundefined\u003c/i\u003e variable in the field (not the \"undefined\" string).",
+            "valueHint": "+1555999999999"
+          },
+          {
+            "type": "CHECKBOX",
+            "name": "addUserDataAddress",
+            "checkboxText": "Add User Address data",
+            "simpleValueType": true,
             "subParams": [
               {
-                "type": "LABEL",
-                "name": "userDataGroupLabel",
-                "displayName": "When sending User Data Identifiers, \u003cb\u003eat least one\u003c/b\u003e of User Email Address(es), User Phone Number(s) or User Address must be specified.\n\u003cbr/\u003e\nThe total number of User Data identifiers must not exceed 10 items."
-              },
-              {
-                "type": "TEXT",
-                "name": "userDataEmailAddresses",
-                "displayName": "User Email Address(es)",
-                "simpleValueType": true,
-                "help": "Specify a single email address, or an array of email addresses. Each item can be already SHA256 hashed or not. They can be already encrypted as well.\n\u003cbr/\u003e\u003cbr/\u003e\nIf already SHA256 hashed, make sure to follow these \u003ca href\u003d\"https://developers.google.com/data-manager/api/get-started/formatting#userdata_format\"\u003enormalization guidelines\u003c/a\u003e before applying the hash, and also to \u003cb\u003especify the hash encoding in the corresponding template field\u003c/b\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\nDefault: \u003ci\u003eeventData.user_data.email\u003c/i\u003e -\u003e \u003ci\u003eeventData.user_data.email_address\u003c/i\u003e -\u003e \u003ci\u003eeventData.user_data.sha256_email\u003c/i\u003e -\u003e \u003ci\u003eeventData.user_data.sha256_email_address\u003c/i\u003e\n\u003cbr/\u003e\n⚠️ If you do NOT want to use the default value, pass an \u003ci\u003eundefined\u003c/i\u003e variable in the field (not the \"undefined\" string).",
-                "valueHint": "jane@example.com"
-              },
-              {
-                "type": "TEXT",
-                "name": "userDataPhoneNumbers",
-                "displayName": "User Phone Number(s)",
-                "simpleValueType": true,
-                "help": "Specify a single phone number, or an array of phone numbers. Each item can be already SHA256 hashed or not. They can be already encrypted as well.\n\u003cbr/\u003e\u003cbr/\u003e\nUse \u003ca href\u003d\"https://en.wikipedia.org/wiki/E.164\"\u003eE.164 format\u003c/a\u003e. Include the plus sign (+) and the country code.\n\u003cbr/\u003e\nIf already SHA256 hashed, make sure to follow these \u003ca href\u003d\"https://developers.google.com/data-manager/api/get-started/formatting#userdata_format\"\u003enormalization guidelines\u003c/a\u003e before applying the hash, and also to \u003cb\u003especify the hash encoding in the corresponding template field\u003c/b\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\nDefault: \u003ci\u003eeventData.user_data.phone\u003c/i\u003e -\u003e \u003ci\u003eeventData.user_data.phone_number\u003c/i\u003e -\u003e \u003ci\u003eeventData.user_data.sha256_phone_number\u003c/i\u003e\n\u003cbr/\u003e\n⚠️ If you do NOT want to use the default value, pass an \u003ci\u003eundefined\u003c/i\u003e variable in the field (not the \"undefined\" string).",
-                "valueHint": "+1555999999999"
-              },
-              {
-                "type": "CHECKBOX",
-                "name": "addUserDataAddress",
-                "checkboxText": "Add User Address data",
-                "simpleValueType": true,
+                "type": "GROUP",
+                "name": "userDataAddressGroup",
                 "subParams": [
                   {
-                    "type": "GROUP",
-                    "name": "userDataAddressGroup",
-                    "subParams": [
-                      {
-                        "type": "LABEL",
-                        "name": "userDataAddressLabel",
-                        "displayName": "You must specify \u003cb\u003eall\u003c/b\u003e the fields below (User Given Name, User Family Name, User Address Region and User Address Postal Code)."
-                      },
-                      {
-                        "type": "TEXT",
-                        "name": "addressGivenName",
-                        "displayName": "User Given Name",
-                        "simpleValueType": true,
-                        "help": "Specify the User Given Name (First Name). Don\u0027t include suffixes such as \u003ci\u003eJr\u003c/i\u003e. It can be already SHA256 hashed or not. It can be encrypted as well.\n\u003cbr/\u003e\u003cbr/\u003e\nIf already SHA256 hashed, make sure to follow these \u003ca href\u003d\"https://developers.google.com/data-manager/api/get-started/formatting#userdata_format\"\u003enormalization guidelines\u003c/a\u003e before applying the hash, and also to \u003cb\u003especify the hash encoding in the corresponding template field\u003c/b\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\nDefault: \u003ci\u003eeventData.user_data.address.first_name\u003c/i\u003e -\u003e \u003ci\u003eeventData.user_data.address.sha256_first_name\u003c/i\u003e\n\u003cbr/\u003e\n⚠️ If you do NOT want to use the default value, pass an \u003ci\u003eundefined\u003c/i\u003e variable in the field (not the \"undefined\" string).",
-                        "valueHint": "john",
-                        "valueValidators": []
-                      },
-                      {
-                        "type": "TEXT",
-                        "name": "addressFamilyName",
-                        "displayName": "User Family Name",
-                        "simpleValueType": true,
-                        "help": "Specify the User Family Name (Last Name). It can be already SHA256 hashed or not. It can be encrypted as well.\n\u003cbr/\u003e\u003cbr/\u003e\nIf already SHA256 hashed, make sure to follow these \u003ca href\u003d\"https://developers.google.com/data-manager/api/get-started/formatting#userdata_format\"\u003enormalization guidelines\u003c/a\u003e before applying the hash, and also to \u003cb\u003especify the hash encoding in the corresponding template field\u003c/b\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\nDefault: \u003ci\u003eeventData.user_data.address.last_name\u003c/i\u003e -\u003e \u003ci\u003eeventData.user_data.address.sha256_last_name\u003c/i\u003e\n\u003cbr/\u003e\n⚠️ If you do NOT want to use the default value, pass an \u003ci\u003eundefined\u003c/i\u003e variable in the field (not the \"undefined\" string).",
-                        "valueHint": "doe",
-                        "valueValidators": []
-                      },
-                      {
-                        "type": "TEXT",
-                        "name": "addressRegion",
-                        "displayName": "User Address Region",
-                        "simpleValueType": true,
-                        "help": "The 2-letter region code in \u003ca href\u003d\"https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2\"\u003eISO-3166-1 alpha-2\u003c/a\u003e of the user\u0027s address. Do not hash.\n\u003cbr/\u003e\u003cbr/\u003e\nDefault: \u003ci\u003eeventData.user_data.address.country\u003c/i\u003e\n\u003cbr/\u003e\n⚠️ If you do NOT want to use the default value, pass an \u003ci\u003eundefined\u003c/i\u003e variable in the field (not the \"undefined\" string).",
-                        "valueHint": "US",
-                        "valueValidators": []
-                      },
-                      {
-                        "type": "TEXT",
-                        "name": "addressPostalCode",
-                        "displayName": "User Address Postal Code",
-                        "simpleValueType": true,
-                        "help": "The postal code of the user\u0027s address. Do not hash.\n\u003cbr/\u003e\nBoth US and international zip and postal codes are allowed. \n\u003cbr/\u003e\nFor US addresses, use either 5 digits or 5 digits followed by a 4-digit extension. Using a 4-digit extension may improve your match rate.\n\u003cbr/\u003e\nFor all other countries, don\u0027t use postal code extensions.\n\u003cbr/\u003e\u003cbr/\u003e\nDefault: \u003ci\u003eeventData.user_data.address.postal_code\u003c/i\u003e\n\u003cbr/\u003e\n⚠️ If you do NOT want to use the default value, pass an \u003ci\u003eundefined\u003c/i\u003e variable in the field (not the \"undefined\" string).",
-                        "valueHint": "10001",
-                        "valueValidators": []
-                      }
-                    ],
-                    "enablingConditions": [
-                      {
-                        "paramName": "addUserDataAddress",
-                        "paramValue": true,
-                        "type": "EQUALS"
-                      }
-                    ],
-                    "groupStyle": "NO_ZIPPY"
+                    "type": "LABEL",
+                    "name": "userDataAddressLabel",
+                    "displayName": "You must specify \u003cb\u003eall\u003c/b\u003e the fields below (User Given Name, User Family Name, User Address Region and User Address Postal Code)."
+                  },
+                  {
+                    "type": "TEXT",
+                    "name": "addressGivenName",
+                    "displayName": "User Given Name",
+                    "simpleValueType": true,
+                    "help": "Specify the User Given Name (First Name). Don\u0027t include prefixes such as \u003ci\u003eMrs.\u003c/i\u003e. It can be already SHA256 hashed or not. It can be encrypted as well.\n\u003cbr/\u003e\u003cbr/\u003e\nIf already SHA256 hashed, make sure to follow these \u003ca href\u003d\"https://developers.google.com/data-manager/api/get-started/formatting#userdata_format\"\u003enormalization guidelines\u003c/a\u003e before applying the hash, and also to \u003cb\u003especify the hash encoding in the corresponding template field\u003c/b\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\nDefault: \u003ci\u003eeventData.user_data.address.first_name\u003c/i\u003e -\u003e \u003ci\u003eeventData.user_data.address.sha256_first_name\u003c/i\u003e\n\u003cbr/\u003e\n⚠️ If you do NOT want to use the default value, pass an \u003ci\u003eundefined\u003c/i\u003e variable in the field (not the \"undefined\" string).",
+                    "valueHint": "john",
+                    "valueValidators": []
+                  },
+                  {
+                    "type": "TEXT",
+                    "name": "addressFamilyName",
+                    "displayName": "User Family Name",
+                    "simpleValueType": true,
+                    "help": "Specify the User Family Name (Last Name). Don\u0027t include suffixes such as \u003ci\u003eJr\u003c/i\u003e. It can be already SHA256 hashed or not. It can be encrypted as well.\n\u003cbr/\u003e\u003cbr/\u003e\nIf already SHA256 hashed, make sure to follow these \u003ca href\u003d\"https://developers.google.com/data-manager/api/get-started/formatting#userdata_format\"\u003enormalization guidelines\u003c/a\u003e before applying the hash, and also to \u003cb\u003especify the hash encoding in the corresponding template field\u003c/b\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\nDefault: \u003ci\u003eeventData.user_data.address.last_name\u003c/i\u003e -\u003e \u003ci\u003eeventData.user_data.address.sha256_last_name\u003c/i\u003e\n\u003cbr/\u003e\n⚠️ If you do NOT want to use the default value, pass an \u003ci\u003eundefined\u003c/i\u003e variable in the field (not the \"undefined\" string).",
+                    "valueHint": "doe",
+                    "valueValidators": []
+                  },
+                  {
+                    "type": "TEXT",
+                    "name": "addressRegion",
+                    "displayName": "User Address Region",
+                    "simpleValueType": true,
+                    "help": "The 2-letter region code in \u003ca href\u003d\"https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2\"\u003eISO-3166-1 alpha-2\u003c/a\u003e of the user\u0027s address. Do not hash.\n\u003cbr/\u003e\u003cbr/\u003e\nDefault: \u003ci\u003eeventData.user_data.address.country\u003c/i\u003e\n\u003cbr/\u003e\n⚠️ If you do NOT want to use the default value, pass an \u003ci\u003eundefined\u003c/i\u003e variable in the field (not the \"undefined\" string).",
+                    "valueHint": "US",
+                    "valueValidators": []
+                  },
+                  {
+                    "type": "TEXT",
+                    "name": "addressPostalCode",
+                    "displayName": "User Address Postal Code",
+                    "simpleValueType": true,
+                    "help": "The postal code of the user\u0027s address. Do not hash.\n\u003cbr/\u003e\nBoth US and international zip and postal codes are allowed. \n\u003cbr/\u003e\nFor US addresses, use either 5 digits or 5 digits followed by a 4-digit extension. Using a 4-digit extension may improve your match rate.\n\u003cbr/\u003e\nFor all other countries, don\u0027t use postal code extensions.\n\u003cbr/\u003e\u003cbr/\u003e\nDefault: \u003ci\u003eeventData.user_data.address.postal_code\u003c/i\u003e\n\u003cbr/\u003e\n⚠️ If you do NOT want to use the default value, pass an \u003ci\u003eundefined\u003c/i\u003e variable in the field (not the \"undefined\" string).",
+                    "valueHint": "10001",
+                    "valueValidators": []
                   }
-                ]
+                ],
+                "enablingConditions": [
+                  {
+                    "paramName": "addUserDataAddress",
+                    "paramValue": true,
+                    "type": "EQUALS"
+                  }
+                ],
+                "groupStyle": "NO_ZIPPY"
               }
             ]
           }
@@ -537,7 +529,8 @@ ___TEMPLATE_PARAMETERS___
             "paramValue": "single",
             "type": "EQUALS"
           }
-        ]
+        ],
+        "displayName": "User Data Identifiers"
       },
       {
         "type": "GROUP",
@@ -693,6 +686,8 @@ ___TEMPLATE_PARAMETERS___
 
 ___SANDBOXED_JS_FOR_SERVER___
 
+/// <reference path="./server-gtm-sandboxed-apis.d.ts" />
+
 const BigQuery = require('BigQuery');
 const encodeUriComponent = require('encodeUriComponent');
 const getAllEventData = require('getAllEventData');
@@ -755,7 +750,7 @@ function addDestinationsData(data, mappedData) {
 
   accountsAndDestinationsFromUI.forEach((row) => {
     const destination = {
-      productDestinationId: 'stape_' + makeString(row.productDestinationId).trim(),
+      productDestinationId: 'stape_' + makeString(row.productDestinationId),
       operatingAccount: {
         product: row.product,
         accountId: makeString(row.operatingAccountId)
@@ -1001,23 +996,70 @@ function addEncryptionData(data, mappedData) {
   return mappedData;
 }
 
+function normalizeEmailAddress(email) {
+  if (!email) return email;
+
+  const emailParts = email.split('@');
+  if (emailParts[1] === 'gmail.com' || emailParts[1] === 'googlemail.com') {
+    return emailParts[0].split('.').join('') + '@' + emailParts[1];
+  }
+  return emailParts.join('@');
+}
+
+function normalizePhoneNumber(phoneNumber) {
+  if (!phoneNumber) return phoneNumber;
+
+  phoneNumber = phoneNumber
+    .split(' ')
+    .join('')
+    .split('-')
+    .join('')
+    .split('(')
+    .join('')
+    .split(')')
+    .join('');
+  if (phoneNumber[0] !== '+') phoneNumber = '+' + phoneNumber;
+  return phoneNumber;
+}
+
 function hashDataIfNeeded(mappedData) {
   const audienceMembers = mappedData.audienceMembers;
 
-  if (audienceMembers) {
-    audienceMembers.forEach((audienceMember) => {
-      if (!audienceMember) return;
+  if (getType(audienceMembers) !== 'array') return;
 
-      if (
-        audienceMember.userData &&
-        audienceMember.userData.userIdentifiers &&
-        getType(audienceMember.userData.userIdentifiers) === 'array'
-      ) {
-        audienceMember.userData.userIdentifiers.forEach((userIdentifier) => {
-          const key = Object.keys(userIdentifier)[0];
+  audienceMembers.forEach((audienceMember) => {
+    if (getType(audienceMember) !== 'object') return;
 
-          if (key === 'emailAddress' || key === 'phoneNumber') {
-            let value = userIdentifier[key];
+    if (
+      getType(audienceMember.userData) === 'object' &&
+      getType(audienceMember.userData.userIdentifiers) === 'array'
+    ) {
+      audienceMember.userData.userIdentifiers.forEach((userIdentifier) => {
+        const key = Object.keys(userIdentifier)[0];
+
+        if (key === 'emailAddress' || key === 'phoneNumber') {
+          let value = userIdentifier[key];
+
+          if (isSHA256HexHashed(value)) {
+            mappedData.encoding = 'HEX';
+            return;
+          } else if (isSHA256Base64Hashed(value)) {
+            mappedData.encoding = 'BASE64';
+            return;
+          }
+
+          if (key === 'phoneNumber') value = normalizePhoneNumber(value);
+          else if (key === 'emailAddress') value = normalizeEmailAddress(value);
+
+          userIdentifier[key] = hashData(value);
+          mappedData.encoding = 'HEX';
+        } else if (key === 'address') {
+          const addressKeysToHash = ['givenName', 'familyName'];
+
+          addressKeysToHash.forEach((nameKey) => {
+            const value = userIdentifier.address[nameKey];
+            if (!value) return;
+
             if (isSHA256HexHashed(value)) {
               mappedData.encoding = 'HEX';
               return;
@@ -1026,58 +1068,28 @@ function hashDataIfNeeded(mappedData) {
               return;
             }
 
-            if (key === 'phoneNumber') {
-              value = value
-                .split(' ')
-                .join('')
-                .split('-')
-                .join('')
-                .split('(')
-                .join('')
-                .split(')')
-                .join('');
-              if (value[0] !== '+') value = '+' + value;
-            }
-
-            userIdentifier[key] = hashData(value);
+            userIdentifier.address[nameKey] = hashData(value);
             mappedData.encoding = 'HEX';
-          } else if (key === 'address') {
-            const addressKeysToHash = ['givenName', 'familyName'];
-            addressKeysToHash.forEach((nameKey) => {
-              const value = userIdentifier.address[nameKey];
-              if (!value) return;
-
-              if (isSHA256HexHashed(value)) {
-                mappedData.encoding = 'HEX';
-                return;
-              } else if (isSHA256Base64Hashed(value)) {
-                mappedData.encoding = 'BASE64';
-                return;
-              }
-              userIdentifier.address[nameKey] = hashData(value);
-              mappedData.encoding = 'HEX';
-            });
-          }
-        });
-      } else if (
-        audienceMember.pairData &&
-        audienceMember.pairData.pairIds &&
-        getType(audienceMember.pairData.pairIds) === 'array'
-      ) {
-        audienceMember.pairData.pairIds = audienceMember.pairData.pairIds.map((pairId) => {
-          if (isSHA256HexHashed(pairId)) {
-            mappedData.encoding = 'HEX';
-            return pairId;
-          } else if (isSHA256Base64Hashed(pairId)) {
-            mappedData.encoding = 'BASE64';
-            return pairId;
-          }
+          });
+        }
+      });
+    } else if (
+      getType(audienceMember.pairData) === 'object' &&
+      getType(audienceMember.pairData.pairIds) === 'array'
+    ) {
+      audienceMember.pairData.pairIds = audienceMember.pairData.pairIds.map((pairId) => {
+        if (isSHA256HexHashed(pairId)) {
           mappedData.encoding = 'HEX';
-          return hashData(pairId);
-        });
-      }
-    });
-  }
+          return pairId;
+        } else if (isSHA256Base64Hashed(pairId)) {
+          mappedData.encoding = 'BASE64';
+          return pairId;
+        }
+        mappedData.encoding = 'HEX';
+        return hashData(pairId);
+      });
+    }
+  });
 
   return mappedData;
 }
@@ -1325,9 +1337,7 @@ function logToBigQuery(dataToLog) {
     dataToLog[p] = JSON.stringify(dataToLog[p]);
   });
 
-  const bigquery =
-    getType(BigQuery) === 'function' ? BigQuery() /* Only during Unit Tests */ : BigQuery;
-  bigquery.insert(connectionInfo, [dataToLog], { ignoreUnknownValues: true });
+  BigQuery.insert(connectionInfo, [dataToLog], { ignoreUnknownValues: true });
 }
 
 function determinateIsLoggingEnabled() {
@@ -1996,6 +2006,19 @@ scenarios:
     \ resolve({ statusCode: 200 });\n  });  \n});\n\nrunCode(mockData);\n\ncallLater(()\
     \ => {\n  assertApi('gtmOnSuccess').wasCalled();\n  assertApi('gtmOnFailure').wasNotCalled();\n\
     });"
+- name: '[Request] Should call gtmOnFailure when promise resolves and status code
+    is outside success range'
+  code: "setMockDataByAudienceMethod('ingest');\n\nmock('sendHttpRequest', (requestUrl,\
+    \ requestOptions, requestBody) => {\n  return Promise.create((resolve, reject)\
+    \ => {\n    resolve({ statusCode: 500 });\n  });  \n});\n\nrunCode(mockData);\n\
+    \ncallLater(() => {\n  assertApi('gtmOnSuccess').wasNotCalled();\n  assertApi('gtmOnFailure').wasCalled();\n\
+    });"
+- name: '[Request] Should call gtmOnFailure when promise rejects'
+  code: "setMockDataByAudienceMethod('ingest');\n\nmock('sendHttpRequest', (requestUrl,\
+    \ requestOptions, requestBody) => {\n  return Promise.create((resolve, reject)\
+    \ => {\n    reject({ reason: 'Failed' });\n  });  \n});\n\nrunCode(mockData);\n\
+    \ncallLater(() => {\n  assertApi('gtmOnSuccess').wasNotCalled();\n  assertApi('gtmOnFailure').wasCalled();\n\
+    });"
 - name: '[Hex] Encoding is correctly defined when hashed Audience Data is already
     Hex encoded'
   code: "setGetAllEventData();\nsetMockDataByAudienceMethod('ingest', {\n  userMode:\
@@ -2022,76 +2045,48 @@ scenarios:
     \n  return Promise.create((resolve, reject) => {\n    resolve({ statusCode: 200\
     \ });\n  });  \n});\n\nrunCode(mockData);\n\ncallLater(() => {\n  assertApi('gtmOnSuccess').wasCalled();\n\
     \  assertApi('gtmOnFailure').wasNotCalled();\n});"
-- name: Should log to console, if the 'Always log to console' option is selected
-  code: "setMockDataByAudienceMethod('ingest');\nmockData.logType = 'always';\n\n\
-    const expectedDebugMode = true;\nmock('getContainerVersion', () => {\n  return\
-    \ {\n    debugMode: expectedDebugMode\n  };\n}); \n\nmock('logToConsole', (logData)\
-    \ => {\n  const parsedLogData = JSON.parse(logData);\n  requiredConsoleKeys.forEach(p\
-    \ => assertThat(parsedLogData[p]).isDefined());\n});\n\nrunCode(mockData);\n\n\
-    callLater(() => {\n  assertApi('logToConsole').wasCalled();\n  assertApi('gtmOnSuccess').wasCalled();\n\
-    \  assertApi('gtmOnFailure').wasNotCalled();\n});"
-- name: Should log to console, if the 'Log during debug and preview' option is selected
-    AND is on preview mode
-  code: |-
-    setMockDataByAudienceMethod('ingest');
-    mockData.logType = 'debug';
-
-    const expectedDebugMode = true;
-    mock('getContainerVersion', () => {
-      return {
-        debugMode: expectedDebugMode
-      };
-    });
-
-    mock('logToConsole', (logData) => {
-      const parsedLogData = JSON.parse(logData);
-      requiredConsoleKeys.forEach(p => assertThat(parsedLogData[p]).isDefined());
-    });
-
-    runCode(mockData);
-
-    callLater(() => {
-      assertApi('logToConsole').wasCalled();
-      assertApi('gtmOnSuccess').wasCalled();
-      assertApi('gtmOnFailure').wasNotCalled();
-    });
-- name: Should NOT log to console, if the 'Log during debug and preview' option is
-    selected AND is NOT on preview mode
-  code: "setMockDataByAudienceMethod('ingest');\nmockData.logType = 'debug';\n\nconst\
-    \ expectedDebugMode = false;\nmock('getContainerVersion', () => {\n  return {\n\
-    \    debugMode: expectedDebugMode\n  };\n}); \n\nrunCode(mockData);\n\ncallLater(()\
-    \ => {\n  assertApi('logToConsole').wasNotCalled();\n  assertApi('gtmOnSuccess').wasCalled();\n\
-    \  assertApi('gtmOnFailure').wasNotCalled();\n});"
-- name: Should NOT log to console, if the 'Do not log' option is selected
-  code: |-
-    setMockDataByAudienceMethod('ingest');
-    mockData.logType = 'no';
-
-    runCode(mockData);
-
-    callLater(() => {
-      assertApi('logToConsole').wasNotCalled();
-      assertApi('gtmOnSuccess').wasCalled();
-      assertApi('gtmOnFailure').wasNotCalled();
-    });
-- name: Should log to BQ, if the 'Log to BigQuery' option is selected
-  code: "setMockDataByAudienceMethod('ingest');\nmockData.bigQueryLogType = 'always';\n\
-    \n// assertApi doesn't work for 'BigQuery.insert()'.\n// Ref: https://gtm-gear.com/posts/gtm-templates-testing/\n\
-    mock('BigQuery', () => {\n  return { \n    insert: (connectionInfo, rows, options)\
-    \ => { \n      assertThat(connectionInfo).isDefined();\n      assertThat(rows).isArray();\n\
-    \      assertThat(rows).hasLength(1);\n      requiredBqKeys.forEach(p => assertThat(rows[0][p]).isDefined());\n\
-    \      assertThat(options).isEqualTo(expectedBqOptions);\n      return Promise.create((resolve,\
-    \ reject) => {\n        resolve();\n      });\n    }\n  };\n});\n\nrunCode(mockData);\n\
-    \ncallLater(() => {\n  assertApi('gtmOnSuccess').wasCalled();\n  assertApi('gtmOnFailure').wasNotCalled();\n\
-    });"
-- name: Should NOT log to BQ, if the 'Do not log to BigQuery' option is selected
+- name: '[Logs] Should log to console'
+  code: "const originalMockData = setMockDataByAudienceMethod('ingest');\n\n[\n  //\
+    \ if the 'Always log to console' option is selected\n  { mockData: { logType:\
+    \ 'always' }, expectedDebugMode: true },\n  // if the 'Log during debug and preview'\
+    \ option is selected AND is on preview mode\n  { mockData: { logType: 'debug'\
+    \ }, expectedDebugMode: true },\n].forEach(scenario => {\n  const copyMockData\
+    \ = JSON.parse(JSON.stringify(originalMockData));\n  mergeObj(copyMockData, scenario.mockData);\n\
+    \  \n  mock('getContainerVersion', () => {\n    return {\n      debugMode: scenario.expectedDebugMode\n\
+    \    };\n  }); \n  \n  mock('logToConsole', (logData) => {\n    const parsedLogData\
+    \ = JSON.parse(logData);\n    requiredConsoleKeys.forEach(p => assertThat(parsedLogData[p]).isDefined());\n\
+    \  });\n  \n  runCode(copyMockData);\n  \n  callLater(() => {\n    assertApi('logToConsole').wasCalled();\n\
+    \    assertApi('gtmOnSuccess').wasCalled();\n    assertApi('gtmOnFailure').wasNotCalled();\n\
+    \  });\n});"
+- name: '[Logs] Should NOT log to console'
+  code: "const originalMockData = setMockDataByAudienceMethod('ingest');\n\n[\n  //\
+    \ if the 'Log during debug and preview' option is selected AND is NOT on preview\
+    \ mode\n  { mockData: { logType: 'debug' }, expectedDebugMode: false },\n  //\
+    \ if the 'Do not log' option is selected\n  { mockData: { logType: 'no' }, expectedDebugMode:\
+    \ undefined },\n].forEach(scenario => {\n  const copyMockData = JSON.parse(JSON.stringify(originalMockData));\n\
+    \  mergeObj(copyMockData, scenario.mockData);\n  \n  mock('getContainerVersion',\
+    \ () => {\n    return {\n      debugMode: scenario.expectedDebugMode\n    };\n\
+    \  });\n  \n  runCode(copyMockData);\n\n  callLater(() => {\n    assertApi('logToConsole').wasNotCalled();\n\
+    \    assertApi('gtmOnSuccess').wasCalled();\n    assertApi('gtmOnFailure').wasNotCalled();\n\
+    \  });\n});"
+- name: '[Logs] Should NOT log to BQ, if the ''Do not log to BigQuery'' option is
+    selected'
   code: "setMockDataByAudienceMethod('ingest');\nmockData.bigQueryLogType = 'no';\n\
     \n// assertApi doesn't work for 'BigQuery.insert()'.\n// Ref: https://gtm-gear.com/posts/gtm-templates-testing/\n\
-    mock('BigQuery', () => {\n  return { \n    insert: (connectionInfo, rows, options)\
-    \ => { \n      fail('BigQuery.insert should not have been called.');\n      return\
-    \ Promise.create((resolve, reject) => {\n        resolve();\n      });\n    }\n\
-    \  };\n});\n\nrunCode(mockData);\n\ncallLater(() => {\n  assertApi('gtmOnSuccess').wasCalled();\n\
-    \  assertApi('gtmOnFailure').wasNotCalled();\n});"
+    mockObject('BigQuery', {\n  insert: (connectionInfo, rows, options) => { \n  \
+    \  fail('BigQuery.insert should not have been called.');\n    return Promise.create((resolve,\
+    \ reject) => {\n      resolve();\n    });\n  }\n});\n\nrunCode(mockData);\n\n\
+    callLater(() => {\n  assertApi('gtmOnSuccess').wasCalled();\n  assertApi('gtmOnFailure').wasNotCalled();\n\
+    });"
+- name: '[Logs] Should log to BQ, if the ''Log to BigQuery'' option is selected'
+  code: "setMockDataByAudienceMethod('ingest');\nmockData.bigQueryLogType = 'always';\n\
+    \nmockObject('BigQuery', {\n  insert: (connectionInfo, rows, options) => { \n\
+    \    assertThat(connectionInfo).isDefined();\n    assertThat(rows).isArray();\n\
+    \    assertThat(rows).hasLength(1);\n    requiredBqKeys.forEach(p => assertThat(rows[0][p]).isDefined());\n\
+    \    assertThat(options).isEqualTo(expectedBqOptions);\n    return Promise.create((resolve,\
+    \ reject) => {\n      resolve();\n    });\n  }\n});\n\nrunCode(mockData);\n\n\
+    callLater(() => {\n  assertApi('gtmOnSuccess').wasCalled();\n  assertApi('gtmOnFailure').wasNotCalled();\n\
+    });"
 setup: "const Promise = require('Promise');\nconst JSON = require('JSON');\nconst\
   \ makeInteger = require('makeInteger');\nconst Object = require('Object');\nconst\
   \ callLater = require('callLater');\n\nconst mergeObj = (target, source) => {\n\
