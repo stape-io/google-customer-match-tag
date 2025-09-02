@@ -1,3 +1,5 @@
+/// <reference path="./server-gtm-sandboxed-apis.d.ts" />
+
 const BigQuery = require('BigQuery');
 const encodeUriComponent = require('encodeUriComponent');
 const getAllEventData = require('getAllEventData');
@@ -60,7 +62,7 @@ function addDestinationsData(data, mappedData) {
 
   accountsAndDestinationsFromUI.forEach((row) => {
     const destination = {
-      productDestinationId: 'stape_' + makeString(row.productDestinationId).trim(),
+      productDestinationId: 'stape_' + makeString(row.productDestinationId),
       operatingAccount: {
         product: row.product,
         accountId: makeString(row.operatingAccountId)
@@ -306,23 +308,70 @@ function addEncryptionData(data, mappedData) {
   return mappedData;
 }
 
+function normalizeEmailAddress(email) {
+  if (!email) return email;
+
+  const emailParts = email.split('@');
+  if (emailParts[1] === 'gmail.com' || emailParts[1] === 'googlemail.com') {
+    return emailParts[0].split('.').join('') + '@' + emailParts[1];
+  }
+  return emailParts.join('@');
+}
+
+function normalizePhoneNumber(phoneNumber) {
+  if (!phoneNumber) return phoneNumber;
+
+  phoneNumber = phoneNumber
+    .split(' ')
+    .join('')
+    .split('-')
+    .join('')
+    .split('(')
+    .join('')
+    .split(')')
+    .join('');
+  if (phoneNumber[0] !== '+') phoneNumber = '+' + phoneNumber;
+  return phoneNumber;
+}
+
 function hashDataIfNeeded(mappedData) {
   const audienceMembers = mappedData.audienceMembers;
 
-  if (audienceMembers) {
-    audienceMembers.forEach((audienceMember) => {
-      if (!audienceMember) return;
+  if (getType(audienceMembers) !== 'array') return;
 
-      if (
-        audienceMember.userData &&
-        audienceMember.userData.userIdentifiers &&
-        getType(audienceMember.userData.userIdentifiers) === 'array'
-      ) {
-        audienceMember.userData.userIdentifiers.forEach((userIdentifier) => {
-          const key = Object.keys(userIdentifier)[0];
+  audienceMembers.forEach((audienceMember) => {
+    if (getType(audienceMember) !== 'object') return;
 
-          if (key === 'emailAddress' || key === 'phoneNumber') {
-            let value = userIdentifier[key];
+    if (
+      getType(audienceMember.userData) === 'object' &&
+      getType(audienceMember.userData.userIdentifiers) === 'array'
+    ) {
+      audienceMember.userData.userIdentifiers.forEach((userIdentifier) => {
+        const key = Object.keys(userIdentifier)[0];
+
+        if (key === 'emailAddress' || key === 'phoneNumber') {
+          let value = userIdentifier[key];
+
+          if (isSHA256HexHashed(value)) {
+            mappedData.encoding = 'HEX';
+            return;
+          } else if (isSHA256Base64Hashed(value)) {
+            mappedData.encoding = 'BASE64';
+            return;
+          }
+
+          if (key === 'phoneNumber') value = normalizePhoneNumber(value);
+          else if (key === 'emailAddress') value = normalizeEmailAddress(value);
+
+          userIdentifier[key] = hashData(value);
+          mappedData.encoding = 'HEX';
+        } else if (key === 'address') {
+          const addressKeysToHash = ['givenName', 'familyName'];
+
+          addressKeysToHash.forEach((nameKey) => {
+            const value = userIdentifier.address[nameKey];
+            if (!value) return;
+
             if (isSHA256HexHashed(value)) {
               mappedData.encoding = 'HEX';
               return;
@@ -331,58 +380,28 @@ function hashDataIfNeeded(mappedData) {
               return;
             }
 
-            if (key === 'phoneNumber') {
-              value = value
-                .split(' ')
-                .join('')
-                .split('-')
-                .join('')
-                .split('(')
-                .join('')
-                .split(')')
-                .join('');
-              if (value[0] !== '+') value = '+' + value;
-            }
-
-            userIdentifier[key] = hashData(value);
+            userIdentifier.address[nameKey] = hashData(value);
             mappedData.encoding = 'HEX';
-          } else if (key === 'address') {
-            const addressKeysToHash = ['givenName', 'familyName'];
-            addressKeysToHash.forEach((nameKey) => {
-              const value = userIdentifier.address[nameKey];
-              if (!value) return;
-
-              if (isSHA256HexHashed(value)) {
-                mappedData.encoding = 'HEX';
-                return;
-              } else if (isSHA256Base64Hashed(value)) {
-                mappedData.encoding = 'BASE64';
-                return;
-              }
-              userIdentifier.address[nameKey] = hashData(value);
-              mappedData.encoding = 'HEX';
-            });
-          }
-        });
-      } else if (
-        audienceMember.pairData &&
-        audienceMember.pairData.pairIds &&
-        getType(audienceMember.pairData.pairIds) === 'array'
-      ) {
-        audienceMember.pairData.pairIds = audienceMember.pairData.pairIds.map((pairId) => {
-          if (isSHA256HexHashed(pairId)) {
-            mappedData.encoding = 'HEX';
-            return pairId;
-          } else if (isSHA256Base64Hashed(pairId)) {
-            mappedData.encoding = 'BASE64';
-            return pairId;
-          }
+          });
+        }
+      });
+    } else if (
+      getType(audienceMember.pairData) === 'object' &&
+      getType(audienceMember.pairData.pairIds) === 'array'
+    ) {
+      audienceMember.pairData.pairIds = audienceMember.pairData.pairIds.map((pairId) => {
+        if (isSHA256HexHashed(pairId)) {
           mappedData.encoding = 'HEX';
-          return hashData(pairId);
-        });
-      }
-    });
-  }
+          return pairId;
+        } else if (isSHA256Base64Hashed(pairId)) {
+          mappedData.encoding = 'BASE64';
+          return pairId;
+        }
+        mappedData.encoding = 'HEX';
+        return hashData(pairId);
+      });
+    }
+  });
 
   return mappedData;
 }
@@ -630,9 +649,7 @@ function logToBigQuery(dataToLog) {
     dataToLog[p] = JSON.stringify(dataToLog[p]);
   });
 
-  const bigquery =
-    getType(BigQuery) === 'function' ? BigQuery() /* Only during Unit Tests */ : BigQuery;
-  bigquery.insert(connectionInfo, [dataToLog], { ignoreUnknownValues: true });
+  BigQuery.insert(connectionInfo, [dataToLog], { ignoreUnknownValues: true });
 }
 
 function determinateIsLoggingEnabled() {
