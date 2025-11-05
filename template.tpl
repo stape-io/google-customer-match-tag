@@ -151,6 +151,80 @@ ___TEMPLATE_PARAMETERS___
         ],
         "newRowButtonText": "Add Customer List",
         "help": "\u003cb\u003eProduct\u003c/b\u003e: The Product the Customer List belongs to.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eOperating Customer ID\u003c/b\u003e: The \u003ci\u003eAccount ID\u003c/i\u003e (without hyphens) of the account (Google Ads account, DV360 account etc.) that will receive customer list data. \u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/Destination\"\u003eLearn more\u003c/a\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eCustomer ID\u003c/b\u003e: The \u003ci\u003eAccount ID\u003c/i\u003e (without hyphens) of the account for which the link between the Data Partner account (Stape) and the Advertiser account was established.\n\u003cbr/\u003e\ne.g. the link between the Data Partner account (Stape) and Advertiser account can be done at MCC level, but the data is going to be sent to a subaccount of the MCC.\n\u003cbr/\u003e\nIn this case: the \u003ci\u003eCustomer Account\u003c/i\u003e is the MCC, and \u003ci\u003eOperating Customer Account\u003c/i\u003e is the subaccount.\n\u003cbr/\u003e\nIf the link is done with the same account that will receive the data, then the \u003ci\u003eCustomer Account\u003c/i\u003e and \u003ci\u003eOperating Customer Account\u003c/i\u003e are the same.\n\u003cbr/\u003e\n\u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/Destination\"\u003eLearn more\u003c/a\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eCustomer List Name\u003c/b\u003e: The name of the customer list you want to interact with.\n\u003cbr/\u003e\nOnly customer lists created through the Stape connection are supported. You cannot interact with arbitrary customer lists.\n\u003cbr/\u003e\nWhen using Google products, the audience will appear with the name format: \u003ci\u003estape_\u0026lt;Customer List Name\u0026gt;\u003c/i\u003e. This customer list is created automatically by Stape during the integration process.\n\u003cbr/\u003e\nFor example, if you enter \"Purchasers\" in this field, the tag will interact with the customer list named \u003ci\u003estape_Purchasers\u003c/i\u003e in your Google product."
+      },
+      {
+        "type": "SIMPLE_TABLE",
+        "name": "ownAuthDestinationsList",
+        "displayName": "Destination Accounts and Customer Lists",
+        "simpleTableColumns": [
+          {
+            "defaultValue": "GOOGLE_ADS",
+            "displayName": "Product",
+            "name": "product",
+            "type": "SELECT",
+            "valueValidators": [
+              {
+                "type": "NON_EMPTY"
+              }
+            ],
+            "selectItems": [
+              {
+                "value": "GOOGLE_ADS",
+                "displayValue": "Google Ads"
+              }
+            ]
+          },
+          {
+            "defaultValue": "",
+            "displayName": "Operating Customer ID",
+            "name": "operatingAccountId",
+            "type": "TEXT",
+            "valueHint": "1234567890",
+            "valueValidators": [
+              {
+                "type": "NON_EMPTY"
+              },
+              {
+                "type": "POSITIVE_NUMBER"
+              }
+            ]
+          },
+          {
+            "defaultValue": "",
+            "displayName": "Customer ID",
+            "name": "loginAccountId",
+            "type": "TEXT",
+            "valueHint": "1234567890",
+            "valueValidators": []
+          },
+          {
+            "defaultValue": "",
+            "displayName": "Customer List ID",
+            "name": "productDestinationId",
+            "type": "TEXT",
+            "valueHint": "1234567890",
+            "isUnique": true,
+            "valueValidators": [
+              {
+                "type": "NON_EMPTY"
+              }
+            ]
+          }
+        ],
+        "enablingConditions": [
+          {
+            "paramName": "authFlow",
+            "paramValue": "own",
+            "type": "EQUALS"
+          }
+        ],
+        "valueValidators": [
+          {
+            "type": "NON_EMPTY"
+          }
+        ],
+        "newRowButtonText": "Add Customer List",
+        "help": "\u003cb\u003eProduct\u003c/b\u003e: The Product the Customer List belongs to.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eOperating Customer ID\u003c/b\u003e: The \u003ci\u003eAccount ID\u003c/i\u003e (without hyphens) of the account (Google Ads account, DV360 account etc.) that will receive customer list data. \u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/Destination\"\u003eLearn more\u003c/a\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eCustomer ID\u003c/b\u003e: The \u003ci\u003eAccount ID\u003c/i\u003e of the account (Google Ads account, DV360 account etc.) used for authorization (without hyphens) when making the API request.\n\u003cbr/\u003e\nIf your credentials are for access to a \u003ci\u003eManager Account\u003c/i\u003e that has the \u003ci\u003eOperating Account\u003c/i\u003e as one of its subaccounts, set the \u003ci\u003eCustomer ID\u003c/i\u003e to the ID of the \u003ci\u003eManager Account\u003c/i\u003e.\n\u003cbr/\u003e\nIf your credentials are for the account that is the \u003ci\u003eOperating Account\u003c/i\u003e, you don\u0027t need to set \u003ci\u003eCustomer ID\u003c/i\u003e.\n\u003cbr/\u003e\nLearn more: \u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/Destination\"\u003e[1]\u003c/a\u003e and \u003ca href\u003d\"https://developers.google.com/data-manager/api/get-started/quickstart/send-events?persona\u003dadvertiser#prepare_a_destination\"\u003e[2]\u003c/a\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eCustomer List ID\u003c/b\u003e: The ID of the customer list you want to interact with."
       }
     ],
     "groupStyle": "NO_ZIPPY"
@@ -562,6 +636,28 @@ ___TEMPLATE_PARAMETERS___
   },
   {
     "type": "GROUP",
+    "name": "ownConnectionSettings",
+    "displayName": "Own Connection Settings",
+    "groupStyle": "ZIPPY_CLOSED",
+    "subParams": [
+      {
+        "type": "TEXT",
+        "name": "xGoogUserProject",
+        "displayName": "X-Goog-User-Project header",
+        "simpleValueType": true,
+        "help": "A request header that specifies the GCP project to bill for access charges associated with the request.\n\u003ca href\u003d\"https://docs.cloud.google.com/storage/docs/json_api/v1/parameters#xgooguserproject\"\u003eLearn more.\u003c/a\u003e"
+      }
+    ],
+    "enablingConditions": [
+      {
+        "paramName": "authFlow",
+        "paramValue": "own",
+        "type": "EQUALS"
+      }
+    ]
+  },
+  {
+    "type": "GROUP",
     "name": "tagExecutionConsentSettingsGroup",
     "displayName": "Tag Execution Consent Settings",
     "groupStyle": "ZIPPY_CLOSED",
@@ -692,6 +788,7 @@ const BigQuery = require('BigQuery');
 const encodeUriComponent = require('encodeUriComponent');
 const getAllEventData = require('getAllEventData');
 const getContainerVersion = require('getContainerVersion');
+const getGoogleAuth = require('getGoogleAuth');
 const getRequestHeader = require('getRequestHeader');
 const getTimestampMillis = require('getTimestampMillis');
 const getType = require('getType');
@@ -705,7 +802,7 @@ const sha256Sync = require('sha256Sync');
 /*==============================================================================
 ==============================================================================*/
 
-const traceId = getRequestHeader('trace-id');
+const apiVersion = 'v1';
 const eventData = getAllEventData();
 const useOptimisticScenario = isUIFieldTrue(data.useOptimisticScenario);
 
@@ -725,7 +822,6 @@ if (invalidFields) {
   log({
     Name: 'GoogleCustomerMatch',
     Type: 'Message',
-    TraceId: traceId,
     EventName: data.audienceAction,
     Message: 'Request was not sent.',
     Reason: invalidFields
@@ -734,7 +830,7 @@ if (invalidFields) {
   return data.gtmOnFailure();
 }
 
-sendRequest(data, mappedData);
+sendRequest(data, mappedData, apiVersion);
 
 if (useOptimisticScenario) {
   return data.gtmOnSuccess();
@@ -746,21 +842,32 @@ if (useOptimisticScenario) {
 
 function addDestinationsData(data, mappedData) {
   const destinations = [];
-  const accountsAndDestinationsFromUI = data.stapeAuthDestinationsList;
+  const accountsAndDestinationsFromUI =
+    data.stapeAuthDestinationsList || data.ownAuthDestinationsList; // Mutually exclusive.;
+  const productDestinationIdPrefix = data.authFlow === 'stape' ? 'stape_' : '';
 
   accountsAndDestinationsFromUI.forEach((row) => {
+    const productDestinationId = productDestinationIdPrefix + makeString(row.productDestinationId);
     const destination = {
-      productDestinationId: 'stape_' + makeString(row.productDestinationId),
+      reference: productDestinationId,
+      productDestinationId: productDestinationId,
       operatingAccount: {
-        product: row.product,
+        accountType: row.product,
         accountId: makeString(row.operatingAccountId)
       }
     };
 
     if (data.authFlow === 'stape' && row.linkedAccountId) {
       destination.linkedAccount = {
-        product: row.product,
+        accountType: row.product,
         accountId: makeString(row.linkedAccountId)
+      };
+    }
+
+    if (data.authFlow === 'own' && row.loginAccountId) {
+      destination.loginAccount = {
+        accountType: row.product,
+        accountId: makeString(row.loginAccountId)
       };
     }
 
@@ -966,6 +1073,12 @@ function addAudienceMembersData(data, eventData, mappedData) {
         userData: audienceMember.userData
       };
       if (audienceMember.consent) audienceMemberUserDataOnly.consent = audienceMember.consent;
+      if (
+        getType(audienceMember.destinationReferences) === 'array' &&
+        audienceMember.destinationReferences.length
+      ) {
+        audienceMemberUserDataOnly.destinationReferences = audienceMember.destinationReferences;
+      }
       audienceMembers.push(audienceMemberUserDataOnly);
     });
   }
@@ -1094,12 +1207,16 @@ function hashDataIfNeeded(mappedData) {
   return mappedData;
 }
 
-function generateRequestUrl(data) {
+function generateRequestUrl(data, apiVersion) {
   const audienceActionNormalization = {
     ingest: 'ingest',
     remove: 'remove'
   };
   const action = audienceActionNormalization[data.audienceAction];
+
+  if (data.authFlow === 'own') {
+    return 'https://datamanager.googleapis.com/' + apiVersion + '/audienceMembers:' + action;
+  }
 
   const containerIdentifier = getRequestHeader('x-gtm-identifier');
   const defaultDomain = getRequestHeader('x-gtm-default-domain');
@@ -1116,13 +1233,23 @@ function generateRequestUrl(data) {
   );
 }
 
-function generateRequestOptions() {
+function generateRequestOptions(data, apiVersion) {
   const options = {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     }
   };
+
+  if (data.authFlow === 'own') {
+    const auth = getGoogleAuth({
+      scopes: ['https://www.googleapis.com/auth/datamanager']
+    });
+    options.authorization = auth;
+    if (data.xGoogUserProject) options.headers['x-goog-user-project'] = data.xGoogUserProject;
+  } else if (data.authFlow === 'stape') {
+    options.headers['x-datamanager-api-version'] = apiVersion;
+  }
 
   return options;
 }
@@ -1168,15 +1295,14 @@ function getDataForAudienceDataUpload(data, eventData) {
   return mappedData;
 }
 
-function sendRequest(data, mappedData) {
-  const requestUrl = generateRequestUrl(data);
-  const requestOptions = generateRequestOptions();
+function sendRequest(data, mappedData, apiVersion) {
+  const requestUrl = generateRequestUrl(data, apiVersion);
+  const requestOptions = generateRequestOptions(data, apiVersion);
   const requestBody = mappedData;
 
   log({
     Name: 'GoogleCustomerMatch',
     Type: 'Request',
-    TraceId: traceId,
     EventName: data.audienceAction,
     RequestMethod: 'POST',
     RequestUrl: requestUrl,
@@ -1189,7 +1315,6 @@ function sendRequest(data, mappedData) {
       log({
         Name: 'GoogleCustomerMatch',
         Type: 'Response',
-        TraceId: traceId,
         EventName: data.audienceAction,
         ResponseStatusCode: result.statusCode,
         ResponseHeaders: result.headers,
@@ -1208,7 +1333,6 @@ function sendRequest(data, mappedData) {
       log({
         Name: 'GoogleCustomerMatch',
         Type: 'Message',
-        TraceId: traceId,
         EventName: data.audienceAction,
         Message: 'Request failed or timed out.',
         Reason: JSON.stringify(result)
@@ -1285,6 +1409,8 @@ function log(rawDataToLog) {
   const logDestinationsHandlers = {};
   if (determinateIsLoggingEnabled()) logDestinationsHandlers.console = logConsole;
   if (determinateIsLoggingEnabledForBigQuery()) logDestinationsHandlers.bigQuery = logToBigQuery;
+
+  rawDataToLog.TraceId = getRequestHeader('trace-id');
 
   const keyMappings = {
     // No transformation for Console is needed.
@@ -1649,6 +1775,32 @@ ___SERVER_PERMISSIONS___
       "isEditedByUser": true
     },
     "isRequired": true
+  },
+  {
+    "instance": {
+      "key": {
+        "publicId": "use_google_credentials",
+        "versionId": "1"
+      },
+      "param": [
+        {
+          "key": "allowedScopes",
+          "value": {
+            "type": 2,
+            "listItem": [
+              {
+                "type": 1,
+                "string": "https://www.googleapis.com/auth/datamanager"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "clientAnnotations": {
+      "isEditedByUser": true
+    },
+    "isRequired": true
   }
 ]
 
@@ -1715,38 +1867,74 @@ scenarios:
     assertApi('gtmOnFailure').wasCalled();
     */
 - name: '[Ingest] Request URL is succesfully built based on Audience Method'
-  code: "setMockDataByAudienceMethod('ingest');\n\nmock('sendHttpRequest', (requestUrl,\
-    \ callback, requestOptions, requestBody) => {\n  assertThat(requestUrl).isEqualTo('https://expectedXGtmIdentifier.expectedXGtmDefaultDomain/stape-api/expectedXGtmApiKey/v2/data-manager/ingest');\n\
-    \  if (typeof callback === 'function') {\n    callback(200);\n  } else {\n   \
-    \ requestBody = requestOptions;\n    requestOptions = callback;\n    return Promise.create((resolve,\
-    \ reject) => {\n      resolve({ statusCode: 200 });\n    });  \n  }\n});\n\nrunCode(mockData);\n\
-    \ncallLater(() => {\n  assertApi('gtmOnSuccess').wasCalled();\n  assertApi('gtmOnFailure').wasNotCalled();\n\
-    });"
-- name: '[Remove] Request URL is succesfully built based on Audience Method'
-  code: "setMockDataByAudienceMethod('remove');\n\nmock('sendHttpRequest', (requestUrl,\
-    \ callback, requestOptions, requestBody) => {\n  assertThat(requestUrl).isEqualTo('https://expectedXGtmIdentifier.expectedXGtmDefaultDomain/stape-api/expectedXGtmApiKey/v2/data-manager/remove');\n\
-    \n  return Promise.create((resolve, reject) => {\n    resolve({ statusCode: 200\
-    \ });\n  });  \n});\n\nrunCode(mockData);\n\ncallLater(() => {\n  assertApi('gtmOnSuccess').wasCalled();\n\
+  code: "[\n  { auth: 'own' },\n  { auth: 'stape' }\n].forEach(scenario => {  \n \
+    \ if (scenario.auth === 'stape') {\n    setMockDataByAudienceMethod('ingest',\
+    \ undefined, 'stape');\n    mock('sendHttpRequest', (requestUrl, callback, requestOptions,\
+    \ requestBody) => {\n      assertThat(requestUrl).isEqualTo('https://expectedXGtmIdentifier.expectedXGtmDefaultDomain/stape-api/expectedXGtmApiKey/v2/data-manager/ingest');\n\
+    \      if (typeof callback === 'function') {\n        callback(200);\n      }\
+    \ else {\n        requestBody = requestOptions;\n        requestOptions = callback;\n\
+    \        return Promise.create((resolve, reject) => {\n          resolve({ statusCode:\
+    \ 200 });\n        });  \n      }\n    });\n  } else if (scenario.auth === 'own')\
+    \ {\n    setMockDataByAudienceMethod('ingest', undefined, 'own');\n    mock('sendHttpRequest',\
+    \ (requestUrl, callback, requestOptions, requestBody) => {\n      assertThat(requestUrl).isEqualTo('https://datamanager.googleapis.com/'\
+    \ + expectedDataManagerApiVersion + '/audienceMembers:ingest');\n      if (typeof\
+    \ callback === 'function') {\n        callback(200);\n      } else {\n       \
+    \ requestBody = requestOptions;\n        requestOptions = callback;\n        return\
+    \ Promise.create((resolve, reject) => {\n          resolve({ statusCode: 200 });\n\
+    \        });  \n      }\n    });\n  }\n  \n  runCode(mockData);\n  \n  mockData\
+    \ = {};\n});\n\ncallLater(() => {\n  assertApi('gtmOnSuccess').wasCalled();\n\
     \  assertApi('gtmOnFailure').wasNotCalled();\n});"
-- name: Request Options are succesfully built and sent in the request
-  code: "setMockDataByAudienceMethod('ingest');\n\nmock('sendHttpRequest', (requestUrl,\
-    \ requestOptions, requestBody) => {\n  assertThat(requestOptions).isEqualTo({\n\
-    \    method: 'POST',\n    headers: {\n      'Content-Type': 'application/json'\n\
-    \    }\n  });\n\n  return Promise.create((resolve, reject) => {\n    resolve({\
-    \ statusCode: 200 });\n  });  \n});\n\nrunCode(mockData);\n\ncallLater(() => {\n\
-    \  assertApi('gtmOnSuccess').wasCalled();\n  assertApi('gtmOnFailure').wasNotCalled();\n\
-    });"
+- name: '[Remove] Request URL is succesfully built based on Audience Method'
+  code: "[\n  { auth: 'own' },\n  { auth: 'stape' }\n].forEach(scenario => {  \n \
+    \ if (scenario.auth === 'stape') {\n    setMockDataByAudienceMethod('remove',\
+    \ undefined, 'stape');\n    mock('sendHttpRequest', (requestUrl, callback, requestOptions,\
+    \ requestBody) => {\n      assertThat(requestUrl).isEqualTo('https://expectedXGtmIdentifier.expectedXGtmDefaultDomain/stape-api/expectedXGtmApiKey/v2/data-manager/remove');\n\
+    \      if (typeof callback === 'function') {\n        callback(200);\n      }\
+    \ else {\n        requestBody = requestOptions;\n        requestOptions = callback;\n\
+    \        return Promise.create((resolve, reject) => {\n          resolve({ statusCode:\
+    \ 200 });\n        });  \n      }\n    });\n  } else if (scenario.auth === 'own')\
+    \ {\n    setMockDataByAudienceMethod('remove', undefined, 'own');\n    mock('sendHttpRequest',\
+    \ (requestUrl, callback, requestOptions, requestBody) => {\n      assertThat(requestUrl).isEqualTo('https://datamanager.googleapis.com/'\
+    \ + expectedDataManagerApiVersion + '/audienceMembers:remove');\n      if (typeof\
+    \ callback === 'function') {\n        callback(200);\n      } else {\n       \
+    \ requestBody = requestOptions;\n        requestOptions = callback;\n        return\
+    \ Promise.create((resolve, reject) => {\n          resolve({ statusCode: 200 });\n\
+    \        });  \n      }\n    });\n  }\n  \n  runCode(mockData);\n  \n  mockData\
+    \ = {};\n});\n\ncallLater(() => {\n  assertApi('gtmOnSuccess').wasCalled();\n\
+    \  assertApi('gtmOnFailure').wasNotCalled();\n});"
+- name: '[Stape] Request Options are succesfully built and sent in the request'
+  code: "[\n  { auth: 'own' },\n  { auth: 'stape' }\n].forEach(scenario => {\n  if\
+    \ (scenario.auth === 'stape') {\n    setMockDataByAudienceMethod('ingest', undefined,\
+    \ 'stape');\n    mock('sendHttpRequest', (requestUrl, requestOptions, requestBody)\
+    \ => {\n      assertThat(requestOptions).isEqualTo({\n        method: 'POST',\n\
+    \        headers: {\n          'Content-Type': 'application/json',\n         \
+    \ 'x-datamanager-api-version': expectedDataManagerApiVersion\n        }\n    \
+    \  });\n    \n      return Promise.create((resolve, reject) => {\n        resolve({\
+    \ statusCode: 200 });\n      });  \n    });\n  } else if (scenario.auth === 'own')\
+    \ {\n    setMockDataByAudienceMethod('ingest', undefined, 'own');\n    mock('sendHttpRequest',\
+    \ (requestUrl, requestOptions, requestBody) => {\n      assertThat(requestOptions).isEqualTo({\n\
+    \        method: 'POST',\n        headers: {\n          'Content-Type': 'application/json',\n\
+    \          'x-goog-user-project': 'xGoogUserProject'\n        },\n        authorization:\
+    \ 'googleAuthToken'\n      });\n      \n      return Promise.create((resolve,\
+    \ reject) => {\n        resolve({ statusCode: 200 });\n      });  \n    });\n\
+    \  }\n  \n  runCode(mockData);\n  \n  mockData = {};\n  \n  if (scenario.auth\
+    \ === 'own') {\n    callLater(() => {\n      assertApi('getGoogleAuth').wasCalledWith({\n\
+    \        scopes: ['https://www.googleapis.com/auth/datamanager']\n      });\n\
+    \    });  \n  }\n});\n\ncallLater(() => {\n  assertApi('gtmOnSuccess').wasCalled();\n\
+    \  assertApi('gtmOnFailure').wasNotCalled();\n});"
 - name: '[Ingest - Single User] Request is successfully built and sent - data from
     UI fields'
   code: "setMockDataByAudienceMethod('ingest', {\n  userMode: 'single'\n});\n\nmock('sendHttpRequest',\
     \ (requestUrl, requestOptions, requestBody) => {\n  const parsedRequestBody =\
     \ JSON.parse(requestBody);\n  assertThat(parsedRequestBody).isEqualTo({\n    destinations:\
-    \ [\n      {\n        productDestinationId: 'stape_123',\n        operatingAccount:\
-    \ { product: 'GOOGLE_ADS', accountId: '123' },\n        linkedAccount: { product:\
-    \ 'GOOGLE_ADS', accountId: '123' }\n      },\n      {\n        productDestinationId:\
-    \ 'stape_444',\n        operatingAccount: { product: 'GOOGLE_ADS', accountId:\
-    \ '444' },\n        linkedAccount: { product: 'GOOGLE_ADS', accountId: '444' }\n\
-    \      }\n    ],\n    validateOnly: false,\n    termsOfService: { customerMatchTermsOfServiceStatus:\
+    \ [\n      {\n        reference: 'stape_productDestinationId',\n        productDestinationId:\
+    \ 'stape_productDestinationId',\n        operatingAccount: { accountType: 'GOOGLE_ADS',\
+    \ accountId: 'operatingAccountId' },\n        linkedAccount: { accountType: 'GOOGLE_ADS',\
+    \ accountId: 'linkedAccountId' }\n      },\n      {\n        reference: 'stape_productDestinationId1',\n\
+    \        productDestinationId: 'stape_productDestinationId1',\n        operatingAccount:\
+    \ { accountType: 'GOOGLE_ADS', accountId: 'operatingAccountId1' },\n        linkedAccount:\
+    \ { accountType: 'GOOGLE_ADS', accountId: 'linkedAccountId1' }\n      }\n    ],\n\
+    \    validateOnly: false,\n    termsOfService: { customerMatchTermsOfServiceStatus:\
     \ 'ACCEPTED' },\n    consent: {\n      adUserData: 'CONSENT_GRANTED',\n      adPersonalization:\
     \ 'CONSENT_GRANTED'\n    },\n    audienceMembers: [\n      {\n        userData:\
     \ {\n          userIdentifiers: [\n            {\n              emailAddress:\n\
@@ -1776,12 +1964,14 @@ scenarios:
     ].forEach((key) => Object.delete(mockData, key));\n\nmock('sendHttpRequest', (requestUrl,\
     \ requestOptions, requestBody) => {\n  const parsedRequestBody = JSON.parse(requestBody);\n\
     \  assertThat(parsedRequestBody).isEqualTo({\n    destinations: [\n      {\n \
-    \       productDestinationId: 'stape_123',\n        operatingAccount: { product:\
-    \ 'GOOGLE_ADS', accountId: '123' },\n        linkedAccount: { product: 'GOOGLE_ADS',\
-    \ accountId: '123' }\n      },\n      {\n        productDestinationId: 'stape_444',\n\
-    \        operatingAccount: { product: 'GOOGLE_ADS', accountId: '444' },\n    \
-    \    linkedAccount: { product: 'GOOGLE_ADS', accountId: '444' }\n      }\n   \
-    \ ],\n    validateOnly: false,\n    termsOfService: { customerMatchTermsOfServiceStatus:\
+    \       reference: 'stape_productDestinationId',\n        productDestinationId:\
+    \ 'stape_productDestinationId',\n        operatingAccount: { accountType: 'GOOGLE_ADS',\
+    \ accountId: 'operatingAccountId' },\n        linkedAccount: { accountType: 'GOOGLE_ADS',\
+    \ accountId: 'linkedAccountId' }\n      },\n      {\n        reference: 'stape_productDestinationId1',\n\
+    \        productDestinationId: 'stape_productDestinationId1',\n        operatingAccount:\
+    \ { accountType: 'GOOGLE_ADS', accountId: 'operatingAccountId1' },\n        linkedAccount:\
+    \ { accountType: 'GOOGLE_ADS', accountId: 'linkedAccountId1' }\n      }\n    ],\n\
+    \    validateOnly: false,\n    termsOfService: { customerMatchTermsOfServiceStatus:\
     \ 'ACCEPTED' },\n    consent: {\n      adUserData: 'CONSENT_GRANTED',\n      adPersonalization:\
     \ 'CONSENT_GRANTED'\n    },\n    audienceMembers: [\n      {\n        userData:\
     \ {\n          userIdentifiers: [\n            {\n              emailAddress:\n\
@@ -1806,12 +1996,14 @@ scenarios:
     \ enableAudienceDataEncryption: false\n});\n\nmock('sendHttpRequest', (requestUrl,\
     \ requestOptions, requestBody) => {\n  const parsedRequestBody = JSON.parse(requestBody);\n\
     \  assertThat(parsedRequestBody).isEqualTo({\n    destinations: [\n      {\n \
-    \       productDestinationId: 'stape_123',\n        operatingAccount: { product:\
-    \ 'GOOGLE_ADS', accountId: '123' },\n        linkedAccount: { product: 'GOOGLE_ADS',\
-    \ accountId: '123' }\n      },\n      {\n        productDestinationId: 'stape_444',\n\
-    \        operatingAccount: { product: 'GOOGLE_ADS', accountId: '444' },\n    \
-    \    linkedAccount: { product: 'GOOGLE_ADS', accountId: '444' }\n      }\n   \
-    \ ],\n    validateOnly: false,\n    termsOfService: { customerMatchTermsOfServiceStatus:\
+    \       reference: 'stape_productDestinationId',\n        productDestinationId:\
+    \ 'stape_productDestinationId',\n        operatingAccount: { accountType: 'GOOGLE_ADS',\
+    \ accountId: 'operatingAccountId' },\n        linkedAccount: { accountType: 'GOOGLE_ADS',\
+    \ accountId: 'linkedAccountId' }\n      },\n      {\n        reference: 'stape_productDestinationId1',\n\
+    \        productDestinationId: 'stape_productDestinationId1',\n        operatingAccount:\
+    \ { accountType: 'GOOGLE_ADS', accountId: 'operatingAccountId1' },\n        linkedAccount:\
+    \ { accountType: 'GOOGLE_ADS', accountId: 'linkedAccountId1' }\n      }\n    ],\n\
+    \    validateOnly: false,\n    termsOfService: { customerMatchTermsOfServiceStatus:\
     \ 'ACCEPTED' },\n    consent: {\n      adUserData: 'CONSENT_GRANTED',\n      adPersonalization:\
     \ 'CONSENT_GRANTED'\n    },\n    audienceMembers: [\n      { mobileData: { mobileIds:\
     \ ['AAA-BB-CC-111'] } },\n      {\n        pairData: {\n          pairIds: [\n\
@@ -1844,12 +2036,14 @@ scenarios:
     \ }\n    },\n    {\n      pairData: { pairIds: ['abc', 'cde'] }\n    }\n  ]\n\
     });\n\nmock('sendHttpRequest', (requestUrl, requestOptions, requestBody) => {\n\
     \  const parsedRequestBody = JSON.parse(requestBody);\n  assertThat(parsedRequestBody).isEqualTo({\n\
-    \    destinations: [\n      {\n        productDestinationId: 'stape_123',\n  \
-    \      operatingAccount: { product: 'GOOGLE_ADS', accountId: '123' },\n      \
-    \  linkedAccount: { product: 'GOOGLE_ADS', accountId: '123' }\n      },\n    \
-    \  {\n        productDestinationId: 'stape_444',\n        operatingAccount: {\
-    \ product: 'GOOGLE_ADS', accountId: '444' },\n        linkedAccount: { product:\
-    \ 'GOOGLE_ADS', accountId: '444' }\n      }\n    ],\n    validateOnly: false,\n\
+    \    destinations: [\n      {\n        reference: 'stape_productDestinationId',\n\
+    \        productDestinationId: 'stape_productDestinationId',\n        operatingAccount:\
+    \ { accountType: 'GOOGLE_ADS', accountId: 'operatingAccountId' },\n        linkedAccount:\
+    \ { accountType: 'GOOGLE_ADS', accountId: 'linkedAccountId' }\n      },\n    \
+    \  {\n        reference: 'stape_productDestinationId1',\n        productDestinationId:\
+    \ 'stape_productDestinationId1',\n        operatingAccount: { accountType: 'GOOGLE_ADS',\
+    \ accountId: 'operatingAccountId1' },\n        linkedAccount: { accountType: 'GOOGLE_ADS',\
+    \ accountId: 'linkedAccountId1' }\n      }\n    ],\n    validateOnly: false,\n\
     \    termsOfService: { customerMatchTermsOfServiceStatus: 'ACCEPTED' },\n    consent:\
     \ {\n      adUserData: 'CONSENT_GRANTED',\n      adPersonalization: 'CONSENT_GRANTED'\n\
     \    },\n    audienceMembers: [\n      {\n        userData: {\n          userIdentifiers:\
@@ -1880,14 +2074,16 @@ scenarios:
   code: "setMockDataByAudienceMethod('remove', {\n  userMode: 'single'\n});\n\nmock('sendHttpRequest',\
     \ (requestUrl, requestOptions, requestBody) => {\n  const parsedRequestBody =\
     \ JSON.parse(requestBody);\n  assertThat(parsedRequestBody).isEqualTo({\n    destinations:\
-    \ [\n      {\n        productDestinationId: 'stape_123',\n        operatingAccount:\
-    \ { product: 'GOOGLE_ADS', accountId: '123' },\n        linkedAccount: { product:\
-    \ 'GOOGLE_ADS', accountId: '123' }\n      },\n      {\n        productDestinationId:\
-    \ 'stape_444',\n        operatingAccount: { product: 'GOOGLE_ADS', accountId:\
-    \ '444' },\n        linkedAccount: { product: 'GOOGLE_ADS', accountId: '444' }\n\
-    \      }\n    ],\n    validateOnly: false,\n    audienceMembers: [\n      {\n\
-    \        userData: {\n          userIdentifiers: [\n            {\n          \
-    \    emailAddress:\n                '973dfe463ec85785f5f95af5ba3906eedb2d931c24e69824a89ea65dba4e813b'\n\
+    \ [\n      {\n        reference: 'stape_productDestinationId',\n        productDestinationId:\
+    \ 'stape_productDestinationId',\n        operatingAccount: { accountType: 'GOOGLE_ADS',\
+    \ accountId: 'operatingAccountId' },\n        linkedAccount: { accountType: 'GOOGLE_ADS',\
+    \ accountId: 'linkedAccountId' }\n      },\n      {\n        reference: 'stape_productDestinationId1',\n\
+    \        productDestinationId: 'stape_productDestinationId1',\n        operatingAccount:\
+    \ { accountType: 'GOOGLE_ADS', accountId: 'operatingAccountId1' },\n        linkedAccount:\
+    \ { accountType: 'GOOGLE_ADS', accountId: 'linkedAccountId1' }\n      }\n    ],\n\
+    \    validateOnly: false,\n    audienceMembers: [\n      {\n        userData:\
+    \ {\n          userIdentifiers: [\n            {\n              emailAddress:\n\
+    \                '973dfe463ec85785f5f95af5ba3906eedb2d931c24e69824a89ea65dba4e813b'\n\
     \            },\n            {\n              phoneNumber:\n                '910a625c4ba147b544e6bd2f267e130ae14c591b6ba9c25cb8573322dedbebd0'\n\
     \            },\n            {\n              address: {\n                givenName:\n\
     \                  '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
@@ -1913,12 +2109,14 @@ scenarios:
     ].forEach((key) => Object.delete(mockData, key));\n\nmock('sendHttpRequest', (requestUrl,\
     \ requestOptions, requestBody) => {\n  const parsedRequestBody = JSON.parse(requestBody);\n\
     \  assertThat(parsedRequestBody).isEqualTo({\n    destinations: [\n      {\n \
-    \       productDestinationId: 'stape_123',\n        operatingAccount: { product:\
-    \ 'GOOGLE_ADS', accountId: '123' },\n        linkedAccount: { product: 'GOOGLE_ADS',\
-    \ accountId: '123' }\n      },\n      {\n        productDestinationId: 'stape_444',\n\
-    \        operatingAccount: { product: 'GOOGLE_ADS', accountId: '444' },\n    \
-    \    linkedAccount: { product: 'GOOGLE_ADS', accountId: '444' }\n      }\n   \
-    \ ],\n    validateOnly: false,\n    audienceMembers: [\n      {\n        userData:\
+    \       reference: 'stape_productDestinationId',\n        productDestinationId:\
+    \ 'stape_productDestinationId',\n        operatingAccount: { accountType: 'GOOGLE_ADS',\
+    \ accountId: 'operatingAccountId' },\n        linkedAccount: { accountType: 'GOOGLE_ADS',\
+    \ accountId: 'linkedAccountId' }\n      },\n      {\n        reference: 'stape_productDestinationId1',\n\
+    \        productDestinationId: 'stape_productDestinationId1',\n        operatingAccount:\
+    \ { accountType: 'GOOGLE_ADS', accountId: 'operatingAccountId1' },\n        linkedAccount:\
+    \ { accountType: 'GOOGLE_ADS', accountId: 'linkedAccountId1' }\n      }\n    ],\n\
+    \    validateOnly: false,\n    audienceMembers: [\n      {\n        userData:\
     \ {\n          userIdentifiers: [\n            {\n              emailAddress:\n\
     \                'ddffdce54594d729a13068951750239a1943c295a5f89349b5cf69744d4a1ba2'\n\
     \            },\n            {\n              emailAddress:\n                'afea90f78a2e604dc6cc5d7826ffdd2bfbab612a0c1222acf8df173319b7e809'\n\
@@ -1941,14 +2139,16 @@ scenarios:
     \ enableAudienceDataEncryption: false\n});\n\nmock('sendHttpRequest', (requestUrl,\
     \ requestOptions, requestBody) => {\n  const parsedRequestBody = JSON.parse(requestBody);\n\
     \  assertThat(parsedRequestBody).isEqualTo({\n    destinations: [\n      {\n \
-    \       productDestinationId: 'stape_123',\n        operatingAccount: { product:\
-    \ 'GOOGLE_ADS', accountId: '123' },\n        linkedAccount: { product: 'GOOGLE_ADS',\
-    \ accountId: '123' }\n      },\n      {\n        productDestinationId: 'stape_444',\n\
-    \        operatingAccount: { product: 'GOOGLE_ADS', accountId: '444' },\n    \
-    \    linkedAccount: { product: 'GOOGLE_ADS', accountId: '444' }\n      }\n   \
-    \ ],\n    validateOnly: false,\n    audienceMembers: [\n      { mobileData: {\
-    \ mobileIds: ['AAA-BB-CC-111'] } },\n      {\n        pairData: {\n          pairIds:\
-    \ [\n            '426a1c28c61b7ba258fa3cc300ba7cd3abc11c0d4b585d3ce4a15d6f22d6d363'\n\
+    \       reference: 'stape_productDestinationId',\n        productDestinationId:\
+    \ 'stape_productDestinationId',\n        operatingAccount: { accountType: 'GOOGLE_ADS',\
+    \ accountId: 'operatingAccountId' },\n        linkedAccount: { accountType: 'GOOGLE_ADS',\
+    \ accountId: 'linkedAccountId' }\n      },\n      {\n        reference: 'stape_productDestinationId1',\n\
+    \        productDestinationId: 'stape_productDestinationId1',\n        operatingAccount:\
+    \ { accountType: 'GOOGLE_ADS', accountId: 'operatingAccountId1' },\n        linkedAccount:\
+    \ { accountType: 'GOOGLE_ADS', accountId: 'linkedAccountId1' }\n      }\n    ],\n\
+    \    validateOnly: false,\n    audienceMembers: [\n      { mobileData: { mobileIds:\
+    \ ['AAA-BB-CC-111'] } },\n      {\n        pairData: {\n          pairIds: [\n\
+    \            '426a1c28c61b7ba258fa3cc300ba7cd3abc11c0d4b585d3ce4a15d6f22d6d363'\n\
     \          ]\n        }\n      }\n    ],\n    encoding: 'HEX'\n  });\n\n  return\
     \ Promise.create((resolve, reject) => {\n    resolve({ statusCode: 200 });\n \
     \ });  \n});\n\nrunCode(mockData);\n\ncallLater(() => {\n  assertApi('gtmOnSuccess').wasCalled();\n\
@@ -1977,12 +2177,14 @@ scenarios:
     \ }\n    },\n    {\n      pairData: { pairIds: ['abc', 'cde'] }\n    }\n  ]\n\
     });\n\nmock('sendHttpRequest', (requestUrl, requestOptions, requestBody) => {\n\
     \  const parsedRequestBody = JSON.parse(requestBody);\n  assertThat(parsedRequestBody).isEqualTo({\n\
-    \    destinations: [\n      {\n        productDestinationId: 'stape_123',\n  \
-    \      operatingAccount: { product: 'GOOGLE_ADS', accountId: '123' },\n      \
-    \  linkedAccount: { product: 'GOOGLE_ADS', accountId: '123' }\n      },\n    \
-    \  {\n        productDestinationId: 'stape_444',\n        operatingAccount: {\
-    \ product: 'GOOGLE_ADS', accountId: '444' },\n        linkedAccount: { product:\
-    \ 'GOOGLE_ADS', accountId: '444' }\n      }\n    ],\n    validateOnly: false,\n\
+    \    destinations: [\n      {\n        reference: 'stape_productDestinationId',\n\
+    \        productDestinationId: 'stape_productDestinationId',\n        operatingAccount:\
+    \ { accountType: 'GOOGLE_ADS', accountId: 'operatingAccountId' },\n        linkedAccount:\
+    \ { accountType: 'GOOGLE_ADS', accountId: 'linkedAccountId' }\n      },\n    \
+    \  {\n        reference: 'stape_productDestinationId1',\n        productDestinationId:\
+    \ 'stape_productDestinationId1',\n        operatingAccount: { accountType: 'GOOGLE_ADS',\
+    \ accountId: 'operatingAccountId1' },\n        linkedAccount: { accountType: 'GOOGLE_ADS',\
+    \ accountId: 'linkedAccountId1' }\n      }\n    ],\n    validateOnly: false,\n\
     \    audienceMembers: [\n      {\n        userData: {\n          userIdentifiers:\
     \ [\n            {\n              emailAddress:\n                '973dfe463ec85785f5f95af5ba3906eedb2d931c24e69824a89ea65dba4e813b'\n\
     \            },\n            {\n              phoneNumber:\n                '910a625c4ba147b544e6bd2f267e130ae14c591b6ba9c25cb8573322dedbebd0'\n\
@@ -2091,37 +2293,18 @@ setup: "const Promise = require('Promise');\nconst JSON = require('JSON');\ncons
   \ makeInteger = require('makeInteger');\nconst Object = require('Object');\nconst\
   \ callLater = require('callLater');\n\nconst mergeObj = (target, source) => {\n\
   \  for (const key in source) {\n    if (source.hasOwnProperty(key)) target[key]\
-  \ = source[key];\n  }\n  return target;\n};\n\nconst expectedBigQuerySettings =\
-  \ {\n  logBigQueryProjectId: 'logBigQueryProjectId',\n  logBigQueryDatasetId: 'logBigQueryDatasetId',\n\
-  \  logBigQueryTableId: 'logBigQueryTableId'\n};\n\nconst requiredConsoleKeys = ['Type',\
-  \ 'TraceId', 'Name'];\nconst requiredBqKeys = ['timestamp', 'type', 'trace_id',\
-  \ 'tag_name'];\nconst expectedBqOptions = { ignoreUnknownValues: true };\n\nconst\
-  \ mockData = {\n  logBigQueryProjectId: expectedBigQuerySettings.logBigQueryProjectId,\n\
+  \ = source[key];\n  }\n  return target;\n};\n\nconst expectedDataManagerApiVersion\
+  \ = 'v1';\n\nconst expectedBigQuerySettings = {\n  logBigQueryProjectId: 'logBigQueryProjectId',\n\
+  \  logBigQueryDatasetId: 'logBigQueryDatasetId',\n  logBigQueryTableId: 'logBigQueryTableId'\n\
+  };\n\nconst requiredConsoleKeys = ['Type', 'TraceId', 'Name'];\nconst requiredBqKeys\
+  \ = ['timestamp', 'type', 'trace_id', 'tag_name'];\nconst expectedBqOptions = {\
+  \ ignoreUnknownValues: true };\n\nlet mockData = {\n  logBigQueryProjectId: expectedBigQuerySettings.logBigQueryProjectId,\n\
   \  logBigQueryDatasetId: expectedBigQuerySettings.logBigQueryDatasetId,\n  logBigQueryTableId:\
   \ expectedBigQuerySettings.logBigQueryTableId\n};\n\nconst setMockDataByAudienceMethod\
-  \ = (method, objToBeMerged) => {\n  const methods = {\n    ingest: {\n      audienceAction:\
-  \ 'ingest',\n      authFlow: 'stape',\n      stapeAuthDestinationsList: [\n    \
-  \  {\n          product: 'GOOGLE_ADS',\n          operatingAccountId: '123',\n \
-  \         linkedAccountId: '123',\n          productDestinationId: '123'\n     \
-  \   },\n        {\n          product: 'GOOGLE_ADS',\n          operatingAccountId:\
-  \ '444',\n          linkedAccountId: '444',\n          productDestinationId: '444'\n\
-  \        }\n      ],\n      termsOfServiceStatus: 'ACCEPTED',\n      validateOnly:\
-  \ false,\n      useOptimisticScenario: false,\n      adUserData: 'CONSENT_GRANTED',\n\
-  \      adPersonalization: 'CONSENT_GRANTED',\n      audienceDataEncoding: 'HEX',\n\
-  \      enableAudienceDataEncryption: true,\n      gcpWrappedKeyType: 'XCHACHA20_POLY1305',\n\
-  \      gcpWrappedKeyEncryptedDek: '123',\n      gcpWrappedKeyKekUri: '123',\n  \
-  \    gcpWrappedKeyWipProvider: '123',\n      userMode: 'single',\n      userDataEmailAddresses:\
-  \ 'test@example.com',\n      userDataPhoneNumbers: '+15555555555',\n      addUserDataAddress:\
-  \ true,\n      addressGivenName: 'test',\n      addressFamilyName: 'test',\n   \
-  \   addressRegion: 'BR',\n      addressPostalCode: '10001',\n      mobileIds: 'AAA-BB-CC-111',\n\
-  \      pairIds: 'foobar123',\n      adStorageConsent: 'optional',\n      logType:\
-  \ 'debug',\n      bigQueryLogType: 'no'\n    },\n    remove: {\n      audienceAction:\
-  \ 'remove',\n      authFlow: 'stape',\n      stapeAuthDestinationsList: [\n    \
-  \  {\n          product: 'GOOGLE_ADS',\n          operatingAccountId: '123',\n \
-  \         linkedAccountId: '123',\n          productDestinationId: '123'\n     \
-  \   },\n        {\n          product: 'GOOGLE_ADS',\n          operatingAccountId:\
-  \ '444',\n          linkedAccountId: '444',\n          productDestinationId: '444'\n\
-  \        }\n      ],\n      validateOnly: false,\n      useOptimisticScenario: false,\n\
+  \ = (method, objToBeMerged, auth) => {\n  if (!auth) auth = 'stape';\n  \n  const\
+  \ baseByMethods = {\n    ingest: {\n      audienceAction: 'ingest',\n      termsOfServiceStatus:\
+  \ 'ACCEPTED',\n      validateOnly: false,\n      useOptimisticScenario: false,\n\
+  \      adUserData: 'CONSENT_GRANTED',\n      adPersonalization: 'CONSENT_GRANTED',\n\
   \      audienceDataEncoding: 'HEX',\n      enableAudienceDataEncryption: true,\n\
   \      gcpWrappedKeyType: 'XCHACHA20_POLY1305',\n      gcpWrappedKeyEncryptedDek:\
   \ '123',\n      gcpWrappedKeyKekUri: '123',\n      gcpWrappedKeyWipProvider: '123',\n\
@@ -2130,13 +2313,37 @@ setup: "const Promise = require('Promise');\nconst JSON = require('JSON');\ncons
   \      addressGivenName: 'test',\n      addressFamilyName: 'test',\n      addressRegion:\
   \ 'BR',\n      addressPostalCode: '10001',\n      mobileIds: 'AAA-BB-CC-111',\n\
   \      pairIds: 'foobar123',\n      adStorageConsent: 'optional',\n      logType:\
-  \ 'debug',\n      bigQueryLogType: 'no'\n    }\n  };\n  \n  return mergeObj(\n \
-  \   mockData, \n    mergeObj(methods[method], objToBeMerged || {})\n  );\n};\n\n\
-  const setGetAllEventData = (objToBeMerged) => {\n  mock('getAllEventData', mergeObj({\n\
-  \    'x-ga-protocol_version': '2',\n    'x-ga-measurement_id': 'G-123ABC',\n   \
-  \ 'x-ga-gtm_version': '45je55e1za200',\n    'x-ga-page_id': 1747422523211,\n   \
-  \ 'x-ga-gcd': '13l3l3l3l1l1',\n    'x-ga-npa': '0',\n    'x-ga-dma': '0',\n    'x-ga-mp2-tag_exp':\n\
-  \      '101509157~103116025~103130498~103130500~103136993~103136995~103200001~103207802~103211513~103233427~103252644~103252646~103263073~103301114~103301116',\n\
+  \ 'debug',\n      bigQueryLogType: 'no'\n    },\n    remove: {\n      audienceAction:\
+  \ 'remove',\n      validateOnly: false,\n      useOptimisticScenario: false,\n \
+  \     audienceDataEncoding: 'HEX',\n      enableAudienceDataEncryption: true,\n\
+  \      gcpWrappedKeyType: 'XCHACHA20_POLY1305',\n      gcpWrappedKeyEncryptedDek:\
+  \ '123',\n      gcpWrappedKeyKekUri: '123',\n      gcpWrappedKeyWipProvider: '123',\n\
+  \      userMode: 'single',\n      userDataEmailAddresses: 'test@example.com',\n\
+  \      userDataPhoneNumbers: '+15555555555',\n      addUserDataAddress: true,\n\
+  \      addressGivenName: 'test',\n      addressFamilyName: 'test',\n      addressRegion:\
+  \ 'BR',\n      addressPostalCode: '10001',\n      mobileIds: 'AAA-BB-CC-111',\n\
+  \      pairIds: 'foobar123',\n      adStorageConsent: 'optional',\n      logType:\
+  \ 'debug',\n      bigQueryLogType: 'no'\n    }\n  };\n  \n  const mockDataByAuthType\
+  \ = {\n    stape: {\n      authFlow: 'stape',\n      stapeAuthDestinationsList:\
+  \ [\n        {\n          product: 'GOOGLE_ADS',\n          operatingAccountId:\
+  \ 'operatingAccountId',\n          linkedAccountId: 'linkedAccountId',\n       \
+  \   productDestinationId: 'productDestinationId'\n        },\n        {\n      \
+  \    product: 'GOOGLE_ADS',\n          operatingAccountId: 'operatingAccountId1',\n\
+  \          linkedAccountId: 'linkedAccountId1',\n          productDestinationId:\
+  \ 'productDestinationId1'\n        }\n      ]\n    },\n    own: {\n      authFlow:\
+  \ 'own',\n      ownAuthDestinationsList: [\n        {\n          product: 'GOOGLE_ADS',\n\
+  \          operatingAccountId: 'operatingAccountId',\n          loginAccountId:\
+  \ 'loginAccountId',\n          productDestinationId: 'productDestinationId'\n  \
+  \      },\n        {\n          product: 'GOOGLE_ADS',\n          operatingAccountId:\
+  \ 'operatingAccountId1',\n          loginAccountId: 'loginAccountId1',\n       \
+  \   productDestinationId: 'productDestinationId1'\n        }\n      ],\n      xGoogUserProject:\
+  \ 'xGoogUserProject'\n    }\n  };\n  \n  mergeObj(baseByMethods[method], objToBeMerged\
+  \ || {});\n  mergeObj(mockDataByAuthType[auth], baseByMethods[method]);\n  mergeObj(mockData,\
+  \ mockDataByAuthType[auth]);\n  return mockData;\n};\n\nconst setGetAllEventData\
+  \ = (objToBeMerged) => {\n  mock('getAllEventData', mergeObj({\n    'x-ga-protocol_version':\
+  \ '2',\n    'x-ga-measurement_id': 'G-123ABC',\n    'x-ga-gtm_version': '45je55e1za200',\n\
+  \    'x-ga-page_id': 1747422523211,\n    'x-ga-gcd': '13l3l3l3l1l1',\n    'x-ga-npa':\
+  \ '0',\n    'x-ga-dma': '0',\n    'x-ga-mp2-tag_exp':\n      '101509157~103116025~103130498~103130500~103136993~103136995~103200001~103207802~103211513~103233427~103252644~103252646~103263073~103301114~103301116',\n\
   \    client_id: 'AUJctU7H7hBB/aMuhE4pKwGu5DWDdklg5abyyyn8i/I=.1747154479',\n   \
   \ 'x-ga-ecid': '1294673677',\n    language: 'en-us',\n    screen_resolution: '1512x982',\n\
   \    event_location: { country: 'BR', region: 'SP' },\n    event_id: '101509157~103116025~103130498',\n\
@@ -2169,8 +2376,8 @@ setup: "const Promise = require('Promise');\nconst JSON = require('JSON');\ncons
   \ (header) => {\n  if (header === 'trace-id') return 'expectedTraceId';\n  else\
   \ if (header === 'x-gtm-identifier') return 'expectedXGtmIdentifier';\n  else if\
   \ (header === 'x-gtm-default-domain') return 'expectedXGtmDefaultDomain';\n  else\
-  \ if (header === 'x-gtm-api-key') return 'expectedXGtmApiKey';\n});\n\nmock('getTimestampMillis',\
-  \ 1747945830456);"
+  \ if (header === 'x-gtm-api-key') return 'expectedXGtmApiKey';\n});\n\nmock('getGoogleAuth',\
+  \ 'googleAuthToken');\n\nmock('getTimestampMillis', 1747945830456);"
 
 
 ___NOTES___
