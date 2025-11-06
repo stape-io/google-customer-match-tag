@@ -10,7 +10,7 @@ This tag supports two primary actions:
 ## How to use the Google Customer Match Tag
 
 1. Sign in to the Data Manager API Connection via the Stape admin. [How-to](https://stape.io/solutions/data-manager-api-connection).
-2. Add the **Google Customer Match (Audiences) Tag** to your server container in GTM.
+2. Add the **Google Customer Match (Audiences) Tag** to your server container in GTM from the [GTM Template Gallery](https://tagmanager.google.com/gallery/#/owners/stape-io/templates/google-customer-match-tag).
 3. Select the **Action** you want to perform (`Add to Customer List` or `Remove from Customer List`).
 4. Configure the **Destination Accounts and Customer Lists** by providing the `Operating Customer ID`, `Customer ID`, and `Customer List Name`.
 5. Configure the **Audience Members** section with the user data you want to send. You can provide data for a single user or multiple users in a batch. The tag will automatically hash user identifiers (like email and phone) using SHA256 if they are not already hashed.

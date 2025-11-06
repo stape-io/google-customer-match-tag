@@ -4,6 +4,7 @@ const BigQuery = require('BigQuery');
 const encodeUriComponent = require('encodeUriComponent');
 const getAllEventData = require('getAllEventData');
 const getContainerVersion = require('getContainerVersion');
+const getGoogleAuth = require('getGoogleAuth');
 const getRequestHeader = require('getRequestHeader');
 const getTimestampMillis = require('getTimestampMillis');
 const getType = require('getType');
@@ -17,7 +18,7 @@ const sha256Sync = require('sha256Sync');
 /*==============================================================================
 ==============================================================================*/
 
-const traceId = getRequestHeader('trace-id');
+const apiVersion = 'v1';
 const eventData = getAllEventData();
 const useOptimisticScenario = isUIFieldTrue(data.useOptimisticScenario);
 
@@ -37,7 +38,6 @@ if (invalidFields) {
   log({
     Name: 'GoogleCustomerMatch',
     Type: 'Message',
-    TraceId: traceId,
     EventName: data.audienceAction,
     Message: 'Request was not sent.',
     Reason: invalidFields
@@ -46,7 +46,7 @@ if (invalidFields) {
   return data.gtmOnFailure();
 }
 
-sendRequest(data, mappedData);
+sendRequest(data, mappedData, apiVersion);
 
 if (useOptimisticScenario) {
   return data.gtmOnSuccess();
@@ -58,21 +58,32 @@ if (useOptimisticScenario) {
 
 function addDestinationsData(data, mappedData) {
   const destinations = [];
-  const accountsAndDestinationsFromUI = data.stapeAuthDestinationsList;
+  const accountsAndDestinationsFromUI =
+    data.stapeAuthDestinationsList || data.ownAuthDestinationsList; // Mutually exclusive.;
+  const productDestinationIdPrefix = data.authFlow === 'stape' ? 'stape_' : '';
 
   accountsAndDestinationsFromUI.forEach((row) => {
+    const productDestinationId = productDestinationIdPrefix + makeString(row.productDestinationId);
     const destination = {
-      productDestinationId: 'stape_' + makeString(row.productDestinationId),
+      reference: productDestinationId,
+      productDestinationId: productDestinationId,
       operatingAccount: {
-        product: row.product,
+        accountType: row.product,
         accountId: makeString(row.operatingAccountId)
       }
     };
 
     if (data.authFlow === 'stape' && row.linkedAccountId) {
       destination.linkedAccount = {
-        product: row.product,
+        accountType: row.product,
         accountId: makeString(row.linkedAccountId)
+      };
+    }
+
+    if (data.authFlow === 'own' && row.loginAccountId) {
+      destination.loginAccount = {
+        accountType: row.product,
+        accountId: makeString(row.loginAccountId)
       };
     }
 
@@ -278,6 +289,12 @@ function addAudienceMembersData(data, eventData, mappedData) {
         userData: audienceMember.userData
       };
       if (audienceMember.consent) audienceMemberUserDataOnly.consent = audienceMember.consent;
+      if (
+        getType(audienceMember.destinationReferences) === 'array' &&
+        audienceMember.destinationReferences.length
+      ) {
+        audienceMemberUserDataOnly.destinationReferences = audienceMember.destinationReferences;
+      }
       audienceMembers.push(audienceMemberUserDataOnly);
     });
   }
@@ -406,12 +423,16 @@ function hashDataIfNeeded(mappedData) {
   return mappedData;
 }
 
-function generateRequestUrl(data) {
+function generateRequestUrl(data, apiVersion) {
   const audienceActionNormalization = {
     ingest: 'ingest',
     remove: 'remove'
   };
   const action = audienceActionNormalization[data.audienceAction];
+
+  if (data.authFlow === 'own') {
+    return 'https://datamanager.googleapis.com/' + apiVersion + '/audienceMembers:' + action;
+  }
 
   const containerIdentifier = getRequestHeader('x-gtm-identifier');
   const defaultDomain = getRequestHeader('x-gtm-default-domain');
@@ -428,13 +449,23 @@ function generateRequestUrl(data) {
   );
 }
 
-function generateRequestOptions() {
+function generateRequestOptions(data, apiVersion) {
   const options = {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     }
   };
+
+  if (data.authFlow === 'own') {
+    const auth = getGoogleAuth({
+      scopes: ['https://www.googleapis.com/auth/datamanager']
+    });
+    options.authorization = auth;
+    if (data.xGoogUserProject) options.headers['x-goog-user-project'] = data.xGoogUserProject;
+  } else if (data.authFlow === 'stape') {
+    options.headers['x-datamanager-api-version'] = apiVersion;
+  }
 
   return options;
 }
@@ -480,15 +511,14 @@ function getDataForAudienceDataUpload(data, eventData) {
   return mappedData;
 }
 
-function sendRequest(data, mappedData) {
-  const requestUrl = generateRequestUrl(data);
-  const requestOptions = generateRequestOptions();
+function sendRequest(data, mappedData, apiVersion) {
+  const requestUrl = generateRequestUrl(data, apiVersion);
+  const requestOptions = generateRequestOptions(data, apiVersion);
   const requestBody = mappedData;
 
   log({
     Name: 'GoogleCustomerMatch',
     Type: 'Request',
-    TraceId: traceId,
     EventName: data.audienceAction,
     RequestMethod: 'POST',
     RequestUrl: requestUrl,
@@ -501,7 +531,6 @@ function sendRequest(data, mappedData) {
       log({
         Name: 'GoogleCustomerMatch',
         Type: 'Response',
-        TraceId: traceId,
         EventName: data.audienceAction,
         ResponseStatusCode: result.statusCode,
         ResponseHeaders: result.headers,
@@ -520,7 +549,6 @@ function sendRequest(data, mappedData) {
       log({
         Name: 'GoogleCustomerMatch',
         Type: 'Message',
-        TraceId: traceId,
         EventName: data.audienceAction,
         Message: 'Request failed or timed out.',
         Reason: JSON.stringify(result)
@@ -597,6 +625,8 @@ function log(rawDataToLog) {
   const logDestinationsHandlers = {};
   if (determinateIsLoggingEnabled()) logDestinationsHandlers.console = logConsole;
   if (determinateIsLoggingEnabledForBigQuery()) logDestinationsHandlers.bigQuery = logToBigQuery;
+
+  rawDataToLog.TraceId = getRequestHeader('trace-id');
 
   const keyMappings = {
     // No transformation for Console is needed.
