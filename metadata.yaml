@@ -1,6 +1,8 @@
 homepage: 'https://stape.io/'
 documentation: 'https://github.com/stape-io/google-customer-match-tag'
 versions:
+  - sha: 1762e3ac5cd0a38426dee4da403ac3a95f54f3c3
+    changeNotes: Updated header format on Stape Connection.
   - sha: c27e00302a308bba8e8c4fda58dddb952e09a51a
     changeNotes: Added new API features to Audience array. Improved help texts. Improved API version handling.
   - sha: bc5dd0a85983bd593bb28c4b20f825a9ad1e97bc
