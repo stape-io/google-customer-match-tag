@@ -18,7 +18,7 @@ const sha256Sync = require('sha256Sync');
 /*==============================================================================
 ==============================================================================*/
 
-const apiVersion = 'v1';
+const apiVersion = '1';
 const eventData = getAllEventData();
 const useOptimisticScenario = isUIFieldTrue(data.useOptimisticScenario);
 
@@ -431,7 +431,7 @@ function generateRequestUrl(data, apiVersion) {
   const action = audienceActionNormalization[data.audienceAction];
 
   if (data.authFlow === 'own') {
-    return 'https://datamanager.googleapis.com/' + apiVersion + '/audienceMembers:' + action;
+    return 'https://datamanager.googleapis.com/v' + apiVersion + '/audienceMembers:' + action;
   }
 
   const containerIdentifier = getRequestHeader('x-gtm-identifier');
