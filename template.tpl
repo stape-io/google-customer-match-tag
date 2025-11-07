@@ -802,7 +802,7 @@ const sha256Sync = require('sha256Sync');
 /*==============================================================================
 ==============================================================================*/
 
-const apiVersion = 'v1';
+const apiVersion = '1';
 const eventData = getAllEventData();
 const useOptimisticScenario = isUIFieldTrue(data.useOptimisticScenario);
 
@@ -1215,7 +1215,7 @@ function generateRequestUrl(data, apiVersion) {
   const action = audienceActionNormalization[data.audienceAction];
 
   if (data.authFlow === 'own') {
-    return 'https://datamanager.googleapis.com/' + apiVersion + '/audienceMembers:' + action;
+    return 'https://datamanager.googleapis.com/v' + apiVersion + '/audienceMembers:' + action;
   }
 
   const containerIdentifier = getRequestHeader('x-gtm-identifier');
@@ -1876,7 +1876,7 @@ scenarios:
     \        return Promise.create((resolve, reject) => {\n          resolve({ statusCode:\
     \ 200 });\n        });  \n      }\n    });\n  } else if (scenario.auth === 'own')\
     \ {\n    setMockDataByAudienceMethod('ingest', undefined, 'own');\n    mock('sendHttpRequest',\
-    \ (requestUrl, callback, requestOptions, requestBody) => {\n      assertThat(requestUrl).isEqualTo('https://datamanager.googleapis.com/'\
+    \ (requestUrl, callback, requestOptions, requestBody) => {\n      assertThat(requestUrl).isEqualTo('https://datamanager.googleapis.com/v'\
     \ + expectedDataManagerApiVersion + '/audienceMembers:ingest');\n      if (typeof\
     \ callback === 'function') {\n        callback(200);\n      } else {\n       \
     \ requestBody = requestOptions;\n        requestOptions = callback;\n        return\
@@ -1894,7 +1894,7 @@ scenarios:
     \        return Promise.create((resolve, reject) => {\n          resolve({ statusCode:\
     \ 200 });\n        });  \n      }\n    });\n  } else if (scenario.auth === 'own')\
     \ {\n    setMockDataByAudienceMethod('remove', undefined, 'own');\n    mock('sendHttpRequest',\
-    \ (requestUrl, callback, requestOptions, requestBody) => {\n      assertThat(requestUrl).isEqualTo('https://datamanager.googleapis.com/'\
+    \ (requestUrl, callback, requestOptions, requestBody) => {\n      assertThat(requestUrl).isEqualTo('https://datamanager.googleapis.com/v'\
     \ + expectedDataManagerApiVersion + '/audienceMembers:remove');\n      if (typeof\
     \ callback === 'function') {\n        callback(200);\n      } else {\n       \
     \ requestBody = requestOptions;\n        requestOptions = callback;\n        return\
@@ -2294,7 +2294,7 @@ setup: "const Promise = require('Promise');\nconst JSON = require('JSON');\ncons
   \ callLater = require('callLater');\n\nconst mergeObj = (target, source) => {\n\
   \  for (const key in source) {\n    if (source.hasOwnProperty(key)) target[key]\
   \ = source[key];\n  }\n  return target;\n};\n\nconst expectedDataManagerApiVersion\
-  \ = 'v1';\n\nconst expectedBigQuerySettings = {\n  logBigQueryProjectId: 'logBigQueryProjectId',\n\
+  \ = '1';\n\nconst expectedBigQuerySettings = {\n  logBigQueryProjectId: 'logBigQueryProjectId',\n\
   \  logBigQueryDatasetId: 'logBigQueryDatasetId',\n  logBigQueryTableId: 'logBigQueryTableId'\n\
   };\n\nconst requiredConsoleKeys = ['Type', 'TraceId', 'Name'];\nconst requiredBqKeys\
   \ = ['timestamp', 'type', 'trace_id', 'tag_name'];\nconst expectedBqOptions = {\
