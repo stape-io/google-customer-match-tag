@@ -9,10 +9,12 @@ This tag supports two primary actions:
 
 ## How to use the Google Customer Match Tag
 
-1. Sign in to the Data Manager API Connection via the Stape admin. [How-to](https://stape.io/solutions/data-manager-api-connection).
+1.  Choose the authentication method:
+    *  Stape Google Connection (recommended): sign in to the Data Manager API Connection via the Stape admin. [How-to](https://stape.io/solutions/data-manager-api-connection).
+    *  Own Google Credentials: a [Service Account impersonation](https://developers.google.com/data-manager/api/devguides/quickstart/set-up-access?credential_type=service_account) is the simplest way to handle the authentication. If hosting on Stape, you can use the [Google Service Account Power Up](https://stape.io/helpdesk/documentation/google-service-account-power-up). Remember to add the Service Account to the product you're interacting with (Google Ads, DV360 etc.).
 2. Add the **Google Customer Match (Audiences) Tag** to your server container in GTM from the [GTM Template Gallery](https://tagmanager.google.com/gallery/#/owners/stape-io/templates/google-customer-match-tag).
 3. Select the **Action** you want to perform (`Add to Customer List` or `Remove from Customer List`).
-4. Configure the **Destination Accounts and Customer Lists** by providing the `Operating Customer ID`, `Customer ID`, and `Customer List Name`.
+4. Configure the **Destination Accounts and Customer Lists** by providing the `Operating Customer ID`, `Customer ID`, and `Customer List Name` (if using Stape Google Connection) or `Customer List ID` (if using Own Google Credentials).
 5. Configure the **Audience Members** section with the user data you want to send. You can provide data for a single user or multiple users in a batch. The tag will automatically hash user identifiers (like email and phone) using SHA256 if they are not already hashed.
 6. Add a trigger.
 
@@ -25,7 +27,7 @@ This tag supports two primary actions:
 * **Destination Accounts and Customer Lists**: Specify the Google Ads accounts and customer lists to target.
   * **Operating Customer ID**: The ID of the Google Ads account that will receive the customer list data.
   * **Customer ID**: The ID of the account for which the link between the Data Partner (Stape) and the Advertiser was established. If the link is with the same account that receives the data, this will be the same as the Operating Customer ID.
-  * **Customer List Name**: The name of the customer list you want to interact with.
+  * **Customer List Name/ID**: The name/ID of the customer list you want to interact with.
 
 ### User Data & Identifiers
 
