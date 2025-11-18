@@ -1,5 +1,3 @@
-/// <reference path="./server-gtm-sandboxed-apis.d.ts" />
-
 const BigQuery = require('BigQuery');
 const encodeUriComponent = require('encodeUriComponent');
 const getAllEventData = require('getAllEventData');

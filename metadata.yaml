@@ -1,6 +1,8 @@
 homepage: 'https://stape.io/'
 documentation: 'https://github.com/stape-io/google-customer-match-tag'
 versions:
+  - sha: 13edfdef5caa2defaa99d4bd19304ccf31e83b59
+    changeNotes: Added support for using Own Google Credentials as an authentication method and DV360 as a new destination product type.
   - sha: 1762e3ac5cd0a38426dee4da403ac3a95f54f3c3
     changeNotes: Updated header format on Stape Connection.
   - sha: c27e00302a308bba8e8c4fda58dddb952e09a51a
