@@ -1268,6 +1268,7 @@ function generateRequestOptions(data, apiVersion) {
     if (data.xGoogUserProject) options.headers['x-goog-user-project'] = data.xGoogUserProject;
   } else if (data.authFlow === 'stape') {
     options.headers['x-datamanager-api-version'] = apiVersion;
+    options.timeout = 20000;
   }
 
   return options;
@@ -1921,19 +1922,20 @@ scenarios:
     \        });  \n      }\n    });\n  }\n  \n  runCode(mockData);\n  \n  mockData\
     \ = {};\n});\n\ncallLater(() => {\n  assertApi('gtmOnSuccess').wasCalled();\n\
     \  assertApi('gtmOnFailure').wasNotCalled();\n});"
-- name: '[Stape] Request Options are succesfully built and sent in the request'
+- name: Request Options are succesfully built and sent in the request
   code: "[\n  { auth: 'own' },\n  { auth: 'stape' }\n].forEach(scenario => {\n  if\
     \ (scenario.auth === 'stape') {\n    setMockDataByAudienceMethod('ingest', undefined,\
     \ 'stape');\n    mock('sendHttpRequest', (requestUrl, requestOptions, requestBody)\
     \ => {\n      assertThat(requestOptions).isEqualTo({\n        method: 'POST',\n\
     \        headers: {\n          'Content-Type': 'application/json',\n         \
-    \ 'x-datamanager-api-version': expectedDataManagerApiVersion\n        }\n    \
-    \  });\n    \n      return Promise.create((resolve, reject) => {\n        resolve({\
-    \ statusCode: 200 });\n      });  \n    });\n  } else if (scenario.auth === 'own')\
-    \ {\n    setMockDataByAudienceMethod('ingest', undefined, 'own');\n    mock('sendHttpRequest',\
-    \ (requestUrl, requestOptions, requestBody) => {\n      assertThat(requestOptions).isEqualTo({\n\
-    \        method: 'POST',\n        headers: {\n          'Content-Type': 'application/json',\n\
-    \          'x-goog-user-project': 'xGoogUserProject'\n        },\n        authorization:\
+    \ 'x-datamanager-api-version': expectedDataManagerApiVersion\n        },\n   \
+    \     timeout: 20000\n      });\n    \n      return Promise.create((resolve, reject)\
+    \ => {\n        resolve({ statusCode: 200 });\n      });  \n    });\n  } else\
+    \ if (scenario.auth === 'own') {\n    setMockDataByAudienceMethod('ingest', undefined,\
+    \ 'own');\n    mock('sendHttpRequest', (requestUrl, requestOptions, requestBody)\
+    \ => {\n      assertThat(requestOptions).isEqualTo({\n        method: 'POST',\n\
+    \        headers: {\n          'Content-Type': 'application/json',\n         \
+    \ 'x-goog-user-project': 'xGoogUserProject'\n        },\n        authorization:\
     \ 'googleAuthToken'\n      });\n      \n      return Promise.create((resolve,\
     \ reject) => {\n        resolve({ statusCode: 200 });\n      });  \n    });\n\
     \  }\n  \n  runCode(mockData);\n  \n  mockData = {};\n  \n  if (scenario.auth\

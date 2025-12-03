@@ -1,6 +1,8 @@
 homepage: 'https://stape.io/'
 documentation: 'https://github.com/stape-io/google-customer-match-tag'
 versions:
+  - sha: 340ce995767c54c641f2297c5e4420c69af0ee80
+    changeNotes: Increased request timeout of Stape Connection to 20s.
   - sha: dce17a89fc5a48560995ecdac88683dae9af6ce6
     changeNotes: Improved the Own Google Credentials help text.
   - sha: 13edfdef5caa2defaa99d4bd19304ccf31e83b59
