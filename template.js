@@ -463,6 +463,7 @@ function generateRequestOptions(data, apiVersion) {
     if (data.xGoogUserProject) options.headers['x-goog-user-project'] = data.xGoogUserProject;
   } else if (data.authFlow === 'stape') {
     options.headers['x-datamanager-api-version'] = apiVersion;
+    options.timeout = 20000;
   }
 
   return options;
