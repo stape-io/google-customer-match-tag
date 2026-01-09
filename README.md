@@ -34,7 +34,7 @@ This tag supports two primary actions:
 ### Main Configuration
 
 * **Action**: Choose whether to `Add to Customer List` or `Remove from Customer List`.
-* **Authentication Type**: Currently supports **Stape Google Connection**. You can enable it in your Stape container settings under the "Connections" section.
+* **Authentication Type**: **Own Google Credentials** or **Stape Google Connection**.
 * **Destination Accounts and Customer Lists**: Specify the Google Ads accounts and customer lists to target.
   * **Operating Customer ID**: The ID of the Google Ads account that will receive the customer list data.
   * **Customer ID**: The ID of the account for which the link between the Data Partner (Stape) and the Advertiser was established. If the link is with the same account that receives the data, this will be the same as the Operating Customer ID.
