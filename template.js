@@ -488,6 +488,27 @@ function validateMappedData(mappedData) {
   if (hasUserDataOrPairData && !mappedData.encoding) {
     return 'Encoding must be specified when sending UserData or PairData.';
   }
+
+  const destinations = mappedData.destinations;
+  const validationKeys = [
+    'productDestinationId',
+    'reference',
+    'operatingAccount.accountId',
+    'linkedAccount.accountId',
+    'loginAccount.accountId'
+  ];
+  for (let i = 0; i < destinations.length; i++) {
+    const destination = destinations[i];
+    for (let j = 0; j < validationKeys.length; j++) {
+      const key = validationKeys[j];
+      const parts = key.split('.');
+      if (parts.length > 1 && !destination[parts[0]]) continue;
+      const value = parts.reduce((acc, part) => acc && acc[part], destination);
+      if (!isValidValue(value) || value === 'undefined' || value === 'stape_undefined') {
+        return 'destinations[' + i + '].' + key + ' is invalid.';
+      }
+    }
+  }
 }
 
 function getDataForAudienceDataUpload(data, eventData) {

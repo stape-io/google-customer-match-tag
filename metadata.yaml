@@ -1,6 +1,8 @@
 homepage: 'https://stape.io/'
 documentation: 'https://github.com/stape-io/google-customer-match-tag'
 versions:
+  - sha: cf530784597defcedf4339925f9e2302aa87689b
+    changeNotes: Enhanced validation for destination fields.
   - sha: 340ce995767c54c641f2297c5e4420c69af0ee80
     changeNotes: Increased request timeout of Stape Connection to 20s.
   - sha: dce17a89fc5a48560995ecdac88683dae9af6ce6
