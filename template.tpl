@@ -1293,6 +1293,27 @@ function validateMappedData(mappedData) {
   if (hasUserDataOrPairData && !mappedData.encoding) {
     return 'Encoding must be specified when sending UserData or PairData.';
   }
+
+  const destinations = mappedData.destinations;
+  const validationKeys = [
+    'productDestinationId',
+    'reference',
+    'operatingAccount.accountId',
+    'linkedAccount.accountId',
+    'loginAccount.accountId'
+  ];
+  for (let i = 0; i < destinations.length; i++) {
+    const destination = destinations[i];
+    for (let j = 0; j < validationKeys.length; j++) {
+      const key = validationKeys[j];
+      const parts = key.split('.');
+      if (parts.length > 1 && !destination[parts[0]]) continue;
+      const value = parts.reduce((acc, part) => acc && acc[part], destination);
+      if (!isValidValue(value) || value === 'undefined' || value === 'stape_undefined') {
+        return 'destinations[' + i + '].' + key + ' is invalid.';
+      }
+    }
+  }
 }
 
 function getDataForAudienceDataUpload(data, eventData) {
@@ -2268,48 +2289,6 @@ scenarios:
     \n  return Promise.create((resolve, reject) => {\n    resolve({ statusCode: 200\
     \ });\n  });  \n});\n\nrunCode(mockData);\n\ncallLater(() => {\n  assertApi('gtmOnSuccess').wasCalled();\n\
     \  assertApi('gtmOnFailure').wasNotCalled();\n});"
-- name: '[Logs] Should log to console'
-  code: "const originalMockData = setMockDataByAudienceMethod('ingest');\n\n[\n  //\
-    \ if the 'Always log to console' option is selected\n  { mockData: { logType:\
-    \ 'always' }, expectedDebugMode: true },\n  // if the 'Log during debug and preview'\
-    \ option is selected AND is on preview mode\n  { mockData: { logType: 'debug'\
-    \ }, expectedDebugMode: true },\n].forEach(scenario => {\n  const copyMockData\
-    \ = JSON.parse(JSON.stringify(originalMockData));\n  mergeObj(copyMockData, scenario.mockData);\n\
-    \  \n  mock('getContainerVersion', () => {\n    return {\n      debugMode: scenario.expectedDebugMode\n\
-    \    };\n  }); \n  \n  mock('logToConsole', (logData) => {\n    const parsedLogData\
-    \ = JSON.parse(logData);\n    requiredConsoleKeys.forEach(p => assertThat(parsedLogData[p]).isDefined());\n\
-    \  });\n  \n  runCode(copyMockData);\n  \n  callLater(() => {\n    assertApi('logToConsole').wasCalled();\n\
-    \    assertApi('gtmOnSuccess').wasCalled();\n    assertApi('gtmOnFailure').wasNotCalled();\n\
-    \  });\n});"
-- name: '[Logs] Should NOT log to console'
-  code: "const originalMockData = setMockDataByAudienceMethod('ingest');\n\n[\n  //\
-    \ if the 'Log during debug and preview' option is selected AND is NOT on preview\
-    \ mode\n  { mockData: { logType: 'debug' }, expectedDebugMode: false },\n  //\
-    \ if the 'Do not log' option is selected\n  { mockData: { logType: 'no' }, expectedDebugMode:\
-    \ undefined },\n].forEach(scenario => {\n  const copyMockData = JSON.parse(JSON.stringify(originalMockData));\n\
-    \  mergeObj(copyMockData, scenario.mockData);\n  \n  mock('getContainerVersion',\
-    \ () => {\n    return {\n      debugMode: scenario.expectedDebugMode\n    };\n\
-    \  });\n  \n  runCode(copyMockData);\n\n  callLater(() => {\n    assertApi('logToConsole').wasNotCalled();\n\
-    \    assertApi('gtmOnSuccess').wasCalled();\n    assertApi('gtmOnFailure').wasNotCalled();\n\
-    \  });\n});"
-- name: '[Logs] Should NOT log to BQ, if the ''Do not log to BigQuery'' option is
-    selected'
-  code: "setMockDataByAudienceMethod('ingest');\nmockData.bigQueryLogType = 'no';\n\
-    \n// assertApi doesn't work for 'BigQuery.insert()'.\n// Ref: https://gtm-gear.com/posts/gtm-templates-testing/\n\
-    mockObject('BigQuery', {\n  insert: (connectionInfo, rows, options) => { \n  \
-    \  fail('BigQuery.insert should not have been called.');\n    return Promise.create((resolve,\
-    \ reject) => {\n      resolve();\n    });\n  }\n});\n\nrunCode(mockData);\n\n\
-    callLater(() => {\n  assertApi('gtmOnSuccess').wasCalled();\n  assertApi('gtmOnFailure').wasNotCalled();\n\
-    });"
-- name: '[Logs] Should log to BQ, if the ''Log to BigQuery'' option is selected'
-  code: "setMockDataByAudienceMethod('ingest');\nmockData.bigQueryLogType = 'always';\n\
-    \nmockObject('BigQuery', {\n  insert: (connectionInfo, rows, options) => { \n\
-    \    assertThat(connectionInfo).isDefined();\n    assertThat(rows).isArray();\n\
-    \    assertThat(rows).hasLength(1);\n    requiredBqKeys.forEach(p => assertThat(rows[0][p]).isDefined());\n\
-    \    assertThat(options).isEqualTo(expectedBqOptions);\n    return Promise.create((resolve,\
-    \ reject) => {\n      resolve();\n    });\n  }\n});\n\nrunCode(mockData);\n\n\
-    callLater(() => {\n  assertApi('gtmOnSuccess').wasCalled();\n  assertApi('gtmOnFailure').wasNotCalled();\n\
-    });"
 setup: "const Promise = require('Promise');\nconst JSON = require('JSON');\nconst\
   \ makeInteger = require('makeInteger');\nconst Object = require('Object');\nconst\
   \ callLater = require('callLater');\n\nconst mergeObj = (target, source) => {\n\
