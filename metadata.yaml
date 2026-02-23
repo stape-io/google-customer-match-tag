@@ -1,6 +1,8 @@
 homepage: 'https://stape.io/'
 documentation: 'https://github.com/stape-io/google-customer-match-tag'
 versions:
+  - sha: bbb8a74bf86772c62c64d4122ee9322af838c19d
+    changeNotes: Added strict validation for destination and audience member fields.
   - sha: cf530784597defcedf4339925f9e2302aa87689b
     changeNotes: Enhanced validation for destination fields.
   - sha: 340ce995767c54c641f2297c5e4420c69af0ee80
