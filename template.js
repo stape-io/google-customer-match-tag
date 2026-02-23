@@ -275,6 +275,14 @@ function addAudienceMembersData(data, eventData, mappedData) {
       }
     }
 
+    if (data.addUserIdData && data.userId) {
+      audienceMembers.push({
+        userIdData: {
+          userId: makeString(data.userId)
+        }
+      });
+    }
+
     // This is for the future. Not currently supported by UI.
     if (data.mobileIds) {
       const mobileIds = itemizeUserIdentifier(data.mobileIds);
@@ -505,6 +513,13 @@ function validateMappedData(mappedData) {
       })
     );
   };
+  const isUserIdDataAbsent = (audienceMember) => {
+    return (
+      getType(audienceMember.userIdData) !== 'object' ||
+      getType(audienceMember.userIdData.userId) !== 'string' ||
+      !audienceMember.userIdData.userId
+    );
+  };
   // This is for the future. Not currently supported by UI.
   const isMobileDataAbsent = (audienceMember) => {
     return (
@@ -517,7 +532,11 @@ function validateMappedData(mappedData) {
     );
   };
   const doesNotHaveMatchData = audienceMembers.some((audienceMember) => {
-    return isUserDataAbsent(audienceMember) && isMobileDataAbsent(audienceMember);
+    return (
+      isUserDataAbsent(audienceMember) &&
+      isUserIdDataAbsent(audienceMember) &&
+      isMobileDataAbsent(audienceMember)
+    );
   });
   if (doesNotHaveMatchData) {
     return 'At least 1 User Data must be specified.';
