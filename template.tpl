@@ -74,7 +74,6 @@ ___TEMPLATE_PARAMETERS___
   {
     "type": "GROUP",
     "name": "destinationsGroup",
-    "displayName": "",
     "subParams": [
       {
         "type": "SIMPLE_TABLE",
@@ -160,6 +159,13 @@ ___TEMPLATE_PARAMETERS___
         "valueValidators": [
           {
             "type": "NON_EMPTY"
+          },
+          {
+            "type": "TABLE_ROW_COUNT",
+            "args": [
+              1,
+              10
+            ]
           }
         ],
         "newRowButtonText": "Add Customer List",
@@ -228,6 +234,9 @@ ___TEMPLATE_PARAMETERS___
             "valueValidators": [
               {
                 "type": "NON_EMPTY"
+              },
+              {
+                "type": "POSITIVE_NUMBER"
               }
             ]
           }
@@ -242,13 +251,19 @@ ___TEMPLATE_PARAMETERS___
         "valueValidators": [
           {
             "type": "NON_EMPTY"
+          },
+          {
+            "type": "TABLE_ROW_COUNT",
+            "args": [
+              1,
+              10
+            ]
           }
         ],
         "newRowButtonText": "Add Customer List",
         "help": "\u003cb\u003eProduct\u003c/b\u003e: The Product the Customer List belongs to. Learn more about DV360 \u003ca href\u003d\"https://support.google.com/displayvideo/answer/2696883?hl\u003den\"\u003eAdvertiser\u003c/a\u003e and \u003ca href\u003d\"https://support.google.com/displayvideo/answer/7622449?hl\u003den\"\u003ePartner\u003c/a\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eOperating Customer ID\u003c/b\u003e: The \u003ci\u003eAccount ID\u003c/i\u003e (without hyphens) of the account (Google Ads account, DV360 account etc.) that will receive customer list data. \u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/Destination\"\u003eLearn more\u003c/a\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eCustomer ID\u003c/b\u003e: The \u003ci\u003eAccount ID\u003c/i\u003e of the account (Google Ads account, DV360 account etc.) used for authorization (without hyphens) when making the API request.\n\u003cbr/\u003e\nIf your credentials are for access to a \u003ci\u003eManager Account\u003c/i\u003e that has the \u003ci\u003eOperating Account\u003c/i\u003e as one of its subaccounts, set the \u003ci\u003eCustomer ID\u003c/i\u003e to the ID of the \u003ci\u003eManager Account\u003c/i\u003e.\n\u003cbr/\u003e\nIf your credentials are for the account that is the \u003ci\u003eOperating Account\u003c/i\u003e, you don\u0027t need to set \u003ci\u003eCustomer ID\u003c/i\u003e.\n\u003cbr/\u003e\nLearn more: \u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/Destination\"\u003e[1]\u003c/a\u003e and \u003ca href\u003d\"https://developers.google.com/data-manager/api/get-started/quickstart/send-events?persona\u003dadvertiser#prepare_a_destination\"\u003e[2]\u003c/a\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eCustomer List ID\u003c/b\u003e: The ID of the customer list you want to interact with."
       }
-    ],
-    "groupStyle": "NO_ZIPPY"
+    ]
   },
   {
     "type": "SELECT",
@@ -350,7 +365,7 @@ ___TEMPLATE_PARAMETERS___
           }
         ],
         "simpleValueType": true,
-        "help": "This represents consent to Ad User Data.",
+        "help": "This represents consent to Ad User Data.\n\u003cbr/\u003e\nWhen passing the value using a variable, make sure to return the exact strings as defined in the drop-down: \u003ci\u003eCONSENT_GRANTED\u003c/i\u003e, \u003ci\u003eCONSENT_DENIED\u003c/i\u003e and \u003ci\u003eCONSENT_STATUS_UNSPECIFIED\u003c/i\u003e.",
         "valueValidators": [
           {
             "type": "NON_EMPTY"
@@ -377,7 +392,7 @@ ___TEMPLATE_PARAMETERS___
           }
         ],
         "simpleValueType": true,
-        "help": "This represents consent to Ad Personalization.",
+        "help": "This represents consent to Ad Personalization.\n\u003cbr/\u003e\nWhen passing the value using a variable, make sure to return the exact strings as defined in the drop-down: \u003ci\u003eCONSENT_GRANTED\u003c/i\u003e, \u003ci\u003eCONSENT_DENIED\u003c/i\u003e and \u003ci\u003eCONSENT_STATUS_UNSPECIFIED\u003c/i\u003e.",
         "valueValidators": [
           {
             "type": "NON_EMPTY"
@@ -517,7 +532,7 @@ ___TEMPLATE_PARAMETERS___
         "selectItems": [
           {
             "value": "single",
-            "displayValue": "Single User"
+            "displayValue": "Single User (Recommended)"
           },
           {
             "value": "multiple",
@@ -804,6 +819,7 @@ ___TEMPLATE_PARAMETERS___
 ___SANDBOXED_JS_FOR_SERVER___
 
 const BigQuery = require('BigQuery');
+const createRegex = require('createRegex');
 const encodeUriComponent = require('encodeUriComponent');
 const getAllEventData = require('getAllEventData');
 const getContainerVersion = require('getContainerVersion');
@@ -825,12 +841,7 @@ const apiVersion = '1';
 const eventData = getAllEventData();
 const useOptimisticScenario = isUIFieldTrue(data.useOptimisticScenario);
 
-if (!isConsentGivenOrNotRequired(data, eventData)) {
-  return data.gtmOnSuccess();
-}
-
-const url = eventData.page_location || getRequestHeader('referer');
-if (url && url.lastIndexOf('https://gtm-msr.appspot.com/', 0) === 0) {
+if (shouldExitEarly(data, eventData)) {
   return data.gtmOnSuccess();
 }
 
@@ -860,33 +871,39 @@ if (useOptimisticScenario) {
 ==============================================================================*/
 
 function addDestinationsData(data, mappedData) {
+  const normalizeIds = (id) => {
+    return replaceAll(makeString(id), '[^0-9]', '');
+  };
+
   const destinations = [];
   const accountsAndDestinationsFromUI =
     data.stapeAuthDestinationsList || data.ownAuthDestinationsList; // Mutually exclusive.;
-  const productDestinationIdPrefix = data.authFlow === 'stape' ? 'stape_' : '';
 
   accountsAndDestinationsFromUI.forEach((row) => {
-    const productDestinationId = productDestinationIdPrefix + makeString(row.productDestinationId);
+    const productDestinationId =
+      data.authFlow === 'stape'
+        ? 'stape_' + makeString(row.productDestinationId).trim() // Audience Name (not ID) is used here.
+        : normalizeIds(row.productDestinationId);
     const destination = {
       reference: productDestinationId,
       productDestinationId: productDestinationId,
       operatingAccount: {
         accountType: row.product,
-        accountId: makeString(row.operatingAccountId)
+        accountId: normalizeIds(row.operatingAccountId)
       }
     };
 
     if (data.authFlow === 'stape' && row.linkedAccountId) {
       destination.linkedAccount = {
         accountType: row.product,
-        accountId: makeString(row.linkedAccountId)
+        accountId: normalizeIds(row.linkedAccountId)
       };
     }
 
     if (data.authFlow === 'own' && row.loginAccountId) {
       destination.loginAccount = {
         accountType: row.product,
-        accountId: makeString(row.loginAccountId)
+        accountId: normalizeIds(row.loginAccountId)
       };
     }
 
@@ -914,7 +931,22 @@ function addConsentData(data, mappedData) {
 
   consentTypes.forEach((consentType) => {
     if (!data[consentType]) return;
-    consent[consentType] = data[consentType];
+    switch (makeString(data[consentType])) {
+      case 'CONSENT_GRANTED':
+      case 'true':
+      case 'granted':
+        consent[consentType] = 'CONSENT_GRANTED';
+        break;
+      case 'CONSENT_DENIED':
+      case 'false':
+      case 'denied':
+        consent[consentType] = 'CONSENT_DENIED';
+        break;
+      case 'CONSENT_STATUS_UNSPECIFIED':
+        consent[consentType] = 'CONSENT_STATUS_UNSPECIFIED';
+      default:
+        return;
+    }
     mappedData.consent = consent;
   });
 
@@ -976,7 +1008,8 @@ function getAddressFromEventData(eventData) {
   const postalCode = eventDataUserDataAddress.postal_code;
   const regionCode = eventDataUserDataAddress.country;
 
-  if (firstName && lastName && postalCode && regionCode) {
+  const addressIsValid = [firstName, lastName, postalCode, regionCode].every(isValidValue);
+  if (addressIsValid) {
     return {
       givenName: makeString(firstName),
       familyName: makeString(lastName),
@@ -994,8 +1027,7 @@ function addAudienceMembersData(data, eventData, mappedData) {
     return [];
   };
   const audienceMemberIDsLengthLimit = 10;
-
-  let audienceMembers = [];
+  const audienceMembers = [];
 
   if (data.userMode === 'single') {
     let emailAddresses = data.hasOwnProperty('userDataEmailAddresses')
@@ -1063,6 +1095,7 @@ function addAudienceMembersData(data, eventData, mappedData) {
       }
     }
 
+    // This is for the future. Not currently supported by UI.
     if (data.mobileIds) {
       const mobileIds = itemizeUserIdentifier(data.mobileIds);
       if (mobileIds && mobileIds.length) {
@@ -1073,20 +1106,10 @@ function addAudienceMembersData(data, eventData, mappedData) {
         });
       }
     }
-
-    if (data.pairIds) {
-      const pairIds = itemizeUserIdentifier(data.pairIds);
-      if (pairIds && pairIds.length) {
-        audienceMembers.push({
-          pairData: {
-            pairIds: pairIds.slice(0, audienceMemberIDsLengthLimit)
-          }
-        });
-      }
-    }
   } else if (data.userMode === 'multiple' && getType(data.audienceMembers) === 'array') {
     data.audienceMembers.forEach((audienceMember) => {
-      if (!audienceMember || !audienceMember.userData) return;
+      if (getType(audienceMember) !== 'object' || getType(audienceMember.userData) !== 'object')
+        return;
 
       const audienceMemberUserDataOnly = {
         userData: audienceMember.userData
@@ -1160,17 +1183,42 @@ function hashDataIfNeeded(mappedData) {
   if (getType(audienceMembers) !== 'array') return;
 
   audienceMembers.forEach((audienceMember) => {
-    if (getType(audienceMember) !== 'object') return;
-
     if (
-      getType(audienceMember.userData) === 'object' &&
-      getType(audienceMember.userData.userIdentifiers) === 'array'
+      getType(audienceMember) !== 'object' ||
+      getType(audienceMember.userData) !== 'object' ||
+      getType(audienceMember.userData.userIdentifiers) !== 'array'
     ) {
-      audienceMember.userData.userIdentifiers.forEach((userIdentifier) => {
-        const key = Object.keys(userIdentifier)[0];
+      return;
+    }
 
-        if (key === 'emailAddress' || key === 'phoneNumber') {
-          let value = userIdentifier[key];
+    audienceMember.userData.userIdentifiers.forEach((userIdentifier) => {
+      const key = Object.keys(userIdentifier)[0];
+
+      if (key === 'emailAddress' || key === 'phoneNumber') {
+        let value = userIdentifier[key];
+
+        if (!value) return;
+
+        if (isSHA256HexHashed(value)) {
+          mappedData.encoding = 'HEX';
+          return;
+        } else if (isSHA256Base64Hashed(value)) {
+          mappedData.encoding = 'BASE64';
+          return;
+        }
+
+        if (key === 'phoneNumber') value = normalizePhoneNumber(value);
+        else if (key === 'emailAddress') value = normalizeEmailAddress(value);
+
+        userIdentifier[key] = hashData(value);
+        mappedData.encoding = 'HEX';
+      } else if (key === 'address') {
+        if (getType(userIdentifier.address) !== 'object') return;
+
+        const addressKeysToHash = ['givenName', 'familyName'];
+        addressKeysToHash.forEach((nameKey) => {
+          const value = userIdentifier.address[nameKey];
+          if (!value) return;
 
           if (isSHA256HexHashed(value)) {
             mappedData.encoding = 'HEX';
@@ -1180,47 +1228,11 @@ function hashDataIfNeeded(mappedData) {
             return;
           }
 
-          if (key === 'phoneNumber') value = normalizePhoneNumber(value);
-          else if (key === 'emailAddress') value = normalizeEmailAddress(value);
-
-          userIdentifier[key] = hashData(value);
+          userIdentifier.address[nameKey] = hashData(value);
           mappedData.encoding = 'HEX';
-        } else if (key === 'address') {
-          const addressKeysToHash = ['givenName', 'familyName'];
-
-          addressKeysToHash.forEach((nameKey) => {
-            const value = userIdentifier.address[nameKey];
-            if (!value) return;
-
-            if (isSHA256HexHashed(value)) {
-              mappedData.encoding = 'HEX';
-              return;
-            } else if (isSHA256Base64Hashed(value)) {
-              mappedData.encoding = 'BASE64';
-              return;
-            }
-
-            userIdentifier.address[nameKey] = hashData(value);
-            mappedData.encoding = 'HEX';
-          });
-        }
-      });
-    } else if (
-      getType(audienceMember.pairData) === 'object' &&
-      getType(audienceMember.pairData.pairIds) === 'array'
-    ) {
-      audienceMember.pairData.pairIds = audienceMember.pairData.pairIds.map((pairId) => {
-        if (isSHA256HexHashed(pairId)) {
-          mappedData.encoding = 'HEX';
-          return pairId;
-        } else if (isSHA256Base64Hashed(pairId)) {
-          mappedData.encoding = 'BASE64';
-          return pairId;
-        }
-        mappedData.encoding = 'HEX';
-        return hashData(pairId);
-      });
-    }
+        });
+      }
+    });
   });
 
   return mappedData;
@@ -1275,26 +1287,68 @@ function generateRequestOptions(data, apiVersion) {
 }
 
 function validateMappedData(mappedData) {
-  if (!mappedData.audienceMembers || mappedData.audienceMembers.length === 0) {
+  const audienceMembers = mappedData.audienceMembers;
+  if (!audienceMembers || audienceMembers.length === 0) {
     return 'At least 1 Audience Member resource must be specified.';
   }
 
   const audienceMembersLengthLimit = 10000;
-  if (mappedData.audienceMembers.length > audienceMembersLengthLimit) {
+  if (audienceMembers.length > audienceMembersLengthLimit) {
     return (
       'Audience Members list length must be at most ' +
       audienceMembersLengthLimit +
       '. Current is: ' +
-      mappedData.audienceMembers.length
+      audienceMembers.length
     );
   }
 
-  const hasUserDataOrPairData = mappedData.audienceMembers.some((am) => am.userData || am.pairData);
+  const hasUserDataOrPairData = audienceMembers.some((am) => am.userData || am.pairData);
   if (hasUserDataOrPairData && !mappedData.encoding) {
     return 'Encoding must be specified when sending UserData or PairData.';
   }
 
+  const isUserDataAbsent = (audienceMember) => {
+    return (
+      getType(audienceMember.userData) !== 'object' ||
+      getType(audienceMember.userData.userIdentifiers) !== 'array' ||
+      audienceMember.userData.userIdentifiers.length === 0 ||
+      audienceMember.userData.userIdentifiers.some((i) => {
+        const userIdentifierIsObject = getType(i) === 'object';
+        const userIdentifierKey = userIdentifierIsObject ? Object.keys(i)[0] : undefined;
+        const userIdentifierValue = userIdentifierIsObject ? Object.values(i)[0] : undefined;
+        return (
+          !hasProps(i) ||
+          !userIdentifierValue ||
+          (userIdentifierKey === 'address' &&
+            (!hasProps(userIdentifierValue) || Object.values(userIdentifierValue).some((v) => !v)))
+        );
+      })
+    );
+  };
+  // This is for the future. Not currently supported by UI.
+  const isMobileDataAbsent = (audienceMember) => {
+    return (
+      getType(audienceMember.mobileData) !== 'object' ||
+      getType(audienceMember.mobileData.mobileIds) !== 'array' ||
+      audienceMember.mobileData.mobileIds.length === 0 ||
+      audienceMember.mobileData.mobileIds.some(
+        (mobileId) => getType(mobileId) !== 'string' || !mobileId
+      )
+    );
+  };
+  const doesNotHaveMatchData = audienceMembers.some((audienceMember) => {
+    return isUserDataAbsent(audienceMember) && isMobileDataAbsent(audienceMember);
+  });
+  if (doesNotHaveMatchData) {
+    return 'At least 1 User Data must be specified.';
+  }
+
   const destinations = mappedData.destinations;
+  const destinationsLengthLimit = 10;
+  if (destinations.length > destinationsLengthLimit) {
+    return 'Destinations list length must be at most ' + destinationsLengthLimit + '.';
+  }
+
   const validationKeys = [
     'productDestinationId',
     'reference',
@@ -1308,8 +1362,11 @@ function validateMappedData(mappedData) {
       const key = validationKeys[j];
       const parts = key.split('.');
       if (parts.length > 1 && !destination[parts[0]]) continue;
-      const value = parts.reduce((acc, part) => acc && acc[part], destination);
-      if (!isValidValue(value) || value === 'undefined' || value === 'stape_undefined') {
+      let value = parts.reduce((acc, part) => acc && acc[part], destination);
+      if (data.authFlow === 'stape' && ['productDestinationId', 'reference'].indexOf(key) !== -1) {
+        value = replaceAll(value, 'stape_', '');
+      }
+      if (!isValidValue(value) || ['undefined', 'null'].indexOf(value) !== -1) {
         return 'destinations[' + i + '].' + key + ' is invalid.';
       }
     }
@@ -1387,8 +1444,26 @@ function sendRequest(data, mappedData, apiVersion) {
   Helpers
 ==============================================================================*/
 
+function shouldExitEarly(data, eventData) {
+  if (!isConsentGivenOrNotRequired(data, eventData)) return true;
+
+  const url = getUrl(data);
+  if (url && url.lastIndexOf('https://gtm-msr.appspot.com/', 0) === 0) return true;
+
+  return false;
+}
+
+function getUrl(eventData) {
+  return eventData.page_location || eventData.page_referrer || getRequestHeader('referer');
+}
+
 function enc(data) {
-  return encodeUriComponent(makeString(data || ''));
+  if (['null', 'undefined'].indexOf(getType(data)) !== -1) data = '';
+  return encodeUriComponent(makeString(data));
+}
+
+function hasProps(obj) {
+  return getType(obj) === 'object' && Object.keys(obj).length > 0;
 }
 
 function isSHA256Base64Hashed(value) {
@@ -1432,7 +1507,13 @@ function hashData(value) {
 
 function isValidValue(value) {
   const valueType = getType(value);
-  return valueType !== 'null' && valueType !== 'undefined' && value !== '';
+  return valueType !== 'null' && valueType !== 'undefined' && value !== '' && value === value;
+}
+
+function replaceAll(str, find, replace) {
+  if (getType(str) !== 'string') return str;
+  const regex = createRegex(find, 'g');
+  return str.replace(regex, replace);
 }
 
 function isUIFieldTrue(field) {
@@ -1849,38 +1930,6 @@ ___SERVER_PERMISSIONS___
 ___TESTS___
 
 scenarios:
-- name: '[Single User] Should NOT send request if Audience Members list is empty'
-  code: |-
-    setMockDataByAudienceMethod('ingest', {
-      userMode: 'single',
-      userDataEmailAddresses: undefined,
-      userDataPhoneNumbers: undefined,
-      addUserDataAddress: false,
-      addressGivenName: undefined,
-      addressFamilyName: undefined,
-      addressRegion: undefined,
-      addressPostalCode: undefined,
-      mobileIds: undefined,
-      pairIds: undefined,
-    });
-
-    runCode(mockData);
-
-    assertApi('sendHttpRequest').wasNotCalled();
-    assertApi('gtmOnSuccess').wasNotCalled();
-    assertApi('gtmOnFailure').wasCalled();
-- name: '[Multiple Users] Should NOT send request if Audience Members list is empty'
-  code: |
-    setMockDataByAudienceMethod('ingest', {
-      userMode: 'multiple',
-      audienceMembers: undefined
-    });
-
-    runCode(mockData);
-
-    assertApi('sendHttpRequest').wasNotCalled();
-    assertApi('gtmOnSuccess').wasNotCalled();
-    assertApi('gtmOnFailure').wasCalled();
 - name: '[Multiple Users] Should NOT send request if Audience Members list length
     is greater than 10000'
   code: |-
@@ -1896,89 +1945,162 @@ scenarios:
 
     audienceMembers.length = 10001;
 
-    setMockDataByAudienceMethod('ingest', {
+    const copyMockData = setMockDataByAudienceMethod('ingest', {
       userMode: 'multiple',
       audienceMembers: audienceMembers
     });
 
-    runCode(mockData);
+    runCode(copyMockData);
 
     assertApi('sendHttpRequest').wasNotCalled();
     assertApi('gtmOnSuccess').wasNotCalled();
     assertApi('gtmOnFailure').wasCalled();
     */
-- name: '[Ingest] Request URL is succesfully built based on Audience Method'
-  code: "[\n  { auth: 'own' },\n  { auth: 'stape' }\n].forEach(scenario => {  \n \
-    \ if (scenario.auth === 'stape') {\n    setMockDataByAudienceMethod('ingest',\
-    \ undefined, 'stape');\n    mock('sendHttpRequest', (requestUrl, callback, requestOptions,\
-    \ requestBody) => {\n      assertThat(requestUrl).isEqualTo('https://expectedXGtmIdentifier.expectedXGtmDefaultDomain/stape-api/expectedXGtmApiKey/v2/data-manager/ingest');\n\
-    \      if (typeof callback === 'function') {\n        callback(200);\n      }\
-    \ else {\n        requestBody = requestOptions;\n        requestOptions = callback;\n\
-    \        return Promise.create((resolve, reject) => {\n          resolve({ statusCode:\
-    \ 200 });\n        });  \n      }\n    });\n  } else if (scenario.auth === 'own')\
-    \ {\n    setMockDataByAudienceMethod('ingest', undefined, 'own');\n    mock('sendHttpRequest',\
-    \ (requestUrl, callback, requestOptions, requestBody) => {\n      assertThat(requestUrl).isEqualTo('https://datamanager.googleapis.com/v'\
-    \ + expectedDataManagerApiVersion + '/audienceMembers:ingest');\n      if (typeof\
-    \ callback === 'function') {\n        callback(200);\n      } else {\n       \
-    \ requestBody = requestOptions;\n        requestOptions = callback;\n        return\
-    \ Promise.create((resolve, reject) => {\n          resolve({ statusCode: 200 });\n\
-    \        });  \n      }\n    });\n  }\n  \n  runCode(mockData);\n  \n  mockData\
-    \ = {};\n});\n\ncallLater(() => {\n  assertApi('gtmOnSuccess').wasCalled();\n\
-    \  assertApi('gtmOnFailure').wasNotCalled();\n});"
-- name: '[Remove] Request URL is succesfully built based on Audience Method'
-  code: "[\n  { auth: 'own' },\n  { auth: 'stape' }\n].forEach(scenario => {  \n \
-    \ if (scenario.auth === 'stape') {\n    setMockDataByAudienceMethod('remove',\
-    \ undefined, 'stape');\n    mock('sendHttpRequest', (requestUrl, callback, requestOptions,\
-    \ requestBody) => {\n      assertThat(requestUrl).isEqualTo('https://expectedXGtmIdentifier.expectedXGtmDefaultDomain/stape-api/expectedXGtmApiKey/v2/data-manager/remove');\n\
-    \      if (typeof callback === 'function') {\n        callback(200);\n      }\
-    \ else {\n        requestBody = requestOptions;\n        requestOptions = callback;\n\
-    \        return Promise.create((resolve, reject) => {\n          resolve({ statusCode:\
-    \ 200 });\n        });  \n      }\n    });\n  } else if (scenario.auth === 'own')\
-    \ {\n    setMockDataByAudienceMethod('remove', undefined, 'own');\n    mock('sendHttpRequest',\
-    \ (requestUrl, callback, requestOptions, requestBody) => {\n      assertThat(requestUrl).isEqualTo('https://datamanager.googleapis.com/v'\
-    \ + expectedDataManagerApiVersion + '/audienceMembers:remove');\n      if (typeof\
-    \ callback === 'function') {\n        callback(200);\n      } else {\n       \
-    \ requestBody = requestOptions;\n        requestOptions = callback;\n        return\
-    \ Promise.create((resolve, reject) => {\n          resolve({ statusCode: 200 });\n\
-    \        });  \n      }\n    });\n  }\n  \n  runCode(mockData);\n  \n  mockData\
-    \ = {};\n});\n\ncallLater(() => {\n  assertApi('gtmOnSuccess').wasCalled();\n\
-    \  assertApi('gtmOnFailure').wasNotCalled();\n});"
-- name: Request Options are succesfully built and sent in the request
-  code: "[\n  { auth: 'own' },\n  { auth: 'stape' }\n].forEach(scenario => {\n  if\
-    \ (scenario.auth === 'stape') {\n    setMockDataByAudienceMethod('ingest', undefined,\
-    \ 'stape');\n    mock('sendHttpRequest', (requestUrl, requestOptions, requestBody)\
-    \ => {\n      assertThat(requestOptions).isEqualTo({\n        method: 'POST',\n\
-    \        headers: {\n          'Content-Type': 'application/json',\n         \
-    \ 'x-datamanager-api-version': expectedDataManagerApiVersion\n        },\n   \
-    \     timeout: 20000\n      });\n    \n      return Promise.create((resolve, reject)\
-    \ => {\n        resolve({ statusCode: 200 });\n      });  \n    });\n  } else\
-    \ if (scenario.auth === 'own') {\n    setMockDataByAudienceMethod('ingest', undefined,\
-    \ 'own');\n    mock('sendHttpRequest', (requestUrl, requestOptions, requestBody)\
-    \ => {\n      assertThat(requestOptions).isEqualTo({\n        method: 'POST',\n\
-    \        headers: {\n          'Content-Type': 'application/json',\n         \
-    \ 'x-goog-user-project': 'xGoogUserProject'\n        },\n        authorization:\
-    \ 'googleAuthToken'\n      });\n      \n      return Promise.create((resolve,\
-    \ reject) => {\n        resolve({ statusCode: 200 });\n      });  \n    });\n\
-    \  }\n  \n  runCode(mockData);\n  \n  mockData = {};\n  \n  if (scenario.auth\
-    \ === 'own') {\n    callLater(() => {\n      assertApi('getGoogleAuth').wasCalledWith({\n\
+- name: Request must not be sent if validations fail
+  code: "const audienceMembersBaseMock = JSON.parse(JSON.stringify(multipleAudienceMembersMock.slice(0,\
+    \ 2)));\n\n[\n  {\n    description: '[Single User] Should NOT send request if\
+    \ Audience Members list is empty - all single user data fields are undefined or\
+    \ false',\n    auth: 'stape',\n    mockData: {\n      userMode: 'single',\n  \
+    \    userDataEmailAddresses: undefined,\n      userDataPhoneNumbers: undefined,\n\
+    \      addUserDataAddress: false,\n      addressGivenName: undefined,\n      addressFamilyName:\
+    \ undefined,\n      addressRegion: undefined,\n      addressPostalCode: undefined,\n\
+    \      mobileIds: undefined,\n      pairIds: undefined\n    }\n  },\n  {\n   \
+    \ description: '[Multiple Users] Should NOT send request if Audience Members list\
+    \ is empty - audienceMembers is explicitly undefined',\n    auth: 'stape',\n \
+    \   mockData: {\n      userMode: 'multiple',\n      audienceMembers: undefined\n\
+    \    }\n  },\n  {\n    description: '[Multiple Users] Should NOT send request\
+    \ if Audience Members list is empty - audienceMembers is an empty array',\n  \
+    \  auth: 'stape',\n    mockData: {\n      userMode: 'multiple',\n      audienceMembers:\
+    \ []\n    }\n  },\n  {\n    description: '[Multiple Users] Should NOT send request\
+    \ if Audience Members list is empty - audienceMembers contains an empty object',\n\
+    \    auth: 'stape',\n    mockData: {\n      userMode: 'multiple',\n      audienceMembers:\
+    \ [{}]\n    }\n  },\n  {\n    description: '[Multiple Users] Should NOT send request\
+    \ if Audience Members list is empty - userData and mobileData are\
+    \ explicitly undefined',\n    auth: 'stape',\n    mockData: {\n      userMode:\
+    \ 'multiple',\n      audienceMembers: assign([], audienceMembersBaseMock[0], [{\n\
+    \        userData: undefined,\n        mobileData: undefined\n      }])\n    }\n\
+    \  },\n  {\n    description: '[Multiple Users] Should NOT send request if Audience\
+    \ Members list is empty - userData is an empty object',\n    auth: 'stape',\n\
+    \    mockData: {\n      userMode: 'multiple',\n      audienceMembers: assign([],\
+    \ audienceMembersBaseMock[0], [{\n        userData: {},\n        mobileData: undefined\n\
+    \      }])\n    }\n  },\n  {\n    description: '[Multiple Users] Should NOT send\
+    \ request if Audience Members list is empty - userIdentifiers inside userData\
+    \ is undefined',\n    auth: 'stape',\n    mockData: {\n      userMode: 'multiple',\n\
+    \      audienceMembers: assign([], audienceMembersBaseMock[0], [{\n        userData:\
+    \ { userIdentifiers: undefined },\n        mobileData: undefined\n      }])\n\
+    \    }\n  },\n  {\n    description: '[Multiple Users] Should NOT send request\
+    \ if Audience Members list is empty - userIdentifiers inside userData is an empty\
+    \ array',\n    auth: 'stape',\n    mockData: {\n      userMode: 'multiple',\n\
+    \      audienceMembers: assign([], audienceMembersBaseMock[0], [{\n        userData:\
+    \ { userIdentifiers: [] },\n        mobileData: undefined\n      }])\n    }\n\
+    \  },\n  {\n    description: '[Multiple Users] Should NOT send request if Audience\
+    \ Members list is empty - userIdentifiers contains an invalid string element',\n\
+    \    auth: 'stape',\n    mockData: {\n      userMode: 'multiple',\n      audienceMembers:\
+    \ assign([], audienceMembersBaseMock[0], [{\n        userData: { userIdentifiers:\
+    \ ['test'] },\n        mobileData: undefined\n      }])\n    }\n  },\n  {\n  \
+    \  description: '[Multiple Users] Should NOT send request if Audience Members\
+    \ list is empty - userIdentifiers contains an empty object',\n    auth: 'stape',\n\
+    \    mockData: {\n      userMode: 'multiple',\n      audienceMembers: assign([],\
+    \ audienceMembersBaseMock[0], [{\n        userData: { userIdentifiers: [{}] },\n\
+    \        mobileData: undefined\n      }])\n    }\n  },\n  {\n    description:\
+    \ '[Multiple Users] Should NOT send request if Audience Members list is empty\
+    \ - emailAddress inside userIdentifiers is undefined',\n    auth: 'stape',\n \
+    \   mockData: {\n      userMode: 'multiple',\n      audienceMembers: assign([],\
+    \ audienceMembersBaseMock[0], [{\n        userData: { userIdentifiers: [{ emailAddress:\
+    \ undefined }] },\n        mobileData: undefined\n      }])\n    }\n  },\n  {\n\
+    \    description: '[Multiple Users] Should NOT send request if Audience Members\
+    \ list is empty - address inside userIdentifiers is undefined',\n    auth: 'stape',\n\
+    \    mockData: {\n      userMode: 'multiple',\n      audienceMembers: assign([],\
+    \ audienceMembersBaseMock[0], [{\n        userData: { userIdentifiers: [{ address:\
+    \ undefined }] },\n        mobileData: undefined\n      }])\n    }\n  },\n  {\n\
+    \    description: '[Multiple Users] Should NOT send request if Audience Members\
+    \ list is empty - address inside userIdentifiers is an empty object',\n    auth:\
+    \ 'stape',\n    mockData: {\n      userMode: 'multiple',\n      audienceMembers:\
+    \ assign([], audienceMembersBaseMock[0], [{\n        userData: { userIdentifiers:\
+    \ [{ address: {} }] },\n        mobileData: undefined\n      }])\n    }\n  },\n\
+    \  {\n    description: '[Multiple Users] Should NOT send request if Audience Members\
+    \ list is empty - givenName inside address is undefined',\n    auth: 'stape',\n\
+    \    mockData: {\n      userMode: 'multiple',\n      audienceMembers: assign([],\
+    \ audienceMembersBaseMock[0], [{\n        userData: { userIdentifiers: [{ address:\
+    \ { givenName: undefined } }] },\n        mobileData: undefined\n      }])\n \
+    \   }\n  },\n  {\n    description: '[Multiple Users] Should NOT send request if\
+    \ Audience Members list is empty - mobileIds inside mobileData is undefined',\n\
+    \    auth: 'stape',\n    mockData: {\n      userMode: 'multiple',\n      audienceMembers:\
+    \ assign([], audienceMembersBaseMock[0], [{\n        mobileData: { mobileIds:\
+    \ undefined },\n        userData: undefined\n      }])\n    }\n  },\n  {\n   \
+    \ description: '[Multiple Users] Should NOT send request if Audience Members list\
+    \ is empty - mobileIds inside mobileData is an empty array',\n    auth: 'stape',\n\
+    \    mockData: {\n      userMode: 'multiple',\n      audienceMembers: assign([],\
+    \ audienceMembersBaseMock[0], [{\n        mobileData: { mobileIds: [] },\n   \
+    \     userData: undefined\n      }])\n    }\n  },\n  {\n    description: 'Invalid\
+    \ Destination ID fields - productDestinationId is the string \"stape_undefined\"\
+    ',\n    auth: 'stape',\n    mockData: {\n      userMode: 'single',\n      stapeAuthDestinationsList:\
+    \ [\n        {\n          product: 'GOOGLE_ADS',\n          operatingAccountId:\
+    \ '123-213-123',\n          linkedAccountId: '123-213-123',\n          productDestinationId:\
+    \ 'stape_undefined'\n        }\n      ]\n    }\n  },\n  {\n    description: 'Invalid\
+    \ Destination ID fields - linkedAccountId contains letters (\"abcde\")',\n   \
+    \ auth: 'stape',\n    mockData: {\n      userMode: 'single',\n      stapeAuthDestinationsList:\
+    \ [\n        {\n          product: 'GOOGLE_ADS',\n          operatingAccountId:\
+    \ '123-213-123',\n          linkedAccountId: 'abcde',\n          productDestinationId:\
+    \ '123-213-123'\n        }\n      ]\n    }\n  },\n  {\n    description: 'Invalid\
+    \ Destination ID fields - operatingAccountId is an empty string',\n    auth: 'stape',\n\
+    \    mockData: {\n      userMode: 'single',\n      stapeAuthDestinationsList:\
+    \ [\n        {\n          product: 'GOOGLE_ADS',\n          operatingAccountId:\
+    \ '',\n          linkedAccountId: '123-213-123',\n          productDestinationId:\
+    \ '123-213-123'\n        }\n      ]\n    }\n  },\n  {\n    description: 'Invalid\
+    \ Destination ID fields - loginAccountId is the string \"undefined\"',\n    auth:\
+    \ 'own',\n    mockData: {\n      userMode: 'single',\n      stapeAuthDestinationsList:\
+    \ [\n        {\n          product: 'GOOGLE_ADS',\n          operatingAccountId:\
+    \ '123-213-123',\n          loginAccountId: 'undefined',\n          productDestinationId:\
+    \ '123-213-123'\n        }\n      ]\n    }\n  }\n].forEach((scenario, i) => {\n\
+    \  const copyMockData = setMockDataByAudienceMethod('ingest', scenario.mockData,\
+    \ scenario.auth);\n  \n  runCode(copyMockData);\n\n  require('logToConsole')(i,\
+    \ scenario);\n  assertApi('sendHttpRequest').wasNotCalled();\n  assertApi('gtmOnSuccess').wasNotCalled();\n\
+    \  assertApi('gtmOnFailure').wasCalled();\n});"
+- name: '[Ingest/Remove] Request URL is succesfully built based on Auth'
+  code: "[\n  { \n    method: 'ingest',\n    auth: 'own',\n    expectedRequestUrl:\
+    \ 'https://datamanager.googleapis.com/v' + expectedDataManagerApiVersion + '/audienceMembers:ingest'\n\
+    \  },\n  { \n    method: 'ingest',\n    auth: 'stape',\n    expectedRequestUrl:\
+    \ 'https://expectedXGtmIdentifier.expectedXGtmDefaultDomain/stape-api/expectedXGtmApiKey/v2/data-manager/ingest'\n\
+    \  },\n  { \n    method: 'remove',\n    auth: 'own',\n    expectedRequestUrl:\
+    \ 'https://datamanager.googleapis.com/v' + expectedDataManagerApiVersion + '/audienceMembers:remove'\n\
+    \  },\n  { \n    method: 'remove',\n    auth: 'stape',\n    expectedRequestUrl:\
+    \ 'https://expectedXGtmIdentifier.expectedXGtmDefaultDomain/stape-api/expectedXGtmApiKey/v2/data-manager/remove'\n\
+    \  }\n].forEach(scenario => {  \n  const copyMockData = setMockDataByAudienceMethod(scenario.method,\
+    \ undefined, scenario.auth);\n  \n  mock('sendHttpRequest', (requestUrl, requestOptions,\
+    \ requestBody) => {\n    assertThat(requestUrl).isEqualTo(scenario.expectedRequestUrl);\n\
+    \n    return Promise.create((resolve, reject) => {\n      resolve({ statusCode:\
+    \ 200 });\n    });  \n  });\n  \n  runCode(copyMockData);\n\n  callLater(() =>\
+    \ {\n    assertApi('gtmOnSuccess').wasCalled();\n    assertApi('gtmOnFailure').wasNotCalled();\n\
+    \  });\n});"
+- name: Request Options are succesfully built and sent based on Auth
+  code: "[\n  {   \n    auth: 'own',\n    expectedRequestOptions: {\n      method:\
+    \ 'POST',\n      headers: {\n        'Content-Type': 'application/json',\n   \
+    \     'x-goog-user-project': 'xGoogUserProject'\n      },\n      authorization:\
+    \ 'googleAuthToken'\n    }\n  },\n  { \n    auth: 'stape',\n    expectedRequestOptions:\
+    \ {\n      method: 'POST',\n      headers: {\n        'Content-Type': 'application/json',\n\
+    \        'x-datamanager-api-version': expectedDataManagerApiVersion\n      },\n\
+    \      timeout: 20000\n    }\n  }\n].forEach(scenario => {\n  const copyMockData\
+    \ = setMockDataByAudienceMethod('ingest', undefined, scenario.auth);\n\n  mock('sendHttpRequest',\
+    \ (requestUrl, requestOptions, requestBody) => {\n    assertThat(requestOptions).isEqualTo(scenario.expectedRequestOptions);\n\
+    \n    return Promise.create((resolve, reject) => {\n      resolve({ statusCode:\
+    \ 200 });\n    });  \n  });\n  \n  runCode(copyMockData);\n  \n  callLater(()\
+    \ => {\n    if (scenario.auth === 'own') {\n      assertApi('getGoogleAuth').wasCalledWith({\n\
     \        scopes: ['https://www.googleapis.com/auth/datamanager']\n      });\n\
-    \    });  \n  }\n});\n\ncallLater(() => {\n  assertApi('gtmOnSuccess').wasCalled();\n\
-    \  assertApi('gtmOnFailure').wasNotCalled();\n});"
-- name: '[Ingest - Single User] Request is successfully built and sent - data from
-    UI fields'
-  code: "setMockDataByAudienceMethod('ingest', {\n  userMode: 'single'\n});\n\nmock('sendHttpRequest',\
-    \ (requestUrl, requestOptions, requestBody) => {\n  const parsedRequestBody =\
-    \ JSON.parse(requestBody);\n  assertThat(parsedRequestBody).isEqualTo({\n    destinations:\
-    \ [\n      {\n        reference: 'stape_productDestinationId',\n        productDestinationId:\
-    \ 'stape_productDestinationId',\n        operatingAccount: { accountType: 'GOOGLE_ADS',\
-    \ accountId: 'operatingAccountId' },\n        linkedAccount: { accountType: 'GOOGLE_ADS',\
-    \ accountId: 'linkedAccountId' }\n      },\n      {\n        reference: 'stape_productDestinationId1',\n\
-    \        productDestinationId: 'stape_productDestinationId1',\n        operatingAccount:\
-    \ { accountType: 'GOOGLE_ADS', accountId: 'operatingAccountId1' },\n        linkedAccount:\
-    \ { accountType: 'GOOGLE_ADS', accountId: 'linkedAccountId1' }\n      }\n    ],\n\
-    \    validateOnly: false,\n    termsOfService: { customerMatchTermsOfServiceStatus:\
-    \ 'ACCEPTED' },\n    consent: {\n      adUserData: 'CONSENT_GRANTED',\n      adPersonalization:\
-    \ 'CONSENT_GRANTED'\n    },\n    audienceMembers: [\n      {\n        userData:\
+    \    }\n    assertApi('gtmOnSuccess').wasCalled();\n    assertApi('gtmOnFailure').wasNotCalled();\n\
+    \  });\n});"
+- name: '[Ingest/Remove] [Single User] [Data from UI fields] Request is successfully
+    built and sent'
+  code: "[\n  { \n    method: 'ingest',\n  },\n  { \n    method: 'remove',\n  }\n\
+    ].forEach(scenario => {  \n  const copyMockData = setMockDataByAudienceMethod(scenario.method,\
+    \ {\n    userMode: 'single'\n  });\n  \n  const expectedRequestBody = {\n    destinations:\
+    \ [\n      {\n        reference: 'stape_3',\n        productDestinationId: 'stape_3',\n\
+    \        operatingAccount: { accountType: 'GOOGLE_ADS', accountId: '1' },\n  \
+    \      linkedAccount: { accountType: 'GOOGLE_ADS', accountId: '2' }\n      },\n\
+    \      {\n        reference: 'stape_33',\n        productDestinationId: 'stape_33',\n\
+    \        operatingAccount: { accountType: 'GOOGLE_ADS', accountId: '11' },\n \
+    \       linkedAccount: { accountType: 'GOOGLE_ADS', accountId: '22' }\n      }\n\
+    \    ],\n    validateOnly: false,\n    audienceMembers: [\n      {\n        userData:\
     \ {\n          userIdentifiers: [\n            {\n              emailAddress:\n\
     \                '973dfe463ec85785f5f95af5ba3906eedb2d931c24e69824a89ea65dba4e813b'\n\
     \            },\n            {\n              phoneNumber:\n                '910a625c4ba147b544e6bd2f267e130ae14c591b6ba9c25cb8573322dedbebd0'\n\
@@ -1987,37 +2109,37 @@ scenarios:
     \                familyName:\n                  '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
     \                regionCode: 'BR',\n                postalCode: '10001'\n    \
     \          }\n            }\n          ]\n        }\n      },\n      { mobileData:\
-    \ { mobileIds: ['AAA-BB-CC-111'] } },\n      {\n        pairData: {\n        \
-    \  pairIds: [\n            '426a1c28c61b7ba258fa3cc300ba7cd3abc11c0d4b585d3ce4a15d6f22d6d363'\n\
-    \          ]\n        }\n      }\n    ],\n    encoding: 'HEX',\n    encryptionInfo:\
+    \ { mobileIds: ['AAA-BB-CC-111'] } }\n    ],\n    encoding: 'HEX',\n    encryptionInfo:\
     \ {\n      gcpWrappedKeyInfo: {\n        keyType: 'XCHACHA20_POLY1305',\n    \
     \    wipProvider: '123',\n        kekUri: '123',\n        encryptedDek: '123'\n\
-    \      }\n    }\n  });\n\n  return Promise.create((resolve, reject) => {\n   \
-    \ resolve({ statusCode: 200 });\n  });  \n});\n\nrunCode(mockData);\n\ncallLater(()\
-    \ => {\n  assertApi('gtmOnSuccess').wasCalled();\n  assertApi('gtmOnFailure').wasNotCalled();\n\
-    });"
-- name: '[Ingest - Single User] Request is successfully built and sent - data from
-    UI fallbacks'
-  code: "setGetAllEventData();\nsetMockDataByAudienceMethod('ingest', {\n  userMode:\
-    \ 'single',\n  userDataEmailAddresses: undefined,\n  userDataPhoneNumbers: undefined,\n\
-    \  addUserDataAddress: true,\n  enableAudienceDataEncryption: false,\n  mobileIds:\
-    \ undefined,\n  pairIds: undefined\n});\n\n[\n  'userDataEmailAddresses',\n  'userDataPhoneNumbers',\n\
-    \  'addressGivenName',\n  'addressFamilyName',\n  'addressRegion',\n  'addressPostalCode'\n\
-    ].forEach((key) => Object.delete(mockData, key));\n\nmock('sendHttpRequest', (requestUrl,\
-    \ requestOptions, requestBody) => {\n  const parsedRequestBody = JSON.parse(requestBody);\n\
-    \  assertThat(parsedRequestBody).isEqualTo({\n    destinations: [\n      {\n \
-    \       reference: 'stape_productDestinationId',\n        productDestinationId:\
-    \ 'stape_productDestinationId',\n        operatingAccount: { accountType: 'GOOGLE_ADS',\
-    \ accountId: 'operatingAccountId' },\n        linkedAccount: { accountType: 'GOOGLE_ADS',\
-    \ accountId: 'linkedAccountId' }\n      },\n      {\n        reference: 'stape_productDestinationId1',\n\
-    \        productDestinationId: 'stape_productDestinationId1',\n        operatingAccount:\
-    \ { accountType: 'GOOGLE_ADS', accountId: 'operatingAccountId1' },\n        linkedAccount:\
-    \ { accountType: 'GOOGLE_ADS', accountId: 'linkedAccountId1' }\n      }\n    ],\n\
-    \    validateOnly: false,\n    termsOfService: { customerMatchTermsOfServiceStatus:\
-    \ 'ACCEPTED' },\n    consent: {\n      adUserData: 'CONSENT_GRANTED',\n      adPersonalization:\
-    \ 'CONSENT_GRANTED'\n    },\n    audienceMembers: [\n      {\n        userData:\
-    \ {\n          userIdentifiers: [\n            {\n              emailAddress:\n\
-    \                'ddffdce54594d729a13068951750239a1943c295a5f89349b5cf69744d4a1ba2'\n\
+    \      }\n    }\n  };\n  \n  if (scenario.method === 'ingest') {\n    expectedRequestBody.termsOfService\
+    \ = { customerMatchTermsOfServiceStatus: 'ACCEPTED' };\n    expectedRequestBody.consent\
+    \ = {\n      adUserData: 'CONSENT_GRANTED',\n      adPersonalization: 'CONSENT_GRANTED'\n\
+    \    };\n  }\n  \n  mock('sendHttpRequest', (requestUrl, requestOptions, requestBody)\
+    \ => {\n    const parsedRequestBody = JSON.parse(requestBody);\n    assertThat(parsedRequestBody).isEqualTo(expectedRequestBody);\n\
+    \n    return Promise.create((resolve, reject) => {\n      resolve({ statusCode:\
+    \ 200 });\n    });  \n  });\n  \n  runCode(copyMockData);\n\n  callLater(() =>\
+    \ {\n    assertApi('gtmOnSuccess').wasCalled();\n    assertApi('gtmOnFailure').wasNotCalled();\n\
+    \  });\n});"
+- name: '[Ingest/Remove] [Single User] [Data from auto-mapping] Request is successfully
+    built and sent'
+  code: "[\n  { \n    method: 'ingest',\n  },\n  { \n    method: 'remove',\n  }\n\
+    ].forEach(scenario => {\n  setGetAllEventData();\n\n  const copyMockData = setMockDataByAudienceMethod(scenario.method,\
+    \ {\n    userMode: 'single',\n    userDataEmailAddresses: undefined,\n    userDataPhoneNumbers:\
+    \ undefined,\n    addUserDataAddress: true,\n    enableAudienceDataEncryption:\
+    \ false,\n    mobileIds: undefined,\n    pairIds: undefined\n  });\n  \n  [\n\
+    \    'userDataEmailAddresses',\n    'userDataPhoneNumbers',\n    'addressGivenName',\n\
+    \    'addressFamilyName',\n    'addressRegion',\n    'addressPostalCode'\n  ].forEach((key)\
+    \ => Object.delete(copyMockData, key));\n  \n  const expectedRequestBody = {\n\
+    \    destinations: [\n      {\n        reference: 'stape_3',\n        productDestinationId:\
+    \ 'stape_3',\n        operatingAccount: { accountType: 'GOOGLE_ADS', accountId:\
+    \ '1' },\n        linkedAccount: { accountType: 'GOOGLE_ADS', accountId: '2' }\n\
+    \      },\n      {\n        reference: 'stape_33',\n        productDestinationId:\
+    \ 'stape_33',\n        operatingAccount: { accountType: 'GOOGLE_ADS', accountId:\
+    \ '11' },\n        linkedAccount: { accountType: 'GOOGLE_ADS', accountId: '22'\
+    \ }\n      }\n    ],\n    validateOnly: false,\n    audienceMembers: [\n     \
+    \ {\n        userData: {\n          userIdentifiers: [\n            {\n      \
+    \        emailAddress:\n                'ddffdce54594d729a13068951750239a1943c295a5f89349b5cf69744d4a1ba2'\n\
     \            },\n            {\n              emailAddress:\n                'afea90f78a2e604dc6cc5d7826ffdd2bfbab612a0c1222acf8df173319b7e809'\n\
     \            },\n            {\n              phoneNumber:\n                'c698c0b85d32cbcf5033ada58f34de87d4f7415efaf5a8d1c1e9e63393dcc85e'\n\
     \            },\n            {\n              address: {\n                givenName:\n\
@@ -2025,71 +2147,55 @@ scenarios:
     \                familyName:\n                  '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
     \                postalCode: '10001',\n                regionCode: 'BR'\n    \
     \          }\n            }\n          ]\n        }\n      }\n    ],\n    encoding:\
-    \ 'HEX'\n  });\n\n  return Promise.create((resolve, reject) => {\n    resolve({\
-    \ statusCode: 200 });\n  });  \n});\n\nrunCode(mockData);\n\ncallLater(() => {\n\
-    \  assertApi('gtmOnSuccess').wasCalled();\n  assertApi('gtmOnFailure').wasNotCalled();\n\
-    });"
-- name: '[Ingest - Single User] data from UI fallbacks are not used when passing undefined
-    to the fields'
-  code: "setGetAllEventData();\nsetMockDataByAudienceMethod('ingest', {\n  userMode:\
-    \ 'single',\n  userDataEmailAddresses: undefined,\n  userDataPhoneNumbers: undefined,\n\
-    \  addUserDataAddress: true,\n  addressGivenName: undefined,\n  addressFamilyName:\
-    \ undefined,\n  addressRegion: undefined,\n  addressPostalCode: undefined,\n \
-    \ enableAudienceDataEncryption: false\n});\n\nmock('sendHttpRequest', (requestUrl,\
-    \ requestOptions, requestBody) => {\n  const parsedRequestBody = JSON.parse(requestBody);\n\
-    \  assertThat(parsedRequestBody).isEqualTo({\n    destinations: [\n      {\n \
-    \       reference: 'stape_productDestinationId',\n        productDestinationId:\
-    \ 'stape_productDestinationId',\n        operatingAccount: { accountType: 'GOOGLE_ADS',\
-    \ accountId: 'operatingAccountId' },\n        linkedAccount: { accountType: 'GOOGLE_ADS',\
-    \ accountId: 'linkedAccountId' }\n      },\n      {\n        reference: 'stape_productDestinationId1',\n\
-    \        productDestinationId: 'stape_productDestinationId1',\n        operatingAccount:\
-    \ { accountType: 'GOOGLE_ADS', accountId: 'operatingAccountId1' },\n        linkedAccount:\
-    \ { accountType: 'GOOGLE_ADS', accountId: 'linkedAccountId1' }\n      }\n    ],\n\
-    \    validateOnly: false,\n    termsOfService: { customerMatchTermsOfServiceStatus:\
-    \ 'ACCEPTED' },\n    consent: {\n      adUserData: 'CONSENT_GRANTED',\n      adPersonalization:\
-    \ 'CONSENT_GRANTED'\n    },\n    audienceMembers: [\n      { mobileData: { mobileIds:\
-    \ ['AAA-BB-CC-111'] } },\n      {\n        pairData: {\n          pairIds: [\n\
-    \            '426a1c28c61b7ba258fa3cc300ba7cd3abc11c0d4b585d3ce4a15d6f22d6d363'\n\
-    \          ]\n        }\n      }\n    ],\n    encoding: 'HEX'\n  });\n\n  return\
-    \ Promise.create((resolve, reject) => {\n    resolve({ statusCode: 200 });\n \
-    \ });  \n});\n\nrunCode(mockData);\n\ncallLater(() => {\n  assertApi('gtmOnSuccess').wasCalled();\n\
-    \  assertApi('gtmOnFailure').wasNotCalled();\n});"
-- name: '[Ingest - Multiple Users] Request is successfully built and sent - data from
-    UI fields'
-  code: "setMockDataByAudienceMethod('ingest', {\n  userMode: 'multiple',\n  audienceMembers:\
-    \ [\n    {\n      userData: {\n        userIdentifiers: [\n          {\n     \
-    \       emailAddress:\n              '973dfe463ec85785f5f95af5ba3906eedb2d931c24e69824a89ea65dba4e813b'\n\
-    \          },\n          {\n            phoneNumber:\n              '910a625c4ba147b544e6bd2f267e130ae14c591b6ba9c25cb8573322dedbebd0'\n\
-    \          },\n          {\n            address: {\n              givenName:\n\
-    \                '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
-    \              familyName:\n                '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
-    \              regionCode: 'BR',\n              postalCode: '10001'\n        \
-    \    }\n          }\n        ]\n      }\n    },\n    {\n      userData: {\n  \
-    \      userIdentifiers: [\n          {\n            emailAddress:\n          \
-    \    '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08'\n    \
-    \      },\n          {\n            phoneNumber:\n              '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08'\n\
-    \          },\n          {\n            address: {\n              givenName:\n\
-    \                '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
-    \              familyName:\n                '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
-    \              regionCode: 'US',\n              postalCode: '22222'\n        \
-    \    }\n          }\n        ]\n      }\n    },\n    { \n      mobileData: { mobileIds:\
-    \ ['AAA-BB-CC-111'] } \n    },\n    { \n      mobileData: { mobileIds: ['foobar',\
-    \ 'barfoo'] } \n    },\n    {\n      pairData: { pairIds: ['426a1c28c61b7ba258fa3cc300ba7cd3abc11c0d4b585d3ce4a15d6f22d6d363']\
-    \ }\n    },\n    {\n      pairData: { pairIds: ['abc', 'cde'] }\n    }\n  ]\n\
-    });\n\nmock('sendHttpRequest', (requestUrl, requestOptions, requestBody) => {\n\
-    \  const parsedRequestBody = JSON.parse(requestBody);\n  assertThat(parsedRequestBody).isEqualTo({\n\
-    \    destinations: [\n      {\n        reference: 'stape_productDestinationId',\n\
-    \        productDestinationId: 'stape_productDestinationId',\n        operatingAccount:\
-    \ { accountType: 'GOOGLE_ADS', accountId: 'operatingAccountId' },\n        linkedAccount:\
-    \ { accountType: 'GOOGLE_ADS', accountId: 'linkedAccountId' }\n      },\n    \
-    \  {\n        reference: 'stape_productDestinationId1',\n        productDestinationId:\
-    \ 'stape_productDestinationId1',\n        operatingAccount: { accountType: 'GOOGLE_ADS',\
-    \ accountId: 'operatingAccountId1' },\n        linkedAccount: { accountType: 'GOOGLE_ADS',\
-    \ accountId: 'linkedAccountId1' }\n      }\n    ],\n    validateOnly: false,\n\
-    \    termsOfService: { customerMatchTermsOfServiceStatus: 'ACCEPTED' },\n    consent:\
-    \ {\n      adUserData: 'CONSENT_GRANTED',\n      adPersonalization: 'CONSENT_GRANTED'\n\
-    \    },\n    audienceMembers: [\n      {\n        userData: {\n          userIdentifiers:\
-    \ [\n            {\n              emailAddress:\n                '973dfe463ec85785f5f95af5ba3906eedb2d931c24e69824a89ea65dba4e813b'\n\
+    \ 'HEX'\n  };\n  \n  if (scenario.method === 'ingest') {\n    expectedRequestBody.termsOfService\
+    \ = { customerMatchTermsOfServiceStatus: 'ACCEPTED' };\n    expectedRequestBody.consent\
+    \ = {\n      adUserData: 'CONSENT_GRANTED',\n      adPersonalization: 'CONSENT_GRANTED'\n\
+    \    };\n  }\n  \n  mock('sendHttpRequest', (requestUrl, requestOptions, requestBody)\
+    \ => {\n    const parsedRequestBody = JSON.parse(requestBody);\n    assertThat(parsedRequestBody).isEqualTo(expectedRequestBody);\n\
+    \n    return Promise.create((resolve, reject) => {\n      resolve({ statusCode:\
+    \ 200 });\n    });  \n  });\n  \n  runCode(copyMockData);\n\n  callLater(() =>\
+    \ {\n    assertApi('gtmOnSuccess').wasCalled();\n    assertApi('gtmOnFailure').wasNotCalled();\n\
+    \  });\n  \n  cleanup();\n});"
+- name: '[Ingest/Remove] [Single User] [Data from auto-mapping] Is not used when passing
+    undefined to the fields'
+  code: "[\n  { \n    method: 'ingest',\n  },\n  { \n    method: 'remove',\n  }\n\
+    ].forEach(scenario => {\n  setGetAllEventData();\n\n  const copyMockData = setMockDataByAudienceMethod(scenario.method,\
+    \ {\n    userMode: 'single',\n    userDataEmailAddresses: undefined,\n    userDataPhoneNumbers:\
+    \ undefined,\n    addUserDataAddress: true,\n    addressGivenName: undefined,\n\
+    \    addressFamilyName: undefined,\n    addressRegion: undefined,\n    addressPostalCode:\
+    \ undefined,\n    enableAudienceDataEncryption: false\n  });\n  \n  const expectedRequestBody\
+    \ = {\n    destinations: [\n      {\n        reference: 'stape_3',\n        productDestinationId:\
+    \ 'stape_3',\n        operatingAccount: { accountType: 'GOOGLE_ADS', accountId:\
+    \ '1' },\n        linkedAccount: { accountType: 'GOOGLE_ADS', accountId: '2' }\n\
+    \      },\n      {\n        reference: 'stape_33',\n        productDestinationId:\
+    \ 'stape_33',\n        operatingAccount: { accountType: 'GOOGLE_ADS', accountId:\
+    \ '11' },\n        linkedAccount: { accountType: 'GOOGLE_ADS', accountId: '22'\
+    \ }\n      }\n    ],\n    validateOnly: false,\n    audienceMembers: [\n     \
+    \ { mobileData: { mobileIds: ['AAA-BB-CC-111'] } }\n    ],\n    encoding: 'HEX'\n\
+    \  };\n  \n  if (scenario.method === 'ingest') {\n    expectedRequestBody.termsOfService\
+    \ = { customerMatchTermsOfServiceStatus: 'ACCEPTED' };\n    expectedRequestBody.consent\
+    \ = {\n      adUserData: 'CONSENT_GRANTED',\n      adPersonalization: 'CONSENT_GRANTED'\n\
+    \    };\n  }\n  \n  mock('sendHttpRequest', (requestUrl, requestOptions, requestBody)\
+    \ => {\n    const parsedRequestBody = JSON.parse(requestBody);\n    assertThat(parsedRequestBody).isEqualTo(expectedRequestBody);\n\
+    \n    return Promise.create((resolve, reject) => {\n      resolve({ statusCode:\
+    \ 200 });\n    });  \n  });\n  \n  runCode(copyMockData);\n\n  callLater(() =>\
+    \ {\n    assertApi('gtmOnSuccess').wasCalled();\n    assertApi('gtmOnFailure').wasNotCalled();\n\
+    \  });\n  \n  cleanup();\n});"
+- name: '[Ingest/Remove] [Multiple Users] [Data from UI fields] Request is successfully
+    built and sent'
+  code: "[\n  { \n    method: 'ingest',\n  },\n  { \n    method: 'remove',\n  }\n\
+    ].forEach(scenario => {  \n  const copyMockData = setMockDataByAudienceMethod(scenario.method,\
+    \ {\n    userMode: 'multiple',\n    audienceMembers: multipleAudienceMembersMock\n\
+    \  });\n  \n  const expectedRequestBody = {\n    destinations: [\n      {\n  \
+    \      reference: 'stape_3',\n        productDestinationId: 'stape_3',\n     \
+    \   operatingAccount: { accountType: 'GOOGLE_ADS', accountId: '1' },\n       \
+    \ linkedAccount: { accountType: 'GOOGLE_ADS', accountId: '2' }\n      },\n   \
+    \   {\n        reference: 'stape_33',\n        productDestinationId: 'stape_33',\n\
+    \        operatingAccount: { accountType: 'GOOGLE_ADS', accountId: '11' },\n \
+    \       linkedAccount: { accountType: 'GOOGLE_ADS', accountId: '22' }\n      }\n\
+    \    ],\n    validateOnly: false,\n    audienceMembers: [\n      {\n        userData:\
+    \ {\n          userIdentifiers: [\n            {\n              emailAddress:\n\
+    \                '973dfe463ec85785f5f95af5ba3906eedb2d931c24e69824a89ea65dba4e813b'\n\
     \            },\n            {\n              phoneNumber:\n                '910a625c4ba147b544e6bd2f267e130ae14c591b6ba9c25cb8573322dedbebd0'\n\
     \            },\n            {\n              address: {\n                givenName:\n\
     \                  '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
@@ -2107,204 +2213,70 @@ scenarios:
     \ IDs and PAIR IDs are not currently supported.\n    ],\n    encoding: 'HEX',\n\
     \    encryptionInfo: {\n      gcpWrappedKeyInfo: {\n        keyType: 'XCHACHA20_POLY1305',\n\
     \        wipProvider: '123',\n        kekUri: '123',\n        encryptedDek: '123'\n\
-    \      }\n    }\n  });\n\n  return Promise.create((resolve, reject) => {\n   \
-    \ resolve({ statusCode: 200 });\n  });  \n});\n\nrunCode(mockData);\n\ncallLater(()\
-    \ => {\n  assertApi('gtmOnSuccess').wasCalled();\n  assertApi('gtmOnFailure').wasNotCalled();\n\
-    });"
-- name: '[Remove - Single User] Request is successfully built and sent - data from
-    UI fields'
-  code: "setMockDataByAudienceMethod('remove', {\n  userMode: 'single'\n});\n\nmock('sendHttpRequest',\
-    \ (requestUrl, requestOptions, requestBody) => {\n  const parsedRequestBody =\
-    \ JSON.parse(requestBody);\n  assertThat(parsedRequestBody).isEqualTo({\n    destinations:\
-    \ [\n      {\n        reference: 'stape_productDestinationId',\n        productDestinationId:\
-    \ 'stape_productDestinationId',\n        operatingAccount: { accountType: 'GOOGLE_ADS',\
-    \ accountId: 'operatingAccountId' },\n        linkedAccount: { accountType: 'GOOGLE_ADS',\
-    \ accountId: 'linkedAccountId' }\n      },\n      {\n        reference: 'stape_productDestinationId1',\n\
-    \        productDestinationId: 'stape_productDestinationId1',\n        operatingAccount:\
-    \ { accountType: 'GOOGLE_ADS', accountId: 'operatingAccountId1' },\n        linkedAccount:\
-    \ { accountType: 'GOOGLE_ADS', accountId: 'linkedAccountId1' }\n      }\n    ],\n\
-    \    validateOnly: false,\n    audienceMembers: [\n      {\n        userData:\
-    \ {\n          userIdentifiers: [\n            {\n              emailAddress:\n\
-    \                '973dfe463ec85785f5f95af5ba3906eedb2d931c24e69824a89ea65dba4e813b'\n\
-    \            },\n            {\n              phoneNumber:\n                '910a625c4ba147b544e6bd2f267e130ae14c591b6ba9c25cb8573322dedbebd0'\n\
-    \            },\n            {\n              address: {\n                givenName:\n\
-    \                  '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
-    \                familyName:\n                  '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
-    \                regionCode: 'BR',\n                postalCode: '10001'\n    \
-    \          }\n            }\n          ]\n        }\n      },\n      { mobileData:\
-    \ { mobileIds: ['AAA-BB-CC-111'] } },\n      {\n        pairData: {\n        \
-    \  pairIds: [\n            '426a1c28c61b7ba258fa3cc300ba7cd3abc11c0d4b585d3ce4a15d6f22d6d363'\n\
-    \          ]\n        }\n      }\n    ],\n    encoding: 'HEX',\n    encryptionInfo:\
-    \ {\n      gcpWrappedKeyInfo: {\n        keyType: 'XCHACHA20_POLY1305',\n    \
-    \    wipProvider: '123',\n        kekUri: '123',\n        encryptedDek: '123'\n\
-    \      }\n    }\n  });\n\n  return Promise.create((resolve, reject) => {\n   \
-    \ resolve({ statusCode: 200 });\n  });  \n});\n\nrunCode(mockData);\n\ncallLater(()\
-    \ => {\n  assertApi('gtmOnSuccess').wasCalled();\n  assertApi('gtmOnFailure').wasNotCalled();\n\
-    });"
-- name: '[Remove - Single User] Request is successfully built and sent - data from
-    UI fallbacks'
-  code: "setGetAllEventData();\nsetMockDataByAudienceMethod('remove', {\n  userMode:\
-    \ 'single',\n  userDataEmailAddresses: undefined,\n  userDataPhoneNumbers: undefined,\n\
-    \  addUserDataAddress: true,\n  enableAudienceDataEncryption: false,\n  mobileIds:\
-    \ undefined,\n  pairIds: undefined\n});\n\n[\n  'userDataEmailAddresses',\n  'userDataPhoneNumbers',\n\
-    \  'addressGivenName',\n  'addressFamilyName',\n  'addressRegion',\n  'addressPostalCode'\n\
-    ].forEach((key) => Object.delete(mockData, key));\n\nmock('sendHttpRequest', (requestUrl,\
-    \ requestOptions, requestBody) => {\n  const parsedRequestBody = JSON.parse(requestBody);\n\
-    \  assertThat(parsedRequestBody).isEqualTo({\n    destinations: [\n      {\n \
-    \       reference: 'stape_productDestinationId',\n        productDestinationId:\
-    \ 'stape_productDestinationId',\n        operatingAccount: { accountType: 'GOOGLE_ADS',\
-    \ accountId: 'operatingAccountId' },\n        linkedAccount: { accountType: 'GOOGLE_ADS',\
-    \ accountId: 'linkedAccountId' }\n      },\n      {\n        reference: 'stape_productDestinationId1',\n\
-    \        productDestinationId: 'stape_productDestinationId1',\n        operatingAccount:\
-    \ { accountType: 'GOOGLE_ADS', accountId: 'operatingAccountId1' },\n        linkedAccount:\
-    \ { accountType: 'GOOGLE_ADS', accountId: 'linkedAccountId1' }\n      }\n    ],\n\
-    \    validateOnly: false,\n    audienceMembers: [\n      {\n        userData:\
-    \ {\n          userIdentifiers: [\n            {\n              emailAddress:\n\
-    \                'ddffdce54594d729a13068951750239a1943c295a5f89349b5cf69744d4a1ba2'\n\
-    \            },\n            {\n              emailAddress:\n                'afea90f78a2e604dc6cc5d7826ffdd2bfbab612a0c1222acf8df173319b7e809'\n\
-    \            },\n            {\n              phoneNumber:\n                'c698c0b85d32cbcf5033ada58f34de87d4f7415efaf5a8d1c1e9e63393dcc85e'\n\
-    \            },\n            {\n              address: {\n                givenName:\n\
-    \                  '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
-    \                familyName:\n                  '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
-    \                postalCode: '10001',\n                regionCode: 'BR'\n    \
-    \          }\n            }\n          ]\n        }\n      }\n    ],\n    encoding:\
-    \ 'HEX'\n  });\n\n  return Promise.create((resolve, reject) => {\n    resolve({\
-    \ statusCode: 200 });\n  });  \n});\n\nrunCode(mockData);\n\ncallLater(() => {\n\
-    \  assertApi('gtmOnSuccess').wasCalled();\n  assertApi('gtmOnFailure').wasNotCalled();\n\
-    });"
-- name: '[Remove - Single User] data from UI fallbacks are not used when passing undefined
-    to the fields'
-  code: "setGetAllEventData();\nsetMockDataByAudienceMethod('remove', {\n  userMode:\
-    \ 'single',\n  userDataEmailAddresses: undefined,\n  userDataPhoneNumbers: undefined,\n\
-    \  addUserDataAddress: true,\n  addressGivenName: undefined,\n  addressFamilyName:\
-    \ undefined,\n  addressRegion: undefined,\n  addressPostalCode: undefined,\n \
-    \ enableAudienceDataEncryption: false\n});\n\nmock('sendHttpRequest', (requestUrl,\
-    \ requestOptions, requestBody) => {\n  const parsedRequestBody = JSON.parse(requestBody);\n\
-    \  assertThat(parsedRequestBody).isEqualTo({\n    destinations: [\n      {\n \
-    \       reference: 'stape_productDestinationId',\n        productDestinationId:\
-    \ 'stape_productDestinationId',\n        operatingAccount: { accountType: 'GOOGLE_ADS',\
-    \ accountId: 'operatingAccountId' },\n        linkedAccount: { accountType: 'GOOGLE_ADS',\
-    \ accountId: 'linkedAccountId' }\n      },\n      {\n        reference: 'stape_productDestinationId1',\n\
-    \        productDestinationId: 'stape_productDestinationId1',\n        operatingAccount:\
-    \ { accountType: 'GOOGLE_ADS', accountId: 'operatingAccountId1' },\n        linkedAccount:\
-    \ { accountType: 'GOOGLE_ADS', accountId: 'linkedAccountId1' }\n      }\n    ],\n\
-    \    validateOnly: false,\n    audienceMembers: [\n      { mobileData: { mobileIds:\
-    \ ['AAA-BB-CC-111'] } },\n      {\n        pairData: {\n          pairIds: [\n\
-    \            '426a1c28c61b7ba258fa3cc300ba7cd3abc11c0d4b585d3ce4a15d6f22d6d363'\n\
-    \          ]\n        }\n      }\n    ],\n    encoding: 'HEX'\n  });\n\n  return\
-    \ Promise.create((resolve, reject) => {\n    resolve({ statusCode: 200 });\n \
-    \ });  \n});\n\nrunCode(mockData);\n\ncallLater(() => {\n  assertApi('gtmOnSuccess').wasCalled();\n\
-    \  assertApi('gtmOnFailure').wasNotCalled();\n});"
-- name: '[Remove - Multiple Users] Request is successfully built and sent - data from
-    UI fields'
-  code: "setMockDataByAudienceMethod('remove', {\n  userMode: 'multiple',\n  audienceMembers:\
-    \ [\n    {\n      userData: {\n        userIdentifiers: [\n          {\n     \
-    \       emailAddress:\n              '973dfe463ec85785f5f95af5ba3906eedb2d931c24e69824a89ea65dba4e813b'\n\
-    \          },\n          {\n            phoneNumber:\n              '910a625c4ba147b544e6bd2f267e130ae14c591b6ba9c25cb8573322dedbebd0'\n\
-    \          },\n          {\n            address: {\n              givenName:\n\
-    \                '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
-    \              familyName:\n                '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
-    \              regionCode: 'BR',\n              postalCode: '10001'\n        \
-    \    }\n          }\n        ]\n      }\n    },\n    {\n      userData: {\n  \
-    \      userIdentifiers: [\n          {\n            emailAddress:\n          \
-    \    '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08'\n    \
-    \      },\n          {\n            phoneNumber:\n              '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08'\n\
-    \          },\n          {\n            address: {\n              givenName:\n\
-    \                '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
-    \              familyName:\n                '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
-    \              regionCode: 'US',\n              postalCode: '22222'\n        \
-    \    }\n          }\n        ]\n      }\n    },\n    { \n      mobileData: { mobileIds:\
-    \ ['AAA-BB-CC-111'] } \n    },\n    { \n      mobileData: { mobileIds: ['foobar',\
-    \ 'barfoo'] } \n    },\n    {\n      pairData: { pairIds: ['426a1c28c61b7ba258fa3cc300ba7cd3abc11c0d4b585d3ce4a15d6f22d6d363']\
-    \ }\n    },\n    {\n      pairData: { pairIds: ['abc', 'cde'] }\n    }\n  ]\n\
-    });\n\nmock('sendHttpRequest', (requestUrl, requestOptions, requestBody) => {\n\
-    \  const parsedRequestBody = JSON.parse(requestBody);\n  assertThat(parsedRequestBody).isEqualTo({\n\
-    \    destinations: [\n      {\n        reference: 'stape_productDestinationId',\n\
-    \        productDestinationId: 'stape_productDestinationId',\n        operatingAccount:\
-    \ { accountType: 'GOOGLE_ADS', accountId: 'operatingAccountId' },\n        linkedAccount:\
-    \ { accountType: 'GOOGLE_ADS', accountId: 'linkedAccountId' }\n      },\n    \
-    \  {\n        reference: 'stape_productDestinationId1',\n        productDestinationId:\
-    \ 'stape_productDestinationId1',\n        operatingAccount: { accountType: 'GOOGLE_ADS',\
-    \ accountId: 'operatingAccountId1' },\n        linkedAccount: { accountType: 'GOOGLE_ADS',\
-    \ accountId: 'linkedAccountId1' }\n      }\n    ],\n    validateOnly: false,\n\
-    \    audienceMembers: [\n      {\n        userData: {\n          userIdentifiers:\
-    \ [\n            {\n              emailAddress:\n                '973dfe463ec85785f5f95af5ba3906eedb2d931c24e69824a89ea65dba4e813b'\n\
-    \            },\n            {\n              phoneNumber:\n                '910a625c4ba147b544e6bd2f267e130ae14c591b6ba9c25cb8573322dedbebd0'\n\
-    \            },\n            {\n              address: {\n                givenName:\n\
-    \                  '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
-    \                familyName:\n                  '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
-    \                regionCode: 'BR',\n                postalCode: '10001'\n    \
-    \          }\n            }\n          ]\n        }\n      },\n      {\n     \
-    \   userData: {\n          userIdentifiers: [\n            {\n              emailAddress:\n\
-    \                '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08'\n\
-    \            },\n            {\n              phoneNumber:\n                '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08'\n\
-    \            },\n            {\n              address: {\n                givenName:\n\
-    \                  '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
-    \                familyName:\n                  '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
-    \                regionCode: 'US',\n                postalCode: '22222'\n    \
-    \          }\n            }\n          ]\n        }\n      }\n      // Mobile\
-    \ IDs and PAIR IDs are not currently supported.\n    ],\n    encoding: 'HEX',\n\
-    \    encryptionInfo: {\n      gcpWrappedKeyInfo: {\n        keyType: 'XCHACHA20_POLY1305',\n\
-    \        wipProvider: '123',\n        kekUri: '123',\n        encryptedDek: '123'\n\
-    \      }\n    }\n  });\n\n  return Promise.create((resolve, reject) => {\n   \
-    \ resolve({ statusCode: 200 });\n  });  \n});\n\nrunCode(mockData);\n\ncallLater(()\
-    \ => {\n  assertApi('gtmOnSuccess').wasCalled();\n  assertApi('gtmOnFailure').wasNotCalled();\n\
-    });"
-- name: '[Request] Should call gtmOnFailure when promise resolves and status code
-    is outside success range'
-  code: "setMockDataByAudienceMethod('ingest');\n\nmock('sendHttpRequest', (requestUrl,\
-    \ requestOptions, requestBody) => {\n  return Promise.create((resolve, reject)\
-    \ => {\n    resolve({ statusCode: 500 });\n  });  \n});\n\nrunCode(mockData);\n\
-    \ncallLater(() => {\n  assertApi('gtmOnSuccess').wasNotCalled();\n  assertApi('gtmOnFailure').wasCalled();\n\
-    });"
-- name: '[Request] Should call gtmOnFailure when promise rejects'
-  code: "setMockDataByAudienceMethod('ingest');\n\nmock('sendHttpRequest', (requestUrl,\
-    \ requestOptions, requestBody) => {\n  return Promise.create((resolve, reject)\
-    \ => {\n    reject({ reason: 'Failed' });\n  });  \n});\n\nrunCode(mockData);\n\
-    \ncallLater(() => {\n  assertApi('gtmOnSuccess').wasNotCalled();\n  assertApi('gtmOnFailure').wasCalled();\n\
-    });"
-- name: '[Hex] Encoding is correctly defined when hashed Audience Data is already
-    Hex encoded'
-  code: "setGetAllEventData();\nsetMockDataByAudienceMethod('ingest', {\n  userMode:\
-    \ 'single',\n  audienceDataEncoding: undefined,\n  userDataEmailAddresses: '426a1c28c61b7ba258fa3cc300ba7cd3abc11c0d4b585d3ce4a15d6f22d6d363',\n\
-    \  userDataPhoneNumbers: '426a1c28c61b7ba258fa3cc300ba7cd3abc11c0d4b585d3ce4a15d6f22d6d363',\n\
-    \  addUserDataAddress: true,\n  addressGivenName: '426a1c28c61b7ba258fa3cc300ba7cd3abc11c0d4b585d3ce4a15d6f22d6d363',\n\
-    \  addressFamilyName: '426a1c28c61b7ba258fa3cc300ba7cd3abc11c0d4b585d3ce4a15d6f22d6d363',\n\
-    \  pairIds: ['426a1c28c61b7ba258fa3cc300ba7cd3abc11c0d4b585d3ce4a15d6f22d6d363']\n\
-    });\n\nmock('sendHttpRequest', (requestUrl, requestOptions, requestBody) => {\n\
-    \  const parsedRequestBody = JSON.parse(requestBody);\n  assertThat(parsedRequestBody.encoding).isEqualTo('HEX');\n\
-    \n  return Promise.create((resolve, reject) => {\n    resolve({ statusCode: 200\
-    \ });\n  });  \n});\n\nrunCode(mockData);\n\ncallLater(() => {\n  assertApi('gtmOnSuccess').wasCalled();\n\
-    \  assertApi('gtmOnFailure').wasNotCalled();\n});"
-- name: '[Base64] Encoding is correctly defined when hashed Audience Data is already
-    Base64 encoded'
-  code: "setGetAllEventData();\nsetMockDataByAudienceMethod('ingest', {\n  userMode:\
-    \ 'single',\n  audienceDataEncoding: undefined,\n  userDataEmailAddresses: 'osrifrM+43jsL6zoLw/I4luJ2T20MMOXTxBMsVIEx1o=',\n\
-    \  userDataPhoneNumbers: 'osrifrM+43jsL6zoLw/I4luJ2T20MMOXTxBMsVIEx1o=',\n  addUserDataAddress:\
-    \ true,\n  addressGivenName: 'osrifrM+43jsL6zoLw/I4luJ2T20MMOXTxBMsVIEx1o=',\n\
-    \  addressFamilyName: 'osrifrM+43jsL6zoLw/I4luJ2T20MMOXTxBMsVIEx1o=',\n  pairIds:\
-    \ ['osrifrM+43jsL6zoLw/I4luJ2T20MMOXTxBMsVIEx1o=']\n});\n\nmock('sendHttpRequest',\
-    \ (requestUrl, requestOptions, requestBody) => {\n  const parsedRequestBody =\
-    \ JSON.parse(requestBody);\n  assertThat(parsedRequestBody.encoding).isEqualTo('BASE64');\n\
-    \n  return Promise.create((resolve, reject) => {\n    resolve({ statusCode: 200\
-    \ });\n  });  \n});\n\nrunCode(mockData);\n\ncallLater(() => {\n  assertApi('gtmOnSuccess').wasCalled();\n\
-    \  assertApi('gtmOnFailure').wasNotCalled();\n});"
+    \      }\n    }\n  };\n  \n  if (scenario.method === 'ingest') {\n    expectedRequestBody.termsOfService\
+    \ = { customerMatchTermsOfServiceStatus: 'ACCEPTED' };\n    expectedRequestBody.consent\
+    \ = {\n      adUserData: 'CONSENT_GRANTED',\n      adPersonalization: 'CONSENT_GRANTED'\n\
+    \    };\n  }\n  \n  mock('sendHttpRequest', (requestUrl, requestOptions, requestBody)\
+    \ => {\n    const parsedRequestBody = JSON.parse(requestBody);\n    assertThat(parsedRequestBody).isEqualTo(expectedRequestBody);\n\
+    \n    return Promise.create((resolve, reject) => {\n      resolve({ statusCode:\
+    \ 200 });\n    });  \n  });\n  \n  runCode(copyMockData);\n\n  callLater(() =>\
+    \ {\n    assertApi('gtmOnSuccess').wasCalled();\n    assertApi('gtmOnFailure').wasNotCalled();\n\
+    \  });\n});"
+- name: '[Encoding] Is correctly defined when hashed Audience Data is already Base64
+    or HEX encoded'
+  code: "[\n  {\n    mockUserDataString : '426a1c28c61b7ba258fa3cc300ba7cd3abc11c0d4b585d3ce4a15d6f22d6d363',\n\
+    \    expectedEncoding: 'HEX'\n  },\n  {\n    mockUserDataString : 'osrifrM+43jsL6zoLw/I4luJ2T20MMOXTxBMsVIEx1o=',\n\
+    \    expectedEncoding: 'BASE64'\n  }\n].forEach((scenario) => {\n  setGetAllEventData();\n\
+    \  \n  const copyMockData = setMockDataByAudienceMethod('ingest', {\n    userMode:\
+    \ 'single',\n    audienceDataEncoding: undefined,\n    userDataEmailAddresses:\
+    \ scenario.mockUserDataString,\n    userDataPhoneNumbers: scenario.mockUserDataString,\n\
+    \    addUserDataAddress: true,\n    addressGivenName: scenario.mockUserDataString,\n\
+    \    addressFamilyName: scenario.mockUserDataString,\n    pairIds: [scenario.mockUserDataString]\n\
+    \  });\n\n  mock('sendHttpRequest', (requestUrl, requestOptions, requestBody)\
+    \ => {\n    const parsedRequestBody = JSON.parse(requestBody);\n    assertThat(parsedRequestBody.encoding).isEqualTo(scenario.expectedEncoding);\n\
+    \  \n    return Promise.create((resolve, reject) => {\n      resolve({ statusCode:\
+    \ 200 });\n    });  \n  });\n  \n  runCode(copyMockData);\n  \n  callLater(()\
+    \ => {\n    assertApi('gtmOnSuccess').wasCalled();\n    assertApi('gtmOnFailure').wasNotCalled();\n\
+    \  });\n  \n  cleanup();\n});"
+- name: '[Failure] Should call gtmOnFailure when promise resolves and status code
+    is outside success range, or when the request fails'
+  code: "[\n  {\n    callback: (resolve, reject) => resolve({ statusCode: 500 })\n\
+    \  },\n  {\n    callback: (resolve, reject) => reject({ reason: 'Failed' })\n\
+    \  }\n].forEach((scenario) => {\n  const copyMockData = setMockDataByAudienceMethod('ingest');\n\
+    \  \n  mock('sendHttpRequest', (requestUrl, requestOptions, requestBody) => {\n\
+    \    return Promise.create((resolve, reject) => {\n      scenario.callback(resolve,\
+    \ reject);\n    });  \n  });\n  \n  runCode(copyMockData);\n  \n  callLater(()\
+    \ => {\n    assertApi('gtmOnSuccess').wasNotCalled();\n    assertApi('gtmOnFailure').wasCalled();\n\
+    \  });\n});"
 setup: "const Promise = require('Promise');\nconst JSON = require('JSON');\nconst\
   \ makeInteger = require('makeInteger');\nconst Object = require('Object');\nconst\
-  \ callLater = require('callLater');\n\nconst mergeObj = (target, source) => {\n\
-  \  for (const key in source) {\n    if (source.hasOwnProperty(key)) target[key]\
-  \ = source[key];\n  }\n  return target;\n};\n\nconst expectedDataManagerApiVersion\
-  \ = '1';\n\nconst expectedBigQuerySettings = {\n  logBigQueryProjectId: 'logBigQueryProjectId',\n\
-  \  logBigQueryDatasetId: 'logBigQueryDatasetId',\n  logBigQueryTableId: 'logBigQueryTableId'\n\
-  };\n\nconst requiredConsoleKeys = ['Type', 'TraceId', 'Name'];\nconst requiredBqKeys\
-  \ = ['timestamp', 'type', 'trace_id', 'tag_name'];\nconst expectedBqOptions = {\
-  \ ignoreUnknownValues: true };\n\nlet mockData = {\n  logBigQueryProjectId: expectedBigQuerySettings.logBigQueryProjectId,\n\
+  \ callLater = require('callLater');\n\nfunction assign() {\n  const target = arguments[0];\n\
+  \  for (let i = 1; i < arguments.length; i++) {\n    for (let key in arguments[i])\
+  \ {\n      target[key] = arguments[i][key];\n    }\n  }\n  return target;\n}\n\n\
+  const expectedDataManagerApiVersion = '1';\n\nconst expectedBigQuerySettings = {\n\
+  \  logBigQueryProjectId: 'logBigQueryProjectId',\n  logBigQueryDatasetId: 'logBigQueryDatasetId',\n\
+  \  logBigQueryTableId: 'logBigQueryTableId'\n};\n\nconst requiredConsoleKeys = ['Type',\
+  \ 'TraceId', 'Name'];\nconst requiredBqKeys = ['timestamp', 'type', 'trace_id',\
+  \ 'tag_name'];\nconst expectedBqOptions = { ignoreUnknownValues: true };\n\nconst\
+  \ mockData = {\n  logBigQueryProjectId: expectedBigQuerySettings.logBigQueryProjectId,\n\
   \  logBigQueryDatasetId: expectedBigQuerySettings.logBigQueryDatasetId,\n  logBigQueryTableId:\
-  \ expectedBigQuerySettings.logBigQueryTableId\n};\n\nconst setMockDataByAudienceMethod\
+  \ expectedBigQuerySettings.logBigQueryTableId\n};\n\nconst cleanup = () => {\n \
+  \ mock('getAllEventData', {});\n  mock('getCookieValues', []);\n};\n\nconst setMockDataByAudienceMethod\
   \ = (method, objToBeMerged, auth) => {\n  if (!auth) auth = 'stape';\n  \n  const\
-  \ baseByMethods = {\n    ingest: {\n      audienceAction: 'ingest',\n      termsOfServiceStatus:\
-  \ 'ACCEPTED',\n      validateOnly: false,\n      useOptimisticScenario: false,\n\
-  \      adUserData: 'CONSENT_GRANTED',\n      adPersonalization: 'CONSENT_GRANTED',\n\
+  \ mockDataByAuthType = {\n    stape: {\n      authFlow: 'stape',\n      stapeAuthDestinationsList:\
+  \ [\n        {\n          product: 'GOOGLE_ADS',\n          operatingAccountId:\
+  \ '1',\n          linkedAccountId: '2',\n          productDestinationId: '3'\n \
+  \       },\n        {\n          product: 'GOOGLE_ADS',\n          operatingAccountId:\
+  \ '11',\n          linkedAccountId: '22',\n          productDestinationId: '33'\n\
+  \        }\n      ]\n    },\n    own: {\n      authFlow: 'own',\n      ownAuthDestinationsList:\
+  \ [\n        {\n          product: 'GOOGLE_ADS',\n          operatingAccountId:\
+  \ '1',\n          loginAccountId: '2',\n          productDestinationId: '3'\n  \
+  \      },\n        {\n          product: 'GOOGLE_ADS',\n          operatingAccountId:\
+  \ '11',\n          loginAccountId: '22',\n          productDestinationId: '33'\n\
+  \        }\n      ],\n      xGoogUserProject: 'xGoogUserProject'\n    }\n  };\n\
+  \  \n  const baseByMethods = {\n    ingest: {\n      audienceAction: 'ingest',\n\
+  \      termsOfServiceStatus: 'ACCEPTED',\n      validateOnly: false,\n      useOptimisticScenario:\
+  \ false,\n      adUserData: 'CONSENT_GRANTED',\n      adPersonalization: 'CONSENT_GRANTED',\n\
   \      audienceDataEncoding: 'HEX',\n      enableAudienceDataEncryption: true,\n\
   \      gcpWrappedKeyType: 'XCHACHA20_POLY1305',\n      gcpWrappedKeyEncryptedDek:\
   \ '123',\n      gcpWrappedKeyKekUri: '123',\n      gcpWrappedKeyWipProvider: '123',\n\
@@ -2312,35 +2284,19 @@ setup: "const Promise = require('Promise');\nconst JSON = require('JSON');\ncons
   \      userDataPhoneNumbers: '+15555555555',\n      addUserDataAddress: true,\n\
   \      addressGivenName: 'test',\n      addressFamilyName: 'test',\n      addressRegion:\
   \ 'BR',\n      addressPostalCode: '10001',\n      mobileIds: 'AAA-BB-CC-111',\n\
-  \      pairIds: 'foobar123',\n      adStorageConsent: 'optional',\n      logType:\
-  \ 'debug',\n      bigQueryLogType: 'no'\n    },\n    remove: {\n      audienceAction:\
-  \ 'remove',\n      validateOnly: false,\n      useOptimisticScenario: false,\n \
-  \     audienceDataEncoding: 'HEX',\n      enableAudienceDataEncryption: true,\n\
-  \      gcpWrappedKeyType: 'XCHACHA20_POLY1305',\n      gcpWrappedKeyEncryptedDek:\
-  \ '123',\n      gcpWrappedKeyKekUri: '123',\n      gcpWrappedKeyWipProvider: '123',\n\
-  \      userMode: 'single',\n      userDataEmailAddresses: 'test@example.com',\n\
-  \      userDataPhoneNumbers: '+15555555555',\n      addUserDataAddress: true,\n\
-  \      addressGivenName: 'test',\n      addressFamilyName: 'test',\n      addressRegion:\
-  \ 'BR',\n      addressPostalCode: '10001',\n      mobileIds: 'AAA-BB-CC-111',\n\
-  \      pairIds: 'foobar123',\n      adStorageConsent: 'optional',\n      logType:\
-  \ 'debug',\n      bigQueryLogType: 'no'\n    }\n  };\n  \n  const mockDataByAuthType\
-  \ = {\n    stape: {\n      authFlow: 'stape',\n      stapeAuthDestinationsList:\
-  \ [\n        {\n          product: 'GOOGLE_ADS',\n          operatingAccountId:\
-  \ 'operatingAccountId',\n          linkedAccountId: 'linkedAccountId',\n       \
-  \   productDestinationId: 'productDestinationId'\n        },\n        {\n      \
-  \    product: 'GOOGLE_ADS',\n          operatingAccountId: 'operatingAccountId1',\n\
-  \          linkedAccountId: 'linkedAccountId1',\n          productDestinationId:\
-  \ 'productDestinationId1'\n        }\n      ]\n    },\n    own: {\n      authFlow:\
-  \ 'own',\n      ownAuthDestinationsList: [\n        {\n          product: 'GOOGLE_ADS',\n\
-  \          operatingAccountId: 'operatingAccountId',\n          loginAccountId:\
-  \ 'loginAccountId',\n          productDestinationId: 'productDestinationId'\n  \
-  \      },\n        {\n          product: 'GOOGLE_ADS',\n          operatingAccountId:\
-  \ 'operatingAccountId1',\n          loginAccountId: 'loginAccountId1',\n       \
-  \   productDestinationId: 'productDestinationId1'\n        }\n      ],\n      xGoogUserProject:\
-  \ 'xGoogUserProject'\n    }\n  };\n  \n  mergeObj(baseByMethods[method], objToBeMerged\
-  \ || {});\n  mergeObj(mockDataByAuthType[auth], baseByMethods[method]);\n  mergeObj(mockData,\
-  \ mockDataByAuthType[auth]);\n  return mockData;\n};\n\nconst setGetAllEventData\
-  \ = (objToBeMerged) => {\n  mock('getAllEventData', mergeObj({\n    'x-ga-protocol_version':\
+  \      adStorageConsent: 'optional',\n      logType: 'debug',\n      bigQueryLogType:\
+  \ 'no'\n    },\n    remove: {\n      audienceAction: 'remove',\n      validateOnly:\
+  \ false,\n      useOptimisticScenario: false,\n      audienceDataEncoding: 'HEX',\n\
+  \      enableAudienceDataEncryption: true,\n      gcpWrappedKeyType: 'XCHACHA20_POLY1305',\n\
+  \      gcpWrappedKeyEncryptedDek: '123',\n      gcpWrappedKeyKekUri: '123',\n  \
+  \    gcpWrappedKeyWipProvider: '123',\n      userMode: 'single',\n      userDataEmailAddresses:\
+  \ 'test@example.com',\n      userDataPhoneNumbers: '+15555555555',\n      addUserDataAddress:\
+  \ true,\n      addressGivenName: 'test',\n      addressFamilyName: 'test',\n   \
+  \   addressRegion: 'BR',\n      addressPostalCode: '10001',\n      mobileIds: 'AAA-BB-CC-111',\n\
+  \      adStorageConsent: 'optional',\n      logType: 'debug',\n      bigQueryLogType:\
+  \ 'no'\n    }\n  };\n \n  return assign(JSON.parse(JSON.stringify(mockData)), baseByMethods[method],\
+  \ mockDataByAuthType[auth] || {}, objToBeMerged || {});\n};\n\nconst setGetAllEventData\
+  \ = (objToBeMerged) => {\n  mock('getAllEventData', assign({\n    'x-ga-protocol_version':\
   \ '2',\n    'x-ga-measurement_id': 'G-123ABC',\n    'x-ga-gtm_version': '45je55e1za200',\n\
   \    'x-ga-page_id': 1747422523211,\n    'x-ga-gcd': '13l3l3l3l1l1',\n    'x-ga-npa':\
   \ '0',\n    'x-ga-dma': '0',\n    'x-ga-mp2-tag_exp':\n      '101509157~103116025~103130498~103130500~103136993~103136995~103200001~103207802~103211513~103233427~103252644~103252646~103263073~103301114~103301116',\n\
@@ -2377,7 +2333,23 @@ setup: "const Promise = require('Promise');\nconst JSON = require('JSON');\ncons
   \ if (header === 'x-gtm-identifier') return 'expectedXGtmIdentifier';\n  else if\
   \ (header === 'x-gtm-default-domain') return 'expectedXGtmDefaultDomain';\n  else\
   \ if (header === 'x-gtm-api-key') return 'expectedXGtmApiKey';\n});\n\nmock('getGoogleAuth',\
-  \ 'googleAuthToken');\n\nmock('getTimestampMillis', 1747945830456);"
+  \ 'googleAuthToken');\n\nmock('getTimestampMillis', 1747945830456);\n\nconst multipleAudienceMembersMock\
+  \ = [\n  {\n    userData: {\n      userIdentifiers: [\n        {\n          emailAddress:\n\
+  \            '973dfe463ec85785f5f95af5ba3906eedb2d931c24e69824a89ea65dba4e813b'\n\
+  \        },\n        {\n          phoneNumber:\n            '910a625c4ba147b544e6bd2f267e130ae14c591b6ba9c25cb8573322dedbebd0'\n\
+  \        },\n        {\n          address: {\n            givenName:\n         \
+  \     '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n    \
+  \        familyName:\n              '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
+  \            regionCode: 'BR',\n            postalCode: '10001'\n          }\n \
+  \       }\n      ]\n    }\n  },\n  {\n    userData: {\n      userIdentifiers: [\n\
+  \        {\n          emailAddress:\n            '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08'\n\
+  \        },\n        {\n          phoneNumber:\n            '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08'\n\
+  \        },\n        {\n          address: {\n            givenName:\n         \
+  \     '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n    \
+  \        familyName:\n              '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',\n\
+  \            regionCode: 'US',\n            postalCode: '22222'\n          }\n \
+  \       }\n      ]\n    }\n  },\n  { \n    mobileData: { mobileIds: ['AAA-BB-CC-111']\
+  \ } \n  },\n  { \n    mobileData: { mobileIds: ['foobar', 'barfoo'] } \n  }\n];"
 
 
 ___NOTES___
