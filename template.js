@@ -1,4 +1,5 @@
 const BigQuery = require('BigQuery');
+const createRegex = require('createRegex');
 const encodeUriComponent = require('encodeUriComponent');
 const getAllEventData = require('getAllEventData');
 const getContainerVersion = require('getContainerVersion');
@@ -20,12 +21,7 @@ const apiVersion = '1';
 const eventData = getAllEventData();
 const useOptimisticScenario = isUIFieldTrue(data.useOptimisticScenario);
 
-if (!isConsentGivenOrNotRequired(data, eventData)) {
-  return data.gtmOnSuccess();
-}
-
-const url = eventData.page_location || getRequestHeader('referer');
-if (url && url.lastIndexOf('https://gtm-msr.appspot.com/', 0) === 0) {
+if (shouldExitEarly(data, eventData)) {
   return data.gtmOnSuccess();
 }
 
@@ -55,33 +51,39 @@ if (useOptimisticScenario) {
 ==============================================================================*/
 
 function addDestinationsData(data, mappedData) {
+  const normalizeIds = (id) => {
+    return replaceAll(makeString(id), '[^0-9]', '');
+  };
+
   const destinations = [];
   const accountsAndDestinationsFromUI =
     data.stapeAuthDestinationsList || data.ownAuthDestinationsList; // Mutually exclusive.;
-  const productDestinationIdPrefix = data.authFlow === 'stape' ? 'stape_' : '';
 
   accountsAndDestinationsFromUI.forEach((row) => {
-    const productDestinationId = productDestinationIdPrefix + makeString(row.productDestinationId);
+    const productDestinationId =
+      data.authFlow === 'stape'
+        ? 'stape_' + makeString(row.productDestinationId).trim() // Audience Name (not ID) is used here.
+        : normalizeIds(row.productDestinationId);
     const destination = {
       reference: productDestinationId,
       productDestinationId: productDestinationId,
       operatingAccount: {
         accountType: row.product,
-        accountId: makeString(row.operatingAccountId)
+        accountId: normalizeIds(row.operatingAccountId)
       }
     };
 
     if (data.authFlow === 'stape' && row.linkedAccountId) {
       destination.linkedAccount = {
         accountType: row.product,
-        accountId: makeString(row.linkedAccountId)
+        accountId: normalizeIds(row.linkedAccountId)
       };
     }
 
     if (data.authFlow === 'own' && row.loginAccountId) {
       destination.loginAccount = {
         accountType: row.product,
-        accountId: makeString(row.loginAccountId)
+        accountId: normalizeIds(row.loginAccountId)
       };
     }
 
@@ -109,7 +111,22 @@ function addConsentData(data, mappedData) {
 
   consentTypes.forEach((consentType) => {
     if (!data[consentType]) return;
-    consent[consentType] = data[consentType];
+    switch (makeString(data[consentType])) {
+      case 'CONSENT_GRANTED':
+      case 'true':
+      case 'granted':
+        consent[consentType] = 'CONSENT_GRANTED';
+        break;
+      case 'CONSENT_DENIED':
+      case 'false':
+      case 'denied':
+        consent[consentType] = 'CONSENT_DENIED';
+        break;
+      case 'CONSENT_STATUS_UNSPECIFIED':
+        consent[consentType] = 'CONSENT_STATUS_UNSPECIFIED';
+      default:
+        return;
+    }
     mappedData.consent = consent;
   });
 
@@ -171,7 +188,8 @@ function getAddressFromEventData(eventData) {
   const postalCode = eventDataUserDataAddress.postal_code;
   const regionCode = eventDataUserDataAddress.country;
 
-  if (firstName && lastName && postalCode && regionCode) {
+  const addressIsValid = [firstName, lastName, postalCode, regionCode].every(isValidValue);
+  if (addressIsValid) {
     return {
       givenName: makeString(firstName),
       familyName: makeString(lastName),
@@ -189,8 +207,7 @@ function addAudienceMembersData(data, eventData, mappedData) {
     return [];
   };
   const audienceMemberIDsLengthLimit = 10;
-
-  let audienceMembers = [];
+  const audienceMembers = [];
 
   if (data.userMode === 'single') {
     let emailAddresses = data.hasOwnProperty('userDataEmailAddresses')
@@ -258,6 +275,7 @@ function addAudienceMembersData(data, eventData, mappedData) {
       }
     }
 
+    // This is for the future. Not currently supported by UI.
     if (data.mobileIds) {
       const mobileIds = itemizeUserIdentifier(data.mobileIds);
       if (mobileIds && mobileIds.length) {
@@ -268,20 +286,10 @@ function addAudienceMembersData(data, eventData, mappedData) {
         });
       }
     }
-
-    if (data.pairIds) {
-      const pairIds = itemizeUserIdentifier(data.pairIds);
-      if (pairIds && pairIds.length) {
-        audienceMembers.push({
-          pairData: {
-            pairIds: pairIds.slice(0, audienceMemberIDsLengthLimit)
-          }
-        });
-      }
-    }
   } else if (data.userMode === 'multiple' && getType(data.audienceMembers) === 'array') {
     data.audienceMembers.forEach((audienceMember) => {
-      if (!audienceMember || !audienceMember.userData) return;
+      if (getType(audienceMember) !== 'object' || getType(audienceMember.userData) !== 'object')
+        return;
 
       const audienceMemberUserDataOnly = {
         userData: audienceMember.userData
@@ -355,17 +363,42 @@ function hashDataIfNeeded(mappedData) {
   if (getType(audienceMembers) !== 'array') return;
 
   audienceMembers.forEach((audienceMember) => {
-    if (getType(audienceMember) !== 'object') return;
-
     if (
-      getType(audienceMember.userData) === 'object' &&
-      getType(audienceMember.userData.userIdentifiers) === 'array'
+      getType(audienceMember) !== 'object' ||
+      getType(audienceMember.userData) !== 'object' ||
+      getType(audienceMember.userData.userIdentifiers) !== 'array'
     ) {
-      audienceMember.userData.userIdentifiers.forEach((userIdentifier) => {
-        const key = Object.keys(userIdentifier)[0];
+      return;
+    }
 
-        if (key === 'emailAddress' || key === 'phoneNumber') {
-          let value = userIdentifier[key];
+    audienceMember.userData.userIdentifiers.forEach((userIdentifier) => {
+      const key = Object.keys(userIdentifier)[0];
+
+      if (key === 'emailAddress' || key === 'phoneNumber') {
+        let value = userIdentifier[key];
+
+        if (!value) return;
+
+        if (isSHA256HexHashed(value)) {
+          mappedData.encoding = 'HEX';
+          return;
+        } else if (isSHA256Base64Hashed(value)) {
+          mappedData.encoding = 'BASE64';
+          return;
+        }
+
+        if (key === 'phoneNumber') value = normalizePhoneNumber(value);
+        else if (key === 'emailAddress') value = normalizeEmailAddress(value);
+
+        userIdentifier[key] = hashData(value);
+        mappedData.encoding = 'HEX';
+      } else if (key === 'address') {
+        if (getType(userIdentifier.address) !== 'object') return;
+
+        const addressKeysToHash = ['givenName', 'familyName'];
+        addressKeysToHash.forEach((nameKey) => {
+          const value = userIdentifier.address[nameKey];
+          if (!value) return;
 
           if (isSHA256HexHashed(value)) {
             mappedData.encoding = 'HEX';
@@ -375,47 +408,11 @@ function hashDataIfNeeded(mappedData) {
             return;
           }
 
-          if (key === 'phoneNumber') value = normalizePhoneNumber(value);
-          else if (key === 'emailAddress') value = normalizeEmailAddress(value);
-
-          userIdentifier[key] = hashData(value);
+          userIdentifier.address[nameKey] = hashData(value);
           mappedData.encoding = 'HEX';
-        } else if (key === 'address') {
-          const addressKeysToHash = ['givenName', 'familyName'];
-
-          addressKeysToHash.forEach((nameKey) => {
-            const value = userIdentifier.address[nameKey];
-            if (!value) return;
-
-            if (isSHA256HexHashed(value)) {
-              mappedData.encoding = 'HEX';
-              return;
-            } else if (isSHA256Base64Hashed(value)) {
-              mappedData.encoding = 'BASE64';
-              return;
-            }
-
-            userIdentifier.address[nameKey] = hashData(value);
-            mappedData.encoding = 'HEX';
-          });
-        }
-      });
-    } else if (
-      getType(audienceMember.pairData) === 'object' &&
-      getType(audienceMember.pairData.pairIds) === 'array'
-    ) {
-      audienceMember.pairData.pairIds = audienceMember.pairData.pairIds.map((pairId) => {
-        if (isSHA256HexHashed(pairId)) {
-          mappedData.encoding = 'HEX';
-          return pairId;
-        } else if (isSHA256Base64Hashed(pairId)) {
-          mappedData.encoding = 'BASE64';
-          return pairId;
-        }
-        mappedData.encoding = 'HEX';
-        return hashData(pairId);
-      });
-    }
+        });
+      }
+    });
   });
 
   return mappedData;
@@ -470,26 +467,68 @@ function generateRequestOptions(data, apiVersion) {
 }
 
 function validateMappedData(mappedData) {
-  if (!mappedData.audienceMembers || mappedData.audienceMembers.length === 0) {
+  const audienceMembers = mappedData.audienceMembers;
+  if (!audienceMembers || audienceMembers.length === 0) {
     return 'At least 1 Audience Member resource must be specified.';
   }
 
   const audienceMembersLengthLimit = 10000;
-  if (mappedData.audienceMembers.length > audienceMembersLengthLimit) {
+  if (audienceMembers.length > audienceMembersLengthLimit) {
     return (
       'Audience Members list length must be at most ' +
       audienceMembersLengthLimit +
       '. Current is: ' +
-      mappedData.audienceMembers.length
+      audienceMembers.length
     );
   }
 
-  const hasUserDataOrPairData = mappedData.audienceMembers.some((am) => am.userData || am.pairData);
+  const hasUserDataOrPairData = audienceMembers.some((am) => am.userData || am.pairData);
   if (hasUserDataOrPairData && !mappedData.encoding) {
     return 'Encoding must be specified when sending UserData or PairData.';
   }
 
+  const isUserDataAbsent = (audienceMember) => {
+    return (
+      getType(audienceMember.userData) !== 'object' ||
+      getType(audienceMember.userData.userIdentifiers) !== 'array' ||
+      audienceMember.userData.userIdentifiers.length === 0 ||
+      audienceMember.userData.userIdentifiers.some((i) => {
+        const userIdentifierIsObject = getType(i) === 'object';
+        const userIdentifierKey = userIdentifierIsObject ? Object.keys(i)[0] : undefined;
+        const userIdentifierValue = userIdentifierIsObject ? Object.values(i)[0] : undefined;
+        return (
+          !hasProps(i) ||
+          !userIdentifierValue ||
+          (userIdentifierKey === 'address' &&
+            (!hasProps(userIdentifierValue) || Object.values(userIdentifierValue).some((v) => !v)))
+        );
+      })
+    );
+  };
+  // This is for the future. Not currently supported by UI.
+  const isMobileDataAbsent = (audienceMember) => {
+    return (
+      getType(audienceMember.mobileData) !== 'object' ||
+      getType(audienceMember.mobileData.mobileIds) !== 'array' ||
+      audienceMember.mobileData.mobileIds.length === 0 ||
+      audienceMember.mobileData.mobileIds.some(
+        (mobileId) => getType(mobileId) !== 'string' || !mobileId
+      )
+    );
+  };
+  const doesNotHaveMatchData = audienceMembers.some((audienceMember) => {
+    return isUserDataAbsent(audienceMember) && isMobileDataAbsent(audienceMember);
+  });
+  if (doesNotHaveMatchData) {
+    return 'At least 1 User Data must be specified.';
+  }
+
   const destinations = mappedData.destinations;
+  const destinationsLengthLimit = 10;
+  if (destinations.length > destinationsLengthLimit) {
+    return 'Destinations list length must be at most ' + destinationsLengthLimit + '.';
+  }
+
   const validationKeys = [
     'productDestinationId',
     'reference',
@@ -503,8 +542,11 @@ function validateMappedData(mappedData) {
       const key = validationKeys[j];
       const parts = key.split('.');
       if (parts.length > 1 && !destination[parts[0]]) continue;
-      const value = parts.reduce((acc, part) => acc && acc[part], destination);
-      if (!isValidValue(value) || value === 'undefined' || value === 'stape_undefined') {
+      let value = parts.reduce((acc, part) => acc && acc[part], destination);
+      if (data.authFlow === 'stape' && ['productDestinationId', 'reference'].indexOf(key) !== -1) {
+        value = replaceAll(value, 'stape_', '');
+      }
+      if (!isValidValue(value) || ['undefined', 'null'].indexOf(value) !== -1) {
         return 'destinations[' + i + '].' + key + ' is invalid.';
       }
     }
@@ -582,8 +624,26 @@ function sendRequest(data, mappedData, apiVersion) {
   Helpers
 ==============================================================================*/
 
+function shouldExitEarly(data, eventData) {
+  if (!isConsentGivenOrNotRequired(data, eventData)) return true;
+
+  const url = getUrl(data);
+  if (url && url.lastIndexOf('https://gtm-msr.appspot.com/', 0) === 0) return true;
+
+  return false;
+}
+
+function getUrl(eventData) {
+  return eventData.page_location || eventData.page_referrer || getRequestHeader('referer');
+}
+
 function enc(data) {
-  return encodeUriComponent(makeString(data || ''));
+  if (['null', 'undefined'].indexOf(getType(data)) !== -1) data = '';
+  return encodeUriComponent(makeString(data));
+}
+
+function hasProps(obj) {
+  return getType(obj) === 'object' && Object.keys(obj).length > 0;
 }
 
 function isSHA256Base64Hashed(value) {
@@ -627,7 +687,13 @@ function hashData(value) {
 
 function isValidValue(value) {
   const valueType = getType(value);
-  return valueType !== 'null' && valueType !== 'undefined' && value !== '';
+  return valueType !== 'null' && valueType !== 'undefined' && value !== '' && value === value;
+}
+
+function replaceAll(str, find, replace) {
+  if (getType(str) !== 'string') return str;
+  const regex = createRegex(find, 'g');
+  return str.replace(regex, replace);
 }
 
 function isUIFieldTrue(field) {
