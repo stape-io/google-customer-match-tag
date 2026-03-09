@@ -294,7 +294,8 @@ ___TEMPLATE_PARAMETERS___
         "paramValue": "ingest",
         "type": "EQUALS"
       }
-    ]
+    ],
+    "defaultValue": "ACCEPTED"
   },
   {
     "type": "SELECT",
@@ -1975,22 +1976,21 @@ scenarios:
     \ if Audience Members list is empty - audienceMembers contains an empty object',\n\
     \    auth: 'stape',\n    mockData: {\n      userMode: 'multiple',\n      audienceMembers:\
     \ [{}]\n    }\n  },\n  {\n    description: '[Multiple Users] Should NOT send request\
-    \ if Audience Members list is empty - userData and mobileData are\
-    \ explicitly undefined',\n    auth: 'stape',\n    mockData: {\n      userMode:\
-    \ 'multiple',\n      audienceMembers: assign([], audienceMembersBaseMock[0], [{\n\
-    \        userData: undefined,\n        mobileData: undefined\n      }])\n    }\n\
-    \  },\n  {\n    description: '[Multiple Users] Should NOT send request if Audience\
-    \ Members list is empty - userData is an empty object',\n    auth: 'stape',\n\
-    \    mockData: {\n      userMode: 'multiple',\n      audienceMembers: assign([],\
-    \ audienceMembersBaseMock[0], [{\n        userData: {},\n        mobileData: undefined\n\
+    \ if Audience Members list is empty - userData and mobileData are explicitly undefined',\n\
+    \    auth: 'stape',\n    mockData: {\n      userMode: 'multiple',\n      audienceMembers:\
+    \ assign([], audienceMembersBaseMock[0], [{\n        userData: undefined,\n  \
+    \      mobileData: undefined\n      }])\n    }\n  },\n  {\n    description: '[Multiple\
+    \ Users] Should NOT send request if Audience Members list is empty - userData\
+    \ is an empty object',\n    auth: 'stape',\n    mockData: {\n      userMode: 'multiple',\n\
+    \      audienceMembers: assign([], audienceMembersBaseMock[0], [{\n        userData:\
+    \ {},\n        mobileData: undefined\n      }])\n    }\n  },\n  {\n    description:\
+    \ '[Multiple Users] Should NOT send request if Audience Members list is empty\
+    \ - userIdentifiers inside userData is undefined',\n    auth: 'stape',\n    mockData:\
+    \ {\n      userMode: 'multiple',\n      audienceMembers: assign([], audienceMembersBaseMock[0],\
+    \ [{\n        userData: { userIdentifiers: undefined },\n        mobileData: undefined\n\
     \      }])\n    }\n  },\n  {\n    description: '[Multiple Users] Should NOT send\
     \ request if Audience Members list is empty - userIdentifiers inside userData\
-    \ is undefined',\n    auth: 'stape',\n    mockData: {\n      userMode: 'multiple',\n\
-    \      audienceMembers: assign([], audienceMembersBaseMock[0], [{\n        userData:\
-    \ { userIdentifiers: undefined },\n        mobileData: undefined\n      }])\n\
-    \    }\n  },\n  {\n    description: '[Multiple Users] Should NOT send request\
-    \ if Audience Members list is empty - userIdentifiers inside userData is an empty\
-    \ array',\n    auth: 'stape',\n    mockData: {\n      userMode: 'multiple',\n\
+    \ is an empty array',\n    auth: 'stape',\n    mockData: {\n      userMode: 'multiple',\n\
     \      audienceMembers: assign([], audienceMembersBaseMock[0], [{\n        userData:\
     \ { userIdentifiers: [] },\n        mobileData: undefined\n      }])\n    }\n\
     \  },\n  {\n    description: '[Multiple Users] Should NOT send request if Audience\
