@@ -1,6 +1,8 @@
 homepage: 'https://stape.io/'
 documentation: 'https://github.com/stape-io/google-customer-match-tag'
 versions:
+  - sha: aaa6bd53db1b7f86b0c21600af28ff426d074d7c
+    changeNotes: Fixed typo in getUrl() invocation on shouldExitEarly().
   - sha: 62cbaeaac78e1df2a489dc148f7aa00f8b1171b3
     changeNotes: Marked TOS as accepted by default.
   - sha: bbb8a74bf86772c62c64d4122ee9322af838c19d
