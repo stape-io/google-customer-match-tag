@@ -627,7 +627,7 @@ function sendRequest(data, mappedData, apiVersion) {
 function shouldExitEarly(data, eventData) {
   if (!isConsentGivenOrNotRequired(data, eventData)) return true;
 
-  const url = getUrl(data);
+  const url = getUrl(eventData);
   if (url && url.lastIndexOf('https://gtm-msr.appspot.com/', 0) === 0) return true;
 
   return false;
