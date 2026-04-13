@@ -1448,7 +1448,7 @@ function sendRequest(data, mappedData, apiVersion) {
 function shouldExitEarly(data, eventData) {
   if (!isConsentGivenOrNotRequired(data, eventData)) return true;
 
-  const url = getUrl(data);
+  const url = getUrl(eventData);
   if (url && url.lastIndexOf('https://gtm-msr.appspot.com/', 0) === 0) return true;
 
   return false;
@@ -2353,6 +2353,9 @@ setup: "const Promise = require('Promise');\nconst JSON = require('JSON');\ncons
 
 
 ___NOTES___
+
+2026-04-13 - Change Notes:
+  - Fix typo in getUrl() invocation on shouldExitEarly().
 
 Created on 7/9/2025, 6:32:40 PM
 
