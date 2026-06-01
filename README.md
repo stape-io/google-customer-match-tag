@@ -68,7 +68,6 @@ The tag can be configured to send data for a single user or for multiple users a
 * **Use Optimistic Scenario**: If `true`, the tag fires `gtmOnSuccess()` immediately without waiting for a response from the API. This speeds up container response time but may hide downstream errors.
 * **Request-level Consent**: Apply `adUserData` and `adPersonalization` consent statuses to all users in the request. This can be overridden at the user level when using the "Multiple Users" mode.
 * **Consent Settings**: Prevent the tag from firing unless the necessary ad storage consent is granted by the user.
-* **Logging**: Configure console and/or BigQuery logging for debugging and monitoring requests and responses.
 
 ## Useful Resources
 
