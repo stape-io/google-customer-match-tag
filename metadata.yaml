@@ -1,6 +1,8 @@
 homepage: 'https://stape.io/'
 documentation: 'https://github.com/stape-io/google-customer-match-tag'
 versions:
+  - sha: 70e7e8a9cb9242497056b1a5d9b9875ea33d80f6
+    changeNotes: Added IP Address support as User Identifier.
   - sha: 7714cccc2e33e3a48efb86630800801547a65687
     changeNotes: Logging removal.
   - sha: aaa6bd53db1b7f86b0c21600af28ff426d074d7c

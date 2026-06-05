@@ -1,13 +1,13 @@
-# Google Customer Match Tag for Google Tag Manager Server-Side
+# Google Data Manager API Customer Match Tag for Google Tag Manager Server-Side
 
-The **Google Customer Match (Audiences) Tag** for Google Tag Manager Server-Side enables you to send audience data to Google advertising products using the [Data Manager API](https://developers.google.com/data-manager/api). This allows you to manage your Customer Match lists by adding or removing users programmatically.
+The **Google Data Manager API Customer Match (Audiences) Tag** for Google Tag Manager Server-Side enables you to send audience data to Google advertising products using the [Data Manager API](https://developers.google.com/data-manager/api). This allows you to manage your Customer Match lists by adding or removing users programmatically.
 
 This tag supports two primary actions:
 
 * **Add to Customer List**: Ingests user data into a specified customer list.
 * **Remove from Customer List**: Removes user data from a specified customer list.
 
-## How to use the Google Customer Match Tag
+## How to use the Google Data Manager API Customer Match Tag
 
 1.  Choose the authentication method:
     *  **Stape Google Connection (recommended)**: sign in to the Data Manager API Connection via the Stape admin. This is the easiest way to set up the authentication. [How-to](https://stape.io/solutions/data-manager-api-connection).
@@ -23,7 +23,7 @@ This tag supports two primary actions:
           - If NOT hosting on Stape, follow [these instructions](https://developers.google.com/tag-platform/tag-manager/server-side/manual-setup-guide#optional_include_google_cloud_credentials).
        6) Grant the Service Account access to the product you're interacting with (Google Ads, DV360 etc.).
 
-2. Add the **Google Customer Match (Audiences) Tag** to your server container in GTM from the [GTM Template Gallery](https://tagmanager.google.com/gallery/#/owners/stape-io/templates/google-customer-match-tag).
+2. Add the **Google Data Manager API Customer Match Tag** to your server container in GTM from the [GTM Template Gallery](https://tagmanager.google.com/gallery/#/owners/stape-io/templates/google-customer-match-tag).
 3. Select the **Action** you want to perform (`Add to Customer List` or `Remove from Customer List`).
 4. Configure the **Destination Accounts and Customer Lists** by providing the `Operating Customer ID`, `Customer ID`, and `Customer List Name` (if using Stape Google Connection) or `Customer List ID` (if using Own Google Credentials).
 5. Configure the **Audience Members** section with the user data you want to send. You can provide data for a single user or multiple users in a batch. The tag will automatically hash user identifiers (like email and phone) using SHA256 if they are not already hashed.
@@ -48,14 +48,18 @@ The tag can be configured to send data for a single user or for multiple users a
   * **Single User**: Manually input identifiers for one user through the UI fields. The tag can fall back to data from the GA4 Event Data stream (`user_data` object) if fields are left blank.
   * **Multiple Users**: Provide a pre-formatted array of audience members. This is useful for bulk uploads.
 * **User Identifiers**:
-  The only current supported type of user identifier is [UserData](https://developers.google.com/data-manager/api/reference/rest/v1/UserData). [PAIR IDs](https://developers.google.com/data-manager/api/reference/rest/v1/AudienceMember#PairData) and [Mobile IDs](https://developers.google.com/data-manager/api/reference/rest/v1/AudienceMember#MobileData) supported is planned to be added soon.
-  * **UserData**: Includes Email Address(es), Phone Number(s), and full address details (Given Name, Family Name, Region, Postal Code). The tag automatically normalizes and hashes this data if provided in clear text. If these fields are left blank in the tag configuration, the tag will attempt to use fallback values from the incoming GA4 event data (`user_data` object). To prevent the tag from using these fallback values, you can pass an `undefined` variable to the corresponding field. The fallback order is:
+  The currently supported identifier types are [UserData](https://developers.google.com/data-manager/api/reference/rest/v1/UserData) and [CompositeData](https://developers.google.com/data-manager/api/reference/rest/v1/AudienceMember#CompositeData) (containing UserData and IpData). User IDs, PAIR IDs and Mobile IDs are planned to be added soon.
+  * **User Data**: Includes Email Address(es), Phone Number(s), and full address details (Given Name, Family Name, Region, Postal Code). The tag automatically normalizes and hashes this data if provided in clear text. If these fields are left blank in the tag configuration, the tag will attempt to use fallback values from the incoming GA4 event data (`user_data` object). When **Auto-map User Data** is enabled, the tag will look for commonly used fields in the `user_data` object to populate the identifiers. For example:
     * **Email**: `user_data.email` -> `user_data.email_address` -> `user_data.sha256_email` -> `user_data.sha256_email_address`
     * **Phone**: `user_data.phone` -> `user_data.phone_number` -> `user_data.sha256_phone_number`
     * **Given Name**: `user_data.address.first_name` -> `user_data.address.sha256_first_name`
     * **Family Name**: `user_data.address.last_name` -> `user_data.address.sha256_last_name`
     * **Region**: `user_data.address.country`
     * **Postal Code**: `user_data.address.postal_code`
+  * **IP Address Data**: The IP address captured at the time of customer interaction and optional observation timestamps. Both IPv4 and IPv6 are accepted. When **Auto-map IP Address Data** is enabled, the tag falls back to `eventData.ip_override` if no IP address is manually configured.
+    * **IP Address**: `eventData.ip_override` (auto-mapped)
+    * **IP Address First Observation Timestamp** (optional): First recorded interaction time from this IP address in a session. Accepts RFC 3339 formats (e.g. `2026-10-02T15:01:23Z`).
+    * **IP Address Last Observation Timestamp** (optional): Last recorded interaction time from this IP address in a session. Accepts RFC 3339 formats (e.g. `2026-10-02T16:22:01Z`).
 
 ### Data Formatting & Encryption
 
@@ -79,7 +83,7 @@ The tag can be configured to send data for a single user or for multiple users a
 
 ## Open Source
 
-The **Google Customer Match Tag for GTM Server-Side** is developed and maintained by the [Stape Team](https://stape.io/) under the Apache 2.0 license.
+The **Google Data Manager API Customer Match Tag for GTM Server-Side** is developed and maintained by the [Stape Team](https://stape.io/) under the Apache 2.0 license.
 
 ### GTM Gallery Status
 🟢 [Listed](https://tagmanager.google.com/gallery/#/owners/stape-io/templates/google-customer-match-tag)
