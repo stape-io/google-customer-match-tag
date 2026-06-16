@@ -1,6 +1,8 @@
 homepage: 'https://stape.io/'
 documentation: 'https://github.com/stape-io/google-customer-match-tag'
 versions:
+  - sha: 9fdba300726f9e6d112f105703111a8693cb19e2
+    changeNotes: Improved email address normalization for googlemail.com and google.com domains.
   - sha: 70e7e8a9cb9242497056b1a5d9b9875ea33d80f6
     changeNotes: Added IP Address support as User Identifier.
   - sha: 7714cccc2e33e3a48efb86630800801547a65687
