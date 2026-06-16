@@ -374,7 +374,7 @@ function normalizeEmailAddress(email) {
 
   const emailParts = email.split('@');
   if (emailParts[1] === 'gmail.com' || emailParts[1] === 'googlemail.com') {
-    return emailParts[0].split('.').join('') + '@' + emailParts[1];
+    emailParts[0] = emailParts[0].split('.').join('').split('+')[0];
   }
   return emailParts.join('@');
 }
