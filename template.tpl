@@ -671,7 +671,7 @@ ___TEMPLATE_PARAMETERS___
                     "name": "ipDataIpAddress",
                     "displayName": "IP Address",
                     "simpleValueType": true,
-                    "help": "IP address captured at the time of customer interaction. Accepts IPv4 and IPv6. \n\u003cbr/\u003e\nSpecify a single IP address. Do not hash.",
+                    "help": "IP address captured at the time of customer interaction. Accepts IPv4 and IPv6. \n\u003cbr/\u003e\nSpecify a single IP address. Do not hash.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eNote:\u003c/b\u003e Google Ads and Display \u0026 Video 360 do not support IP address matching for end users in the European Economic Area (EEA), United Kingdom (UK), or Switzerland (CH). Add logic to conditionally exclude sharing IP addresses from users from these regions and ensure that you provide users with clear and comprehensive information about the data you collect on your sites, apps, and other properties and get consent where required by law or any applicable Google policies.",
                     "valueHint": "192.168.0.1"
                   },
                   {
@@ -1160,7 +1160,7 @@ function normalizeEmailAddress(email) {
 
   const emailParts = email.split('@');
   if (emailParts[1] === 'gmail.com' || emailParts[1] === 'googlemail.com') {
-    return emailParts[0].split('.').join('') + '@' + emailParts[1];
+    emailParts[0] = emailParts[0].split('.').join('').split('+')[0];
   }
   return emailParts.join('@');
 }
@@ -2212,6 +2212,9 @@ setup: "const Promise = require('Promise');\nconst JSON = require('JSON');\ncons
 
 ___NOTES___
 
+2026-06-16 - Change Notes:
+  - Improve email address normalization for 'googlemail.com' and 'google.com' domains.
+  
 2026-06-03 - Change Notes:
   - Add IP address support (IpData) in single-user mode: auto-maps from event data's `ip_override` by default, with optional explicit fields `ipDataIpAddress`, `ipDataObserveStartTime`, and `ipDataObserveEndTime`.
   - Add `autoMapUserData` toggle for single-user mode to optionally suppress automatic mapping of email, phone, and address from event data (previously always auto-mapped).
