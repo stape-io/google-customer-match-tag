@@ -15,6 +15,11 @@ const sha256Sync = require('sha256Sync');
 ==============================================================================*/
 
 const API_VERSION = '1';
+const AUDIENCE_TYPES = {
+  contactId: 'CONTACT_ID',
+  mobileId: 'MOBILE_ID',
+  userId: 'USER_ID'
+};
 const eventData = getAllEventData();
 const useOptimisticScenario = isUIFieldTrue(data.useOptimisticScenario);
 
@@ -197,14 +202,17 @@ function getAddressFromEventData(eventData) {
 }
 
 function addAudienceMembersData(data, eventData, mappedData) {
-  const itemizeUserIdentifier = (input) => {
-    const type = getType(input);
-    if (type === 'array') return input.filter((e) => e);
-    if (type === 'string' || type === 'number') return [input];
-    return [];
-  };
   const audienceMemberIDsLengthLimit = 10;
   const audienceMembers = [];
+  const audienceType = getAudienceType(data);
+
+  if (audienceType === AUDIENCE_TYPES.mobileId) {
+    mappedData.audienceMembers = getMobileIdAudienceMembers(data, audienceMemberIDsLengthLimit);
+    return mappedData;
+  } else if (audienceType === AUDIENCE_TYPES.userId) {
+    mappedData.audienceMembers = getUserIdAudienceMembers(data);
+    return mappedData;
+  }
 
   if (data.userMode === 'single') {
     const compositeData = {};
@@ -346,6 +354,55 @@ function addAudienceMembersData(data, eventData, mappedData) {
   mappedData.audienceMembers = audienceMembers;
 
   return mappedData;
+}
+
+function getMobileIdAudienceMembers(data, mobileIdsLengthLimit) {
+  const audienceMembers = [];
+
+  if (data.userMode === 'single') {
+    const mobileIds = itemizeUserIdentifier(data.mobileDataMobileIds).map((id) => makeString(id));
+    if (mobileIds.length) {
+      audienceMembers.push({
+        mobileData: { mobileIds: mobileIds.slice(0, mobileIdsLengthLimit) }
+      });
+    }
+  } else if (data.userMode === 'multiple' && getType(data.audienceMembers) === 'array') {
+    data.audienceMembers.forEach((am) => {
+      if (getType(am) !== 'object' || getType(am.mobileData) !== 'object') return;
+      audienceMembers.push(pickAudienceMemberFields(am, 'mobileData'));
+    });
+  }
+
+  return audienceMembers;
+}
+
+function getUserIdAudienceMembers(data) {
+  const audienceMembers = [];
+
+  if (data.userMode === 'single') {
+    if (isValidValue(data.userIdDataUserId)) {
+      audienceMembers.push({
+        userIdData: { userId: makeString(data.userIdDataUserId) }
+      });
+    }
+  } else if (data.userMode === 'multiple' && getType(data.audienceMembers) === 'array') {
+    data.audienceMembers.forEach((am) => {
+      if (getType(am) !== 'object' || getType(am.userIdData) !== 'object') return;
+      audienceMembers.push(pickAudienceMemberFields(am, 'userIdData'));
+    });
+  }
+
+  return audienceMembers;
+}
+
+function pickAudienceMemberFields(am, dataKey) {
+  const audienceMember = {};
+  audienceMember[dataKey] = am[dataKey];
+  if (am.consent) audienceMember.consent = am.consent;
+  if (getType(am.destinationReferences) === 'array' && am.destinationReferences.length) {
+    audienceMember.destinationReferences = am.destinationReferences;
+  }
+  return audienceMember;
 }
 
 function addEncodingData(data, mappedData) {
@@ -557,14 +614,47 @@ function validateMappedData(mappedData) {
     );
   };
 
-  const doesNotHaveMatchData = audienceMembers.some((am) => {
-    return isUserDataAbsent(am) && isIpDataAbsent(am);
-  });
-  if (doesNotHaveMatchData) {
-    return 'At least 1 User Data or IP Data must be specified.';
+  const isMobileDataInvalid = (am) => {
+    const mobileIds = (am.mobileData || {}).mobileIds;
+    return (
+      getType(mobileIds) !== 'array' ||
+      mobileIds.length === 0 ||
+      mobileIds.length > 10 ||
+      mobileIds.some((id) => getType(id) !== 'string' || !id)
+    );
+  };
+
+  const isUserIdDataInvalid = (am) => {
+    const userId = (am.userIdData || {}).userId;
+    return getType(userId) !== 'string' || !userId;
+  };
+
+  const audienceType = getAudienceType(data);
+  const destinations = mappedData.destinations;
+
+  if (audienceType === AUDIENCE_TYPES.mobileId) {
+    if (audienceMembers.some(isMobileDataInvalid)) {
+      return 'Every Audience Member must have between 1 and 10 Mobile IDs.';
+    }
+  } else if (audienceType === AUDIENCE_TYPES.userId) {
+    if (audienceMembers.some(isUserIdDataInvalid)) {
+      return 'Every Audience Member must have a User ID.';
+    }
+    const hasUnsupportedDestination = destinations.some(
+      (d) => d.operatingAccount.accountType !== 'GOOGLE_ADS'
+    );
+    if (hasUnsupportedDestination) {
+      return 'User ID audiences are only supported by Google Ads destinations.';
+    }
+  } else {
+    const doesNotHaveMatchData = audienceMembers.some((am) => {
+      return isUserDataAbsent(am) && isIpDataAbsent(am);
+    });
+    if (doesNotHaveMatchData) {
+      return 'At least 1 User Data or IP Data must be specified.';
+    }
   }
 
-  const destinations = mappedData.destinations;
   const destinationsLengthLimit = 10;
   if (destinations.length > destinationsLengthLimit) {
     return 'Destinations list length must be at most ' + destinationsLengthLimit + '.';
@@ -605,10 +695,13 @@ function getDataForAudienceDataUpload(data, eventData) {
     addConsentData(data, mappedData);
   }
   addAudienceMembersData(data, eventData, mappedData);
-  hashDataIfNeeded(mappedData); // This should come before addEncodingData().
-  addEncodingData(data, mappedData);
-  if (isUIFieldTrue(data.enableAudienceDataEncryption)) {
-    addEncryptionData(data, mappedData);
+  // Encoding and encryption only apply to Contact information (UserData).
+  if (getAudienceType(data) === AUDIENCE_TYPES.contactId) {
+    hashDataIfNeeded(mappedData); // This should come before addEncodingData().
+    addEncodingData(data, mappedData);
+    if (isUIFieldTrue(data.enableAudienceDataEncryption)) {
+      addEncryptionData(data, mappedData);
+    }
   }
 
   return mappedData;
@@ -648,6 +741,22 @@ function shouldExitEarly(data, eventData) {
 
 function getUrl(eventData) {
   return eventData.page_location || eventData.page_referrer || getRequestHeader('referer');
+}
+
+function getAudienceType(data) {
+  // Only the Own Google Credentials auth supports audience types other than Contact information.
+  if (data.authFlow !== 'own') return AUDIENCE_TYPES.contactId;
+  const supportedAudienceTypes = Object.values(AUDIENCE_TYPES);
+  return supportedAudienceTypes.indexOf(data.audienceType) !== -1
+    ? data.audienceType
+    : AUDIENCE_TYPES.contactId;
+}
+
+function itemizeUserIdentifier(input) {
+  const type = getType(input);
+  if (type === 'array') return input.filter((e) => e);
+  if (type === 'string' || type === 'number') return [input];
+  return [];
 }
 
 function enc(data) {
