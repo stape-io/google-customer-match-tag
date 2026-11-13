@@ -417,6 +417,36 @@ ___TEMPLATE_PARAMETERS___
     "subParams": [
       {
         "type": "SELECT",
+        "name": "audienceType",
+        "displayName": "Audience Type",
+        "macrosInSelect": false,
+        "selectItems": [
+          {
+            "value": "CONTACT_ID",
+            "displayValue": "Contact information"
+          },
+          {
+            "value": "MOBILE_ID",
+            "displayValue": "Mobile ID"
+          },
+          {
+            "value": "USER_ID",
+            "displayValue": "User ID"
+          }
+        ],
+        "simpleValueType": true,
+        "help": "The type of identifier the Customer List accepts. It must match the \u003ci\u003eupload key type\u003c/i\u003e chosen when the Customer List was \u003ca href\u003d\"https://developers.google.com/data-manager/api/devguides/audiences/google-ads/customer-match/create-audience\"\u003ecreated\u003c/a\u003e: \u003ci\u003eCONTACT_ID\u003c/i\u003e (Contact information), \u003ci\u003eMOBILE_ID\u003c/i\u003e (Mobile ID) or \u003ci\u003eUSER_ID\u003c/i\u003e (User ID).\n\u003cbr/\u003e\u003cbr/\u003e\nA request, and every Customer List in it, can only receive \u003cb\u003eone\u003c/b\u003e type of identifier. If the type doesn\u0027t match the Customer List, the API rejects the request.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cul\u003e\n\u003cli\u003e\u003cb\u003eContact information\u003c/b\u003e: email addresses, phone numbers, addresses and IP addresses. Supported by Google Ads and Display \u0026 Video 360.\u003c/li\u003e\n\u003cli\u003e\u003cb\u003eMobile ID\u003c/b\u003e: Android Advertising IDs (AAID) or iOS IDFAs. Supported by Google Ads and Display \u0026 Video 360.\u003c/li\u003e\n\u003cli\u003e\u003cb\u003eUser ID\u003c/b\u003e: your own unique identifier for the user. Supported by Google Ads only.\u003c/li\u003e\n\u003c/ul\u003e\nOnly \u003cb\u003eOwn Google Credentials\u003c/b\u003e supports Mobile ID and User ID. Customer Lists created via the Stape Google Connection accept Contact information only.",
+        "defaultValue": "CONTACT_ID",
+        "enablingConditions": [
+          {
+            "paramName": "authFlow",
+            "paramValue": "own",
+            "type": "EQUALS"
+          }
+        ]
+      },
+      {
+        "type": "SELECT",
         "name": "audienceDataEncoding",
         "displayName": "Audience Data Encoding",
         "macrosInSelect": true,
@@ -432,7 +462,24 @@ ___TEMPLATE_PARAMETERS___
         ],
         "simpleValueType": true,
         "help": "The encoding type of the user identifiers SHA256 hash: \u003ci\u003eHEX\u003c/i\u003e or \u003ci\u003eBASE64\u003c/i\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eRequired\u003c/b\u003e for \u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/UserData\"\u003e\u003ci\u003eUserData\u003c/i\u003e\u003c/a\u003e (User Email Address, User Phone Number and User Given/Family Name) uploads.\n\u003cbr/\u003e\nFor other types (User Address Region and User Address Postal Code) uploads, this field is \u003cb\u003eignored\u003c/b\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\nFor hashed user identifiers, this is the encoding type of the hashed string.\n\u003cbr/\u003e\nFor encrypted hashed user identifiers, this is the encoding type of the outer encrypted string, but not necessarily the inner hashed string, meaning the inner hashed string could be encoded in a different way than the outer encrypted string.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eDefault\u003c/b\u003e: \u003ci\u003eHEX\u003c/i\u003e - when passing a non-hashed value to \u003ci\u003eUserData\u003c/i\u003e (User Email Address, User Phone Number and User Given/Family Name) fields; or when using default values from GA4 Event Data.",
-        "notSetText": "(not set)"
+        "notSetText": "(not set)",
+        "enablingConditions": [
+          {
+            "paramName": "authFlow",
+            "paramValue": "stape",
+            "type": "EQUALS"
+          },
+          {
+            "paramName": "audienceType",
+            "paramValue": "CONTACT_ID",
+            "type": "EQUALS"
+          },
+          {
+            "paramName": "audienceType",
+            "paramValue": "",
+            "type": "NOT_PRESENT"
+          }
+        ]
       },
       {
         "type": "SELECT",
@@ -522,6 +569,23 @@ ___TEMPLATE_PARAMETERS___
                 "type": "NOT_EQUALS"
               }
             ]
+          }
+        ],
+        "enablingConditions": [
+          {
+            "paramName": "authFlow",
+            "paramValue": "stape",
+            "type": "EQUALS"
+          },
+          {
+            "paramName": "audienceType",
+            "paramValue": "CONTACT_ID",
+            "type": "EQUALS"
+          },
+          {
+            "paramName": "audienceType",
+            "paramValue": "",
+            "type": "NOT_PRESENT"
           }
         ]
       },
@@ -692,6 +756,92 @@ ___TEMPLATE_PARAMETERS___
                   }
                 ]
               }
+            ],
+            "enablingConditions": [
+              {
+                "paramName": "authFlow",
+                "paramValue": "stape",
+                "type": "EQUALS"
+              },
+              {
+                "paramName": "audienceType",
+                "paramValue": "CONTACT_ID",
+                "type": "EQUALS"
+              },
+              {
+                "paramName": "audienceType",
+                "paramValue": "",
+                "type": "NOT_PRESENT"
+              }
+            ]
+          },
+          {
+            "type": "GROUP",
+            "name": "ownAuthAudienceTypesGroup",
+            "subParams": [
+              {
+                "type": "GROUP",
+                "name": "mobileIdGroup",
+                "displayName": "Mobile ID Data",
+                "groupStyle": "ZIPPY_OPEN",
+                "subParams": [
+                  {
+                    "type": "TEXT",
+                    "name": "mobileDataMobileIds",
+                    "displayName": "Mobile ID(s)",
+                    "simpleValueType": true,
+                    "help": "Specify a single Mobile ID, or an array of up to 10 Mobile IDs, for the same user. Accepts Android Advertising IDs (AAID) and iOS IDFAs. Do not hash.\n\u003cbr/\u003e\u003cbr/\u003e\nThe Customer List must be created with the \u003ci\u003eMOBILE_ID\u003c/i\u003e upload key type, and its app (iOS or Android) must match the IDs being sent.",
+                    "valueHint": "123e4567-e89b-12d3-a456-426614174000",
+                    "valueValidators": [
+                      {
+                        "type": "NON_EMPTY"
+                      }
+                    ]
+                  }
+                ],
+                "enablingConditions": [
+                  {
+                    "paramName": "audienceType",
+                    "paramValue": "MOBILE_ID",
+                    "type": "EQUALS"
+                  }
+                ]
+              },
+              {
+                "type": "GROUP",
+                "name": "userIdGroup",
+                "displayName": "User ID Data",
+                "groupStyle": "ZIPPY_OPEN",
+                "subParams": [
+                  {
+                    "type": "TEXT",
+                    "name": "userIdDataUserId",
+                    "displayName": "User ID",
+                    "simpleValueType": true,
+                    "help": "Specify a single User ID: the unique identifier you assign to the user. Do not hash.\n\u003cbr/\u003e\u003cbr/\u003e\nThe Customer List must be created with the \u003ci\u003eUSER_ID\u003c/i\u003e upload key type. Only Google Ads supports User ID Customer Lists.",
+                    "valueHint": "user_987654321",
+                    "valueValidators": [
+                      {
+                        "type": "NON_EMPTY"
+                      }
+                    ]
+                  }
+                ],
+                "enablingConditions": [
+                  {
+                    "paramName": "audienceType",
+                    "paramValue": "USER_ID",
+                    "type": "EQUALS"
+                  }
+                ]
+              }
+            ],
+            "enablingConditions": [
+              {
+                "paramName": "authFlow",
+                "paramValue": "own",
+                "type": "EQUALS"
+              }
             ]
           }
         ],
@@ -712,7 +862,7 @@ ___TEMPLATE_PARAMETERS___
             "name": "audienceMembers",
             "displayName": "Audience Members Array",
             "simpleValueType": true,
-            "help": "Specify the Audience Members array. This is useful when you need to upload data for multiple users at once. At most\n10000 Audience Members can be specified in the array.\n\u003cbr/\u003e\u003cbr/\u003e\nThe only current supported type of user identifiers are \u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/AudienceMember#CompositeData\"\u003e\u003ci\u003eCompositeData\u003c/i\u003e\u003c/a\u003e (containing UserData and IpData) and \u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/UserData\"\u003e\u003ci\u003eUserData\u003c/i\u003e\u003c/a\u003e.\n\u003cbr/\u003e\u003cbr/\u003e\nThe array must be formatted as specified in the\nGoogle Documentation. You can specify different consent types for each user, overriding the request-level consent.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eIf you already pass SHA256 hashed fields to the array, make sure to specify the SHA256 hash encoding in the corresponding template field. Otherwise, the tag will hash it automatically and set it for you.\u003c/b\u003e\n\u003cbr/\u003e\u003cbr/\u003e\nReferences: \n\u003cul\u003e\n\u003cli\u003e\u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/AudienceMember\"\u003eAudience Member\u003c/a\u003e\u003c/li\u003e\n\u003cli\u003e\u003ca href\u003d\"https://developers.google.com/data-manager/api/get-started/formatting\"\u003eNormalization guidelines\u003c/a\u003e\u003c/li\u003e\n\u003cli\u003e\u003ca href\u003d\"https://developers.google.com/data-manager/api/get-started/quickstart/send-audience-members?persona\u003dadvertiser#build_the_request_body\"\u003eExample\u003c/a\u003e\u003c/li\u003e\n\u003c/ul\u003e",
+            "help": "Specify the Audience Members array. This is useful when you need to upload data for multiple users at once. At most\n10000 Audience Members can be specified in the array.\n\u003cbr/\u003e\u003cbr/\u003e\nEach Audience Member must carry the identifier of the selected \u003cb\u003eAudience Type\u003c/b\u003e; Audience Members carrying another type are skipped:\n\u003cul\u003e\n\u003cli\u003e\u003cb\u003eContact information\u003c/b\u003e: \u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/AudienceMember#CompositeData\"\u003e\u003ci\u003eCompositeData\u003c/i\u003e\u003c/a\u003e (containing UserData and IpData) or \u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/UserData\"\u003e\u003ci\u003eUserData\u003c/i\u003e\u003c/a\u003e.\u003c/li\u003e\n\u003cli\u003e\u003cb\u003eMobile ID\u003c/b\u003e: \u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/MobileData\"\u003e\u003ci\u003eMobileData\u003c/i\u003e\u003c/a\u003e, e.g. \u003ci\u003e{ \"mobileData\": { \"mobileIds\": [\"...\"] } }\u003c/i\u003e.\u003c/li\u003e\n\u003cli\u003e\u003cb\u003eUser ID\u003c/b\u003e: \u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/AudienceMember#UserIdData\"\u003e\u003ci\u003eUserIdData\u003c/i\u003e\u003c/a\u003e, e.g. \u003ci\u003e{ \"userIdData\": { \"userId\": \"...\" } }\u003c/i\u003e.\u003c/li\u003e\n\u003c/ul\u003e\n\nThe array must be formatted as specified in the\nGoogle Documentation. You can specify different consent types for each user, overriding the request-level consent.\n\u003cbr/\u003e\u003cbr/\u003e\n\u003cb\u003eIf you already pass SHA256 hashed fields to the array, make sure to specify the SHA256 hash encoding in the corresponding template field. Otherwise, the tag will hash it automatically and set it for you.\u003c/b\u003e\n\u003cbr/\u003e\u003cbr/\u003e\nReferences: \n\u003cul\u003e\n\u003cli\u003e\u003ca href\u003d\"https://developers.google.com/data-manager/api/reference/rest/v1/AudienceMember\"\u003eAudience Member\u003c/a\u003e\u003c/li\u003e\n\u003cli\u003e\u003ca href\u003d\"https://developers.google.com/data-manager/api/get-started/formatting\"\u003eNormalization guidelines\u003c/a\u003e\u003c/li\u003e\n\u003cli\u003e\u003ca href\u003d\"https://developers.google.com/data-manager/api/get-started/quickstart/send-audience-members?persona\u003dadvertiser#build_the_request_body\"\u003eExample\u003c/a\u003e\u003c/li\u003e\n\u003c/ul\u003e",
             "valueValidators": [
               {
                 "type": "NON_EMPTY"
@@ -801,6 +951,11 @@ const sha256Sync = require('sha256Sync');
 ==============================================================================*/
 
 const API_VERSION = '1';
+const AUDIENCE_TYPES = {
+  contactId: 'CONTACT_ID',
+  mobileId: 'MOBILE_ID',
+  userId: 'USER_ID'
+};
 const eventData = getAllEventData();
 const useOptimisticScenario = isUIFieldTrue(data.useOptimisticScenario);
 
@@ -983,14 +1138,17 @@ function getAddressFromEventData(eventData) {
 }
 
 function addAudienceMembersData(data, eventData, mappedData) {
-  const itemizeUserIdentifier = (input) => {
-    const type = getType(input);
-    if (type === 'array') return input.filter((e) => e);
-    if (type === 'string' || type === 'number') return [input];
-    return [];
-  };
   const audienceMemberIDsLengthLimit = 10;
   const audienceMembers = [];
+  const audienceType = getAudienceType(data);
+
+  if (audienceType === AUDIENCE_TYPES.mobileId) {
+    mappedData.audienceMembers = getMobileIdAudienceMembers(data, audienceMemberIDsLengthLimit);
+    return mappedData;
+  } else if (audienceType === AUDIENCE_TYPES.userId) {
+    mappedData.audienceMembers = getUserIdAudienceMembers(data);
+    return mappedData;
+  }
 
   if (data.userMode === 'single') {
     const compositeData = {};
@@ -1132,6 +1290,55 @@ function addAudienceMembersData(data, eventData, mappedData) {
   mappedData.audienceMembers = audienceMembers;
 
   return mappedData;
+}
+
+function getMobileIdAudienceMembers(data, mobileIdsLengthLimit) {
+  const audienceMembers = [];
+
+  if (data.userMode === 'single') {
+    const mobileIds = itemizeUserIdentifier(data.mobileDataMobileIds).map((id) => makeString(id));
+    if (mobileIds.length) {
+      audienceMembers.push({
+        mobileData: { mobileIds: mobileIds.slice(0, mobileIdsLengthLimit) }
+      });
+    }
+  } else if (data.userMode === 'multiple' && getType(data.audienceMembers) === 'array') {
+    data.audienceMembers.forEach((am) => {
+      if (getType(am) !== 'object' || getType(am.mobileData) !== 'object') return;
+      audienceMembers.push(pickAudienceMemberFields(am, 'mobileData'));
+    });
+  }
+
+  return audienceMembers;
+}
+
+function getUserIdAudienceMembers(data) {
+  const audienceMembers = [];
+
+  if (data.userMode === 'single') {
+    if (isValidValue(data.userIdDataUserId)) {
+      audienceMembers.push({
+        userIdData: { userId: makeString(data.userIdDataUserId) }
+      });
+    }
+  } else if (data.userMode === 'multiple' && getType(data.audienceMembers) === 'array') {
+    data.audienceMembers.forEach((am) => {
+      if (getType(am) !== 'object' || getType(am.userIdData) !== 'object') return;
+      audienceMembers.push(pickAudienceMemberFields(am, 'userIdData'));
+    });
+  }
+
+  return audienceMembers;
+}
+
+function pickAudienceMemberFields(am, dataKey) {
+  const audienceMember = {};
+  audienceMember[dataKey] = am[dataKey];
+  if (am.consent) audienceMember.consent = am.consent;
+  if (getType(am.destinationReferences) === 'array' && am.destinationReferences.length) {
+    audienceMember.destinationReferences = am.destinationReferences;
+  }
+  return audienceMember;
 }
 
 function addEncodingData(data, mappedData) {
@@ -1343,14 +1550,47 @@ function validateMappedData(mappedData) {
     );
   };
 
-  const doesNotHaveMatchData = audienceMembers.some((am) => {
-    return isUserDataAbsent(am) && isIpDataAbsent(am);
-  });
-  if (doesNotHaveMatchData) {
-    return 'At least 1 User Data or IP Data must be specified.';
+  const isMobileDataInvalid = (am) => {
+    const mobileIds = (am.mobileData || {}).mobileIds;
+    return (
+      getType(mobileIds) !== 'array' ||
+      mobileIds.length === 0 ||
+      mobileIds.length > 10 ||
+      mobileIds.some((id) => getType(id) !== 'string' || !id)
+    );
+  };
+
+  const isUserIdDataInvalid = (am) => {
+    const userId = (am.userIdData || {}).userId;
+    return getType(userId) !== 'string' || !userId;
+  };
+
+  const audienceType = getAudienceType(data);
+  const destinations = mappedData.destinations;
+
+  if (audienceType === AUDIENCE_TYPES.mobileId) {
+    if (audienceMembers.some(isMobileDataInvalid)) {
+      return 'Every Audience Member must have between 1 and 10 Mobile IDs.';
+    }
+  } else if (audienceType === AUDIENCE_TYPES.userId) {
+    if (audienceMembers.some(isUserIdDataInvalid)) {
+      return 'Every Audience Member must have a User ID.';
+    }
+    const hasUnsupportedDestination = destinations.some(
+      (d) => d.operatingAccount.accountType !== 'GOOGLE_ADS'
+    );
+    if (hasUnsupportedDestination) {
+      return 'User ID audiences are only supported by Google Ads destinations.';
+    }
+  } else {
+    const doesNotHaveMatchData = audienceMembers.some((am) => {
+      return isUserDataAbsent(am) && isIpDataAbsent(am);
+    });
+    if (doesNotHaveMatchData) {
+      return 'At least 1 User Data or IP Data must be specified.';
+    }
   }
 
-  const destinations = mappedData.destinations;
   const destinationsLengthLimit = 10;
   if (destinations.length > destinationsLengthLimit) {
     return 'Destinations list length must be at most ' + destinationsLengthLimit + '.';
@@ -1391,10 +1631,13 @@ function getDataForAudienceDataUpload(data, eventData) {
     addConsentData(data, mappedData);
   }
   addAudienceMembersData(data, eventData, mappedData);
-  hashDataIfNeeded(mappedData); // This should come before addEncodingData().
-  addEncodingData(data, mappedData);
-  if (isUIFieldTrue(data.enableAudienceDataEncryption)) {
-    addEncryptionData(data, mappedData);
+  // Encoding and encryption only apply to Contact information (UserData).
+  if (getAudienceType(data) === AUDIENCE_TYPES.contactId) {
+    hashDataIfNeeded(mappedData); // This should come before addEncodingData().
+    addEncodingData(data, mappedData);
+    if (isUIFieldTrue(data.enableAudienceDataEncryption)) {
+      addEncryptionData(data, mappedData);
+    }
   }
 
   return mappedData;
@@ -1434,6 +1677,22 @@ function shouldExitEarly(data, eventData) {
 
 function getUrl(eventData) {
   return eventData.page_location || eventData.page_referrer || getRequestHeader('referer');
+}
+
+function getAudienceType(data) {
+  // Only the Own Google Credentials auth supports audience types other than Contact information.
+  if (data.authFlow !== 'own') return AUDIENCE_TYPES.contactId;
+  const supportedAudienceTypes = Object.values(AUDIENCE_TYPES);
+  return supportedAudienceTypes.indexOf(data.audienceType) !== -1
+    ? data.audienceType
+    : AUDIENCE_TYPES.contactId;
+}
+
+function itemizeUserIdentifier(input) {
+  const type = getType(input);
+  if (type === 'array') return input.filter((e) => e);
+  if (type === 'string' || type === 'number') return [input];
+  return [];
 }
 
 function enc(data) {
@@ -2113,6 +2372,371 @@ scenarios:
     \ 200 });\n     });\n   });\n \n   runCode(copyMockData);\n \n   callLater(()\
     \ => {\n     assertApi('gtmOnSuccess').wasCalled();\n     assertApi('gtmOnFailure').wasNotCalled();\n\
     \   });\n });"
+- name: '[Audience Type] [Single User] Mobile ID and User ID requests are built and sent with Own auth'
+  code: |-
+    const elevenMobileIds = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9', 'm10', 'm11'];
+    const ownDestinationsExpected = [
+      {
+        reference: '3',
+        productDestinationId: '3',
+        operatingAccount: { accountType: 'GOOGLE_ADS', accountId: '1' },
+        loginAccount: { accountType: 'GOOGLE_ADS', accountId: '2' }
+      },
+      {
+        reference: '33',
+        productDestinationId: '33',
+        operatingAccount: { accountType: 'GOOGLE_ADS', accountId: '11' },
+        loginAccount: { accountType: 'GOOGLE_ADS', accountId: '22' }
+      }
+    ];
+
+    [
+      {
+        description: 'Mobile ID - array of Mobile IDs',
+        mockData: { audienceType: 'MOBILE_ID', mobileDataMobileIds: ['aaid-1', 'idfa-2'] },
+        expectedAudienceMembers: [{ mobileData: { mobileIds: ['aaid-1', 'idfa-2'] } }]
+      },
+      {
+        description: 'Mobile ID - single Mobile ID string',
+        mockData: { audienceType: 'MOBILE_ID', mobileDataMobileIds: 'aaid-1' },
+        expectedAudienceMembers: [{ mobileData: { mobileIds: ['aaid-1'] } }]
+      },
+      {
+        description: 'Mobile ID - more than 10 Mobile IDs are truncated to 10',
+        mockData: { audienceType: 'MOBILE_ID', mobileDataMobileIds: elevenMobileIds },
+        expectedAudienceMembers: [{ mobileData: { mobileIds: elevenMobileIds.slice(0, 10) } }]
+      },
+      {
+        description: 'Mobile ID - Display and Video 360 destination is accepted',
+        mockData: {
+          audienceType: 'MOBILE_ID',
+          mobileDataMobileIds: 'aaid-1',
+          ownAuthDestinationsList: [
+            { product: 'DISPLAY_VIDEO_ADVERTISER', operatingAccountId: '1', productDestinationId: '3' }
+          ]
+        },
+        expectedDestinations: [
+          {
+            reference: '3',
+            productDestinationId: '3',
+            operatingAccount: { accountType: 'DISPLAY_VIDEO_ADVERTISER', accountId: '1' }
+          }
+        ],
+        expectedAudienceMembers: [{ mobileData: { mobileIds: ['aaid-1'] } }]
+      },
+      {
+        description: 'User ID - string User ID',
+        mockData: { audienceType: 'USER_ID', userIdDataUserId: 'user_987654321' },
+        expectedAudienceMembers: [{ userIdData: { userId: 'user_987654321' } }]
+      },
+      {
+        description: 'User ID - numeric User ID is converted to string',
+        mockData: { audienceType: 'USER_ID', userIdDataUserId: 987654321 },
+        expectedAudienceMembers: [{ userIdData: { userId: '987654321' } }]
+      }
+    ].forEach((scenario) => {
+      ['ingest', 'remove'].forEach((method) => {
+        cleanup();
+        const copyMockData = setMockDataByAudienceMethod(method, scenario.mockData, 'own');
+
+        // Encoding and encryption only apply to Contact information, so they must not be sent.
+        const expectedRequestBody = {
+          validateOnly: false,
+          destinations: scenario.expectedDestinations || ownDestinationsExpected,
+          audienceMembers: scenario.expectedAudienceMembers
+        };
+        if (method === 'ingest') {
+          expectedRequestBody.termsOfService = { customerMatchTermsOfServiceStatus: 'ACCEPTED' };
+          expectedRequestBody.consent = {
+            adUserData: 'CONSENT_GRANTED',
+            adPersonalization: 'CONSENT_GRANTED'
+          };
+        }
+
+        mock('sendHttpRequest', (requestUrl, requestOptions, requestBody) => {
+          require('logToConsole')(method, scenario.description);
+          assertThat(requestUrl).isEqualTo(
+            'https://datamanager.googleapis.com/v' +
+              expectedDataManagerApiVersion +
+              '/audienceMembers:' +
+              method
+          );
+          assertThat(JSON.parse(requestBody)).isEqualTo(expectedRequestBody);
+          return Promise.create((resolve) => resolve({ statusCode: 200 }));
+        });
+
+        runCode(copyMockData);
+      });
+    });
+
+    callLater(() => {
+      assertApi('sendHttpRequest').wasCalled();
+      assertApi('gtmOnSuccess').wasCalled();
+      assertApi('gtmOnFailure').wasNotCalled();
+    });
+- name: '[Audience Type] [Multiple Users] Only members carrying the selected identifier type are sent'
+  code: |-
+    const audienceMembersMock = [
+      {
+        mobileData: { mobileIds: ['aaid-1', 'idfa-2'] },
+        consent: { adUserData: 'CONSENT_DENIED', adPersonalization: 'CONSENT_DENIED' },
+        destinationReferences: ['3'],
+        extraField: 'should be dropped'
+      },
+      { userIdData: { userId: 'user_1' }, destinationReferences: [] },
+      JSON.parse(JSON.stringify(multipleAudienceMembersMock[0])),
+      { compositeData: { ipData: [{ ipAddress: '192.168.0.1' }] } },
+      'not an object',
+      { mobileData: 'not an object' },
+      { userIdData: { userId: 'user_2' }, consent: { adUserData: 'CONSENT_GRANTED' } }
+    ];
+
+    [
+      {
+        audienceType: 'MOBILE_ID',
+        expectedAudienceMembers: [
+          {
+            mobileData: { mobileIds: ['aaid-1', 'idfa-2'] },
+            consent: { adUserData: 'CONSENT_DENIED', adPersonalization: 'CONSENT_DENIED' },
+            destinationReferences: ['3']
+          }
+        ]
+      },
+      {
+        audienceType: 'USER_ID',
+        expectedAudienceMembers: [
+          { userIdData: { userId: 'user_1' } },
+          { userIdData: { userId: 'user_2' }, consent: { adUserData: 'CONSENT_GRANTED' } }
+        ]
+      }
+    ].forEach((scenario) => {
+      ['ingest', 'remove'].forEach((method) => {
+        cleanup();
+        const copyMockData = setMockDataByAudienceMethod(
+          method,
+          {
+            userMode: 'multiple',
+            audienceType: scenario.audienceType,
+            audienceMembers: JSON.parse(JSON.stringify(audienceMembersMock))
+          },
+          'own'
+        );
+
+        mock('sendHttpRequest', (requestUrl, requestOptions, requestBody) => {
+          const parsedRequestBody = JSON.parse(requestBody);
+          assertThat(parsedRequestBody.audienceMembers).isEqualTo(scenario.expectedAudienceMembers);
+          assertThat(parsedRequestBody.encoding).isUndefined();
+          assertThat(parsedRequestBody.encryptionInfo).isUndefined();
+          return Promise.create((resolve) => resolve({ statusCode: 200 }));
+        });
+
+        runCode(copyMockData);
+      });
+    });
+
+    callLater(() => {
+      assertApi('sendHttpRequest').wasCalled();
+      assertApi('gtmOnSuccess').wasCalled();
+      assertApi('gtmOnFailure').wasNotCalled();
+    });
+- name: '[Audience Type] Falls back to Contact information when undefined, unknown, or when using Stape auth'
+  code: |-
+    [
+      {
+        description: 'Own auth and Audience Type undefined',
+        auth: 'own',
+        mockData: { audienceType: undefined }
+      },
+      {
+        description: 'Own auth and Audience Type is an unknown value',
+        auth: 'own',
+        mockData: { audienceType: 'GOOGLE_USER_ID' }
+      },
+      {
+        description: 'Own auth and Audience Type is CONTACT_ID',
+        auth: 'own',
+        mockData: {
+          audienceType: 'CONTACT_ID',
+          mobileDataMobileIds: 'aaid-1',
+          userIdDataUserId: 'user_1'
+        }
+      },
+      {
+        description: 'Stape auth ignores Audience Type MOBILE_ID',
+        auth: 'stape',
+        mockData: { audienceType: 'MOBILE_ID', mobileDataMobileIds: 'aaid-1' }
+      },
+      {
+        description: 'Stape auth ignores Audience Type USER_ID',
+        auth: 'stape',
+        mockData: { audienceType: 'USER_ID', userIdDataUserId: 'user_1' }
+      }
+    ].forEach((scenario) => {
+      cleanup();
+      const copyMockData = setMockDataByAudienceMethod('ingest', scenario.mockData, scenario.auth);
+
+      mock('sendHttpRequest', (requestUrl, requestOptions, requestBody) => {
+        require('logToConsole')(scenario.description);
+        const parsedRequestBody = JSON.parse(requestBody);
+        assertThat(parsedRequestBody.audienceMembers).isEqualTo([
+          {
+            compositeData: {
+              userData: {
+                userIdentifiers: [
+                  { emailAddress: '973dfe463ec85785f5f95af5ba3906eedb2d931c24e69824a89ea65dba4e813b' },
+                  { phoneNumber: '910a625c4ba147b544e6bd2f267e130ae14c591b6ba9c25cb8573322dedbebd0' },
+                  {
+                    address: {
+                      givenName: '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',
+                      familyName: '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',
+                      regionCode: 'BR',
+                      postalCode: '10001'
+                    }
+                  }
+                ]
+              },
+              ipData: [{ ipAddress: '192.168.0.1' }]
+            }
+          }
+        ]);
+        assertThat(parsedRequestBody.encoding).isEqualTo('HEX');
+        assertThat(parsedRequestBody.encryptionInfo).isEqualTo({
+          gcpWrappedKeyInfo: {
+            keyType: 'XCHACHA20_POLY1305',
+            wipProvider: '123',
+            kekUri: '123',
+            encryptedDek: '123'
+          }
+        });
+        return Promise.create((resolve) => resolve({ statusCode: 200 }));
+      });
+
+      runCode(copyMockData);
+    });
+
+    callLater(() => {
+      assertApi('sendHttpRequest').wasCalled();
+      assertApi('gtmOnSuccess').wasCalled();
+      assertApi('gtmOnFailure').wasNotCalled();
+    });
+- name: '[Audience Type] Request is not sent when the selected identifier is missing or invalid, or the destination does not support it'
+  code: |-
+    [
+      {
+        description: '[Mobile ID] [Single User] Mobile IDs field is undefined',
+        mockData: { audienceType: 'MOBILE_ID', mobileDataMobileIds: undefined }
+      },
+      {
+        description: '[Mobile ID] [Single User] Mobile IDs field is an empty array',
+        mockData: { audienceType: 'MOBILE_ID', mobileDataMobileIds: [] }
+      },
+      {
+        description: '[Mobile ID] [Single User] Mobile IDs field only contains empty values',
+        mockData: { audienceType: 'MOBILE_ID', mobileDataMobileIds: ['', null] }
+      },
+      {
+        description: '[Mobile ID] [Multiple Users] no member carries mobileData',
+        mockData: {
+          audienceType: 'MOBILE_ID',
+          userMode: 'multiple',
+          audienceMembers: [
+            { userIdData: { userId: 'user_1' } },
+            JSON.parse(JSON.stringify(multipleAudienceMembersMock[0]))
+          ]
+        }
+      },
+      {
+        description: '[Mobile ID] [Multiple Users] mobileIds is an empty array',
+        mockData: {
+          audienceType: 'MOBILE_ID',
+          userMode: 'multiple',
+          audienceMembers: [{ mobileData: { mobileIds: [] } }]
+        }
+      },
+      {
+        description: '[Mobile ID] [Multiple Users] mobileIds is not an array',
+        mockData: {
+          audienceType: 'MOBILE_ID',
+          userMode: 'multiple',
+          audienceMembers: [{ mobileData: { mobileIds: 'aaid-1' } }]
+        }
+      },
+      {
+        description: '[Mobile ID] [Multiple Users] mobileIds has more than 10 items',
+        mockData: {
+          audienceType: 'MOBILE_ID',
+          userMode: 'multiple',
+          audienceMembers: [
+            { mobileData: { mobileIds: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'] } }
+          ]
+        }
+      },
+      {
+        description: '[Mobile ID] [Multiple Users] mobileIds contains an empty string or a non-string',
+        mockData: {
+          audienceType: 'MOBILE_ID',
+          userMode: 'multiple',
+          audienceMembers: [
+            { mobileData: { mobileIds: ['aaid-1'] } },
+            { mobileData: { mobileIds: ['', 123] } }
+          ]
+        }
+      },
+      {
+        description: '[User ID] [Single User] User ID field is undefined',
+        mockData: { audienceType: 'USER_ID', userIdDataUserId: undefined }
+      },
+      {
+        description: '[User ID] [Single User] User ID field is an empty string',
+        mockData: { audienceType: 'USER_ID', userIdDataUserId: '' }
+      },
+      {
+        description: '[User ID] [Multiple Users] no member carries userIdData',
+        mockData: {
+          audienceType: 'USER_ID',
+          userMode: 'multiple',
+          audienceMembers: [{ mobileData: { mobileIds: ['aaid-1'] } }]
+        }
+      },
+      {
+        description: '[User ID] [Multiple Users] userId is an empty string',
+        mockData: {
+          audienceType: 'USER_ID',
+          userMode: 'multiple',
+          audienceMembers: [{ userIdData: { userId: '' } }]
+        }
+      },
+      {
+        description: '[User ID] [Multiple Users] userId is not a string',
+        mockData: {
+          audienceType: 'USER_ID',
+          userMode: 'multiple',
+          audienceMembers: [{ userIdData: { userId: 123 } }]
+        }
+      },
+      {
+        description: '[User ID] Display and Video 360 destination does not support User ID',
+        mockData: {
+          audienceType: 'USER_ID',
+          userIdDataUserId: 'user_1',
+          ownAuthDestinationsList: [
+            { product: 'GOOGLE_ADS', operatingAccountId: '1', productDestinationId: '3' },
+            { product: 'DISPLAY_VIDEO_PARTNER', operatingAccountId: '11', productDestinationId: '33' }
+          ]
+        }
+      }
+    ].forEach((scenario) => {
+      cleanup();
+      const copyMockData = setMockDataByAudienceMethod('ingest', scenario.mockData, 'own');
+
+      runCode(copyMockData);
+
+      require('logToConsole')(scenario.description);
+    });
+
+    assertApi('sendHttpRequest').wasNotCalled();
+    assertApi('gtmOnSuccess').wasNotCalled();
+    assertApi('gtmOnFailure').wasCalled();
 setup: "const Promise = require('Promise');\nconst JSON = require('JSON');\nconst\
   \ makeInteger = require('makeInteger');\nconst Object = require('Object');\nconst\
   \ callLater = require('callLater');\n\nfunction assign() {\n  const target = arguments[0];\n\
@@ -2211,6 +2835,13 @@ setup: "const Promise = require('Promise');\nconst JSON = require('JSON');\ncons
 
 
 ___NOTES___
+
+2026-11-13 - Change Notes:
+  - Add an Audience Type field (Own Google Credentials only) to send Mobile ID (`mobileData`) or User ID (`userIdData`) audience members instead of Contact information; it defaults to Contact information when unset, unknown, or when the Stape Google Connection is used, because Stape-created Customer Lists only accept contact data.
+  - Add single-user fields for Mobile IDs (up to 10, truncated beyond that) and User ID; in multiple-users mode, keep only audience members carrying the selected identifier type, with their consent and destination references.
+  - Validate the selected identifier per audience member (1 to 10 non-empty Mobile IDs, or a non-empty User ID) and reject User ID requests to non-Google Ads destinations, which don't support User ID lists.
+  - Send encoding and encryption info only for Contact information, and hide those fields in the UI for the other Audience Types, since the API ignores them for non-UserData uploads.
+  - Add unit tests for both Audience Types in single and multiple users mode, the Contact information fallback, and the new validation failures.
 
 2026-06-16 - Change Notes:
   - Improve email address normalization for 'googlemail.com' and 'google.com' domains.
