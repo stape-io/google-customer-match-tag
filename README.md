@@ -26,8 +26,9 @@ This tag supports two primary actions:
 2. Add the **Google Data Manager API Customer Match Tag** to your server container in GTM from the [GTM Template Gallery](https://tagmanager.google.com/gallery/#/owners/stape-io/templates/google-customer-match-tag).
 3. Select the **Action** you want to perform (`Add to Customer List` or `Remove from Customer List`).
 4. Configure the **Destination Accounts and Customer Lists** by providing the `Operating Customer ID`, `Customer ID`, and `Customer List Name` (if using Stape Google Connection) or `Customer List ID` (if using Own Google Credentials).
-5. Configure the **Audience Members** section with the user data you want to send. You can provide data for a single user or multiple users in a batch. The tag will automatically hash user identifiers (like email and phone) using SHA256 if they are not already hashed.
-6. Add a trigger.
+5. If using **Own Google Credentials**, choose the **Audience Type** that matches the Customer List: `Contact information` (default), `Mobile ID` or `User ID`. See [Audience Types](#audience-types).
+6. Configure the **Audience Members** section with the user data you want to send. You can provide data for a single user or multiple users in a batch. The tag will automatically hash user identifiers (like email and phone) using SHA256 if they are not already hashed.
+7. Add a trigger.
 
 ## Parameters
 
@@ -40,15 +41,33 @@ This tag supports two primary actions:
   * **Customer ID**: The ID of the account for which the link between the Data Partner (Stape) and the Advertiser was established. If the link is with the same account that receives the data, this will be the same as the Operating Customer ID.
   * **Customer List Name/ID**: The name/ID of the customer list you want to interact with.
 
+### Audience Types
+
+A Customer List accepts a single type of identifier, defined by the **upload key type** chosen when the list is created. The **Audience Type** field (available only with **Own Google Credentials**) tells the tag which identifier to send:
+
+| Audience Type | Upload key type of the Customer List | Identifier sent | Google Ads | Display & Video 360 |
+|---|---|---|---|---|
+| **Contact information** (default) | `CONTACT_ID` | [CompositeData](https://developers.google.com/data-manager/api/reference/rest/v1/AudienceMember#CompositeData) (email, phone, address and IP address) | ✅ | ✅ |
+| **Mobile ID** | `MOBILE_ID` | [MobileData](https://developers.google.com/data-manager/api/reference/rest/v1/MobileData) (Android Advertising ID or iOS IDFA) | ✅ | ✅ |
+| **User ID** | `USER_ID` | [UserIdData](https://developers.google.com/data-manager/api/reference/rest/v1/AudienceMember#UserIdData) (your own user identifier) | ✅ | ❌ |
+
+Keep in mind:
+
+* **The Customer List must be created with the matching upload key type.** A Mobile ID or User ID list can't receive contact information, and the other way around; the API rejects the request. See how to create a Customer Match audience for [Google Ads](https://developers.google.com/data-manager/api/devguides/audiences/google-ads/customer-match/create-audience) and for [Display & Video 360](https://developers.google.com/data-manager/api/devguides/audiences/display-video/customer-match/create-audience).
+* **One identifier type per request and per Customer List.** Every Customer List in the tag must accept the selected Audience Type. To send several identifier types, use one tag (and one Customer List) per type.
+* **Mobile ID and User ID require Own Google Credentials.** Customer Lists created via the **Stape Google Connection** accept Contact information only, so the tag always sends Contact information when that authentication is used.
+* If the Audience Type is not set (for example, in tags created before this field existed), the tag sends Contact information.
+* Mobile IDs and User IDs are sent as they are, without hashing. Audience Data Encoding and Audience Data Encryption only apply to Contact information.
+
 ### User Data & Identifiers
 
 The tag can be configured to send data for a single user or for multiple users at once.
 
 * **User Mode**:
   * **Single User**: Manually input identifiers for one user through the UI fields. The tag can fall back to data from the GA4 Event Data stream (`user_data` object) if fields are left blank.
-  * **Multiple Users**: Provide a pre-formatted array of audience members. This is useful for bulk uploads.
+  * **Multiple Users**: Provide a pre-formatted array of audience members. This is useful for bulk uploads. Each audience member must carry the identifier of the selected Audience Type (`compositeData`/`userData` for Contact information, `mobileData` for Mobile ID, `userIdData` for User ID); audience members carrying another type are skipped.
 * **User Identifiers**:
-  The currently supported identifier types are [UserData](https://developers.google.com/data-manager/api/reference/rest/v1/UserData) and [CompositeData](https://developers.google.com/data-manager/api/reference/rest/v1/AudienceMember#CompositeData) (containing UserData and IpData). User IDs, PAIR IDs and Mobile IDs are planned to be added soon.
+  The supported identifier types are [UserData](https://developers.google.com/data-manager/api/reference/rest/v1/UserData) and [CompositeData](https://developers.google.com/data-manager/api/reference/rest/v1/AudienceMember#CompositeData) (containing UserData and IpData) for Contact information, [MobileData](https://developers.google.com/data-manager/api/reference/rest/v1/MobileData) for Mobile ID and [UserIdData](https://developers.google.com/data-manager/api/reference/rest/v1/AudienceMember#UserIdData) for User ID. See [Audience Types](#audience-types).
   * **User Data**: Includes Email Address(es), Phone Number(s), and full address details (Given Name, Family Name, Region, Postal Code). The tag automatically normalizes and hashes this data if provided in clear text. If these fields are left blank in the tag configuration, the tag will attempt to use fallback values from the incoming GA4 event data (`user_data` object). When **Auto-map User Data** is enabled, the tag will look for commonly used fields in the `user_data` object to populate the identifiers. For example:
     * **Email**: `user_data.email` -> `user_data.email_address` -> `user_data.sha256_email` -> `user_data.sha256_email_address`
     * **Phone**: `user_data.phone` -> `user_data.phone_number` -> `user_data.sha256_phone_number`
@@ -60,8 +79,12 @@ The tag can be configured to send data for a single user or for multiple users a
     * **IP Address**: `eventData.ip_override` (auto-mapped)
     * **IP Address First Observation Timestamp** (optional): First recorded interaction time from this IP address in a session. Accepts RFC 3339 formats (e.g. `2026-10-02T15:01:23Z`).
     * **IP Address Last Observation Timestamp** (optional): Last recorded interaction time from this IP address in a session. Accepts RFC 3339 formats (e.g. `2026-10-02T16:22:01Z`).
+  * **Mobile ID Data** (Audience Type `Mobile ID`): a single Mobile ID, or an array of up to 10 Mobile IDs for the same user. Accepts Android Advertising IDs (AAID) and iOS IDFAs. More than 10 are truncated to the first 10.
+  * **User ID Data** (Audience Type `User ID`): a single User ID, the unique identifier you assign to the user. Supported by Google Ads only.
 
 ### Data Formatting & Encryption
+
+Encoding and encryption only apply to Contact information. They are hidden and not sent for the Mobile ID and User ID Audience Types.
 
 * **Audience Data Encoding**: Specify the encoding (`HEX` or `BASE64`) if you are providing pre-hashed user identifiers. If you provide raw data, the tag defaults to `HEX` after hashing.
 * **Audience Data Encryption**: If enabled, you must provide Google Cloud Platform wrapped key information (`Key Type`, `Workload Identity pool provider`, `KEK Uri`, and `Encrypted DEK`) for end-to-end encryption.
