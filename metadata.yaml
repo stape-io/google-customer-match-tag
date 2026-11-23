@@ -1,6 +1,8 @@
 homepage: 'https://stape.io/'
 documentation: 'https://github.com/stape-io/google-customer-match-tag'
 versions:
+  - sha: 610c0f8c327e2bb729d4b241c95347012676404f
+    changeNotes: Updated tag icon/logo.
   - sha: 95b0e088bd66f6d74810b130a7a45ab8870eb506
     changeNotes: Added Mobile ID and User ID audience types for Own Google Credentials.
   - sha: 9fdba300726f9e6d112f105703111a8693cb19e2
